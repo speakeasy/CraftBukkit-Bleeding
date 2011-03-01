@@ -430,11 +430,11 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             }
 
             // CraftBukkit start
-            Type eventType = Type.PLAYER_ITEM;
+            Type eventType = Type.PLAYER_INTERACT;
             Player who = (this.e == null) ? null : (Player) this.e.getBukkitEntity();
             org.bukkit.inventory.ItemStack itemInHand = new CraftItemStack(itemstack);
 
-            PlayerItemEvent event = new PlayerItemEvent(eventType, who, itemInHand, blockClicked, blockFace);
+            PlayerInteractEvent event = new PlayerInteractEvent(eventType, Action.RIGHT_CLICK_AIR, itemInHand, blockClicked, blockFace, who);
 
             // CraftBukkit We still call this event even in spawn protection.
             // Don't call this event if using Buckets / signs
@@ -474,15 +474,10 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             }
 
             // CraftBukkit start - spawn protection moved to ItemBlock!!!
-            CraftItemStack craftItem = new CraftItemStack(itemstack);
-            Player player = getPlayer();
-            BlockRightClickEvent event = new BlockRightClickEvent(Type.BLOCK_RIGHTCLICKED, blockClicked, blockFace, craftItem, player);
-            server.getPluginManager().callEvent(event);
-
             this.e.c.a(this.e, this.e.world, itemstack, i, j, k, l);
-            this.e.a.b((Packet) (new Packet53BlockChange(i, j, k, this.e.world)));
             // CraftBukkit end
 
+            this.e.a.b((Packet) (new Packet53BlockChange(i, j, k, this.e.world)));
             if (l == 0) {
                 --j;
             }

@@ -7,8 +7,10 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerItemEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 // CraftBukkit end
 
 public class ItemBucket extends Item {
@@ -56,38 +58,27 @@ public class ItemBucket extends Item {
                 CraftWorld craftWorld = ((WorldServer) world).getWorld();
                 CraftServer craftServer = ((WorldServer) world).getServer();
 
-                Type eventType = Type.PLAYER_ITEM;
+                Type eventType = Type.PLAYER_INTERACT;
                 Player who = (entityhuman == null) ? null : (Player) entityhuman.getBukkitEntity();
                 org.bukkit.inventory.ItemStack itemInHand = new CraftItemStack(itemstack);
                 org.bukkit.block.Block blockClicked = craftWorld.getBlockAt(i, j, k);
                 BlockFace blockFace = CraftBlock.notchToBlockFace(movingobjectposition.e);
+
+                PlayerInteractEvent event = new PlayerInteractEvent(eventType, Action.RIGHT_CLICK_BLOCK, itemInHand, blockClicked, blockFace, who);
+                craftServer.getPluginManager().callEvent(event);
+
+                if (event.useInteractedBlock() == Event.Result.DENY) {
+                    return itemstack;
+                }
                 // CraftBukkit end
 
                 if (this.a == 0) {
                     if (world.getMaterial(i, j, k) == Material.WATER && world.getData(i, j, k) == 0) {
-                        // CraftBukkit start
-                        PlayerItemEvent event = new PlayerItemEvent(eventType, who, itemInHand, blockClicked, blockFace);
-                        craftServer.getPluginManager().callEvent(event);
-
-                        if (event.isCancelled()) {
-                            return itemstack;
-                        }
-                        // CraftBukkit end
-
                         world.e(i, j, k, 0);
                         return new ItemStack(Item.WATER_BUCKET);
                     }
 
                     if (world.getMaterial(i, j, k) == Material.LAVA && world.getData(i, j, k) == 0) {
-                        // CraftBukkit start
-                        PlayerItemEvent event = new PlayerItemEvent(eventType, who, itemInHand, blockClicked, blockFace);
-                        craftServer.getPluginManager().callEvent(event);
-
-                        if (event.isCancelled()) {
-                            return itemstack;
-                        }
-                        // CraftBukkit end
-
                         world.e(i, j, k, 0);
                         return new ItemStack(Item.LAVA_BUCKET);
                     }
@@ -128,15 +119,6 @@ public class ItemBucket extends Item {
                                 world.a("largesmoke", (double) i + Math.random(), (double) j + Math.random(), (double) k + Math.random(), 0.0D, 0.0D, 0.0D);
                             }
                         } else {
-                            // CraftBukkit start - bucket empty.
-                            PlayerItemEvent event = new PlayerItemEvent(eventType, who, itemInHand, blockClicked, blockFace);
-                            craftServer.getPluginManager().callEvent(event);
-
-                            if (event.isCancelled()) {
-                                return itemstack;
-                            }
-                            // CraftBukkit end
-
                             world.b(i, j, k, this.a, 0);
                         }
 

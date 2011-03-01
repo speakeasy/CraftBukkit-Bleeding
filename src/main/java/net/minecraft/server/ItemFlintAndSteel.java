@@ -1,14 +1,9 @@
 package net.minecraft.server;
 
 // CraftBukkit start
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 // CraftBukkit end
@@ -56,24 +51,12 @@ public class ItemFlintAndSteel extends Item {
 
         if (i1 == 0) {
             // CraftBukkit start - Flint and steel
-            Type eventType = Type.PLAYER_ITEM;
             Player thePlayer = (Player) entityhuman.getBukkitEntity();
-            CraftItemStack itemInHand = new CraftItemStack(itemstack);
-            BlockFace blockFace = CraftBlock.notchToBlockFace(l);
-
-            PlayerItemEvent event = new PlayerItemEvent(eventType, thePlayer, itemInHand, blockClicked, blockFace);
-            craftServer.getPluginManager().callEvent(event);
-
-            boolean preventLighter = event.isCancelled();
 
             IgniteCause igniteCause = BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL;
             BlockIgniteEvent eventIgnite = new BlockIgniteEvent(blockClicked, igniteCause, thePlayer);
             craftServer.getPluginManager().callEvent(eventIgnite);
             boolean preventFire = eventIgnite.isCancelled();
-
-            if (preventLighter) {
-                return false;
-            }
 
             if (preventFire) {
                 itemstack.b(1);

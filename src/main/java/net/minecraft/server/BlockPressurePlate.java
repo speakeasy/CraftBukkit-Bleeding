@@ -7,9 +7,6 @@ import java.util.Random;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.Event.Type;
-import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 // CraftBukkit end
 
@@ -68,24 +65,6 @@ public class BlockPressurePlate extends Block {
     public void a(World world, int i, int j, int k, Entity entity) {
         if (!world.isStatic) {
             if (world.getData(i, j, k) != 1) {
-
-                // CraftBukkit start - Interact Pressure Plate
-                if (entity instanceof EntityLiving) {
-                    CraftServer server = ((WorldServer) world).getServer();
-                    CraftWorld craftWorld = ((WorldServer) world).getWorld();
-                    Type eventType = Type.BLOCK_INTERACT;
-                    CraftBlock block = (CraftBlock) craftWorld.getBlockAt(i, j, k);
-                    org.bukkit.entity.LivingEntity who = (entity == null) ? null : (LivingEntity) entity.getBukkitEntity();
-
-                    BlockInteractEvent event = new BlockInteractEvent(eventType, block, who);
-                    server.getPluginManager().callEvent(event);
-
-                    if (event.isCancelled()) {
-                        return;
-                    }
-                }
-                // CraftBukkit end
-
                 this.g(world, i, j, k);
             }
         }

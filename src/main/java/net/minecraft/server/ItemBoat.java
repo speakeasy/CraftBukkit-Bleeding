@@ -7,8 +7,10 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerItemEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 // CraftBukkit end
 
 public class ItemBoat extends Item {
@@ -49,16 +51,16 @@ public class ItemBoat extends Item {
                     CraftWorld craftWorld = ((WorldServer) world).getWorld();
                     CraftServer craftServer = ((WorldServer) world).getServer();
 
-                    Type eventType = Type.PLAYER_ITEM;
+                    Type eventType = Type.PLAYER_INTERACT;
                     Player who = (entityhuman == null) ? null : (Player) entityhuman.getBukkitEntity();
                     org.bukkit.inventory.ItemStack itemInHand = new CraftItemStack(itemstack);
                     org.bukkit.block.Block blockClicked = craftWorld.getBlockAt(i, j, k);
                     BlockFace blockFace = CraftBlock.notchToBlockFace(movingobjectposition.e);
 
-                    PlayerItemEvent event = new PlayerItemEvent(eventType, who, itemInHand, blockClicked, blockFace);
+                    PlayerInteractEvent event = new PlayerInteractEvent(eventType, Action.RIGHT_CLICK_BLOCK, itemInHand, blockClicked, blockFace, who);
                     craftServer.getPluginManager().callEvent(event);
 
-                    if (event.isCancelled()) {
+                        if (event.useInteractedBlock() == Event.Result.DENY) {
                         return itemstack;
                     }
                     // CraftBukkit end

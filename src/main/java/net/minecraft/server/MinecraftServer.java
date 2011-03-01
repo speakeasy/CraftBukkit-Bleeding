@@ -246,7 +246,7 @@ public class MinecraftServer implements Runnable, ICommandListener {
             if (this.d()) {
                 long i = System.currentTimeMillis();
 
-                for (long j = 0L; this.p; Thread.sleep(1L)) {
+                for (long j = 0L; this.p; Thread.sleep(50 - j)) {
                     long k = System.currentTimeMillis();
                     long l = k - i;
 
