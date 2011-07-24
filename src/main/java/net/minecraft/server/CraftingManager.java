@@ -8,13 +8,13 @@ import java.util.List;
 public class CraftingManager {
 
     private static final CraftingManager a = new CraftingManager();
-    private List b = new ArrayList();
+    public List b = new ArrayList(); // CraftBukkit - private -> public
 
     public static final CraftingManager getInstance() {
         return a;
     }
 
-    private CraftingManager() {
+    public CraftingManager() { // CraftBukkit - private -> public
         (new RecipesTools()).a(this);
         (new RecipesWeapons()).a(this);
         (new RecipeIngots()).a(this);
@@ -92,8 +92,15 @@ public class CraftingManager {
         this.registerShapedRecipe(new ItemStack(Block.ENCHANTMENT_TABLE, 1), new Object[] { " B ", "D#D", "###", Character.valueOf('#'), Block.OBSIDIAN, Character.valueOf('B'), Item.BOOK, Character.valueOf('D'), Item.DIAMOND});
         this.registerShapelessRecipe(new ItemStack(Item.EYE_OF_ENDER, 1), new Object[] { Item.ENDER_PEARL, Item.BLAZE_POWDER});
         Collections.sort(this.b, new RecipeSorter(this));
+        this.sort(); // CraftBukkit - moved sort to a separate method
         System.out.println(this.b.size() + " recipes");
     }
+
+    // CraftBukkit start
+    public void sort() {
+        Collections.sort(this.b, new RecipeSorter(this));
+    }
+    // CraftBukkit end
 
     public void registerShapedRecipe(ItemStack itemstack, Object... aobject) { // CraftBukkit - default -> public
         String s = "";
