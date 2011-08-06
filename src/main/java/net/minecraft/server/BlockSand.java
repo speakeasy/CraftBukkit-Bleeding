@@ -11,12 +11,18 @@ public class BlockSand extends Block {
     }
 
     public void c(World world, int i, int j, int k) {
-        world.c(i, j, k, this.id, this.c());
+        this.queueBlockTick(world, i, j, k); // CraftBukkit
     }
 
     public void doPhysics(World world, int i, int j, int k, int l) {
-        world.c(i, j, k, this.id, this.c());
+        this.queueBlockTick(world, i, j, k); // CraftBukkit
     }
+
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, this.c());
+    }
+    // CraftBukkit end
 
     public void a(World world, int i, int j, int k, Random random) {
         this.g(world, i, j, k);

@@ -2,8 +2,6 @@ package net.minecraft.server;
 
 import java.util.Random;
 
-import org.bukkit.BlockChangeDelegate; // CraftBukkit
-
 public class BlockSapling extends BlockFlower {
 
     protected BlockSapling(int i, int j) {
@@ -17,16 +15,20 @@ public class BlockSapling extends BlockFlower {
         if (!world.isStatic) {
             super.a(world, i, j, k, random);
             if (world.getLightLevel(i, j + 1, k) >= 9 && random.nextInt(30) == 0) {
-                int l = world.getData(i, j, k);
-
-                if ((l & 8) == 0) {
-                    world.setData(i, j, k, l | 8);
-                } else {
-                    this.b(world, i, j, k, random);
+                // CraftBukkit start
+                this.b(world, i, j, k, random);
+                if (world.getData(i, j, k) != this.id) {
+                    return;
                 }
             }
+            this.queueBlockTick(world, i, j, k);
         }
     }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(1D/30, 2));
+    }
+    // CraftBukkit end
 
     public int a(int i, int j) {
         j &= 3;
@@ -65,7 +67,7 @@ public class BlockSapling extends BlockFlower {
     }
 
     // CraftBukkit start
-    private class BlockChangeWithNotify implements BlockChangeDelegate {
+    private class BlockChangeWithNotify implements org.bukkit.BlockChangeDelegate {
         World world;
 
         BlockChangeWithNotify(World world) { this.world = world; }

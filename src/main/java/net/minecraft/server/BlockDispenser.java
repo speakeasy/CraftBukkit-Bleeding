@@ -177,7 +177,7 @@ public class BlockDispenser extends BlockContainer {
             boolean flag = world.isBlockIndirectlyPowered(i, j, k) || world.isBlockIndirectlyPowered(i, j + 1, k);
 
             if (flag) {
-                world.c(i, j, k, this.id, this.c());
+                world.queueBlockTick(i, j, k, this.id, this.c()); // CraftBukkit
             }
         }
     }

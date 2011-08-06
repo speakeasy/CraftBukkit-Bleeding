@@ -36,6 +36,7 @@ public class BlockLog extends Block {
 
                             if ((i2 & 8) == 0) {
                                 world.setRawData(i + i1, j + j1, k + k1, i2 | 8);
+                                Block.LEAVES.queueBlockTick(world, i + i1, j + j1, k + k1); // CraftBukkit
                             }
                         }
                     }

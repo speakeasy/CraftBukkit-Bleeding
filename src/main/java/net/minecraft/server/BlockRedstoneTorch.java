@@ -145,8 +145,14 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     public void doPhysics(World world, int i, int j, int k, int l) {
         super.doPhysics(world, i, j, k, l);
-        world.c(i, j, k, this.id, this.c());
+        // CraftBukkit start
+        queueBlockTick(world, i, j, k);
     }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, this.c());
+    }
+    // CraftBukkit end
 
     public boolean d(World world, int i, int j, int k, int l) {
         return l == 0 ? this.a(world, i, j, k, l) : false;

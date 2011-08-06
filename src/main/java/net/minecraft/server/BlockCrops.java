@@ -23,15 +23,21 @@ public class BlockCrops extends BlockFlower {
             int l = world.getData(i, j, k);
 
             if (l < 7) {
-                float f = this.h(world, i, j, k);
-
-                if (random.nextInt((int) (100.0F / f)) == 0) {
-                    ++l;
-                    world.setData(i, j, k, l);
-                }
+                // CraftBukkit start
+                world.setData(i, j, k, l + 1);
             }
         }
+        this.queueBlockTick(world, i, j, k);
     }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(this.h(chunk.world, x, y, z) / 100));
+    }
+
+    public void c(World world, int x, int y, int z) {
+        queueBlockTick(world, x, y, z);
+    }
+    // CraftBukkit end
 
     public void d_(World world, int i, int j, int k) {
         world.setData(i, j, k, 7);

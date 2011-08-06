@@ -38,6 +38,7 @@ public class BlockRedstoneOre extends Block {
         this.h(world, i, j, k);
         if (this.id == Block.REDSTONE_ORE.id) {
             world.setTypeId(i, j, k, Block.GLOWING_REDSTONE_ORE.id);
+            this.queueBlockTick(world, i, j, k); // CraftBukkit
         }
     }
 
@@ -46,6 +47,18 @@ public class BlockRedstoneOre extends Block {
             world.setTypeId(i, j, k, Block.REDSTONE_ORE.id);
         }
     }
+
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, this.c());
+    }
+
+    public void c(World world, int x, int y, int z) {
+        if (this.a) {
+            queueBlockTick(world, x, y, z);
+        }
+    }
+    // CraftBukkit end
 
     public int a(int i, Random random) {
         return Item.REDSTONE.id;

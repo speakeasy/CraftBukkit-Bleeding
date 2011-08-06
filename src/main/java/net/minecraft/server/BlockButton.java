@@ -162,10 +162,16 @@ public class BlockButton extends Block {
                 world.applyPhysics(i, j - 1, k, this.id);
             }
 
-            world.c(i, j, k, this.id, this.c());
+            this.queueBlockTick(world, i, j, k); // CraftBukkit
             return true;
         }
     }
+
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, this.c());
+    }
+    // CraftBukkit end
 
     public void remove(World world, int i, int j, int k) {
         int l = world.getData(i, j, k);

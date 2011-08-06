@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.craftbukkit.util.LongHashset;
 // CraftBukkit end
 
 public abstract class EntityHuman extends EntityLiving {
@@ -52,6 +53,22 @@ public abstract class EntityHuman extends EntityLiving {
     public float F;
     private int d = 0;
     public EntityFish hookedFish = null;
+
+    // CraftBukkit start
+    public LongHashset getChunks() {
+        LongHashset list = new LongHashset();
+        int xx = MathHelper.floor(this.x / 16);
+        int zz = MathHelper.floor(this.y / 16);
+
+        int r = 9;
+        for (int x = -r; x <= r; x++) {
+            for (int z = -r; z <= r; z++) {
+                list.add(x + xx, z + zz);
+            }
+        }
+        return list;
+    }
+    // CraftBukkit end
 
     public EntityHuman(World world) {
         super(world);

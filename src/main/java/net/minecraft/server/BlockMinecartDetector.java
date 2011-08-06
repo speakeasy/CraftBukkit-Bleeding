@@ -84,7 +84,13 @@ public class BlockMinecartDetector extends BlockMinecartTrack {
         }
 
         if (flag1) {
-            world.c(i, j, k, this.id, this.c());
+            this.queueBlockTick(world, i, j, k); // CraftBukkit
         }
     }
+
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, this.c());
+    }
+    // CraftBukkit end
 }

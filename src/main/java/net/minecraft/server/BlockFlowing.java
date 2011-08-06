@@ -85,7 +85,7 @@ public class BlockFlowing extends BlockFluids {
                     world.setTypeId(i, j, k, 0);
                 } else {
                     world.setData(i, j, k, i1);
-                    world.c(i, j, k, this.id, this.c());
+                    world.queueBlockTick(i, j, k, this.id, this.c()); // CraftBukkit
                     world.applyPhysics(i, j, k, this.id);
                 }
             } else if (flag) {
@@ -295,7 +295,7 @@ public class BlockFlowing extends BlockFluids {
     public void c(World world, int i, int j, int k) {
         super.c(world, i, j, k);
         if (world.getTypeId(i, j, k) == this.id) {
-            world.c(i, j, k, this.id, this.c());
+            world.queueBlockTick(i, j, k, this.id, this.c()); // CraftBukkit
         }
     }
 }

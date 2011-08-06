@@ -146,4 +146,10 @@ public class LongHashset extends LongHash {
             rl.unlock();
         }
     }
+
+    public void addAll(LongHashset set) {
+        for (long key: set.keys()) {
+            this.add(key);
+        }
+    }
 }

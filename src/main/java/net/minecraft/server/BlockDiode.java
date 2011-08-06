@@ -37,7 +37,7 @@ public class BlockDiode extends Block {
             if (!flag) {
                 int i1 = (l & 12) >> 2;
 
-                world.c(i, j, k, Block.DIODE_ON.id, b[i1] * 2);
+                world.queueBlockTick(i, j, k, Block.DIODE_ON.id, b[i1] * 2); // CraftBukkit
             }
         }
     }
@@ -74,9 +74,9 @@ public class BlockDiode extends Block {
             int j1 = (i1 & 12) >> 2;
 
             if (this.c && !flag) {
-                world.c(i, j, k, this.id, b[j1] * 2);
+                world.queueBlockTick(i, j, k, this.id, b[j1] * 2); // CraftBukkit
             } else if (!this.c && flag) {
-                world.c(i, j, k, this.id, b[j1] * 2);
+                world.queueBlockTick(i, j, k, this.id, b[j1] * 2); // CraftBukkit
             }
         }
     }
@@ -122,7 +122,7 @@ public class BlockDiode extends Block {
         boolean flag = this.f(world, i, j, k, l);
 
         if (flag) {
-            world.c(i, j, k, this.id, 1);
+            world.queueBlockTick(i, j, k, this.id, 1); // CraftBukkit
         }
     }
 

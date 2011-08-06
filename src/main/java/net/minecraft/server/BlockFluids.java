@@ -231,4 +231,10 @@ public abstract class BlockFluids extends Block {
             world.a("largesmoke", (double) i + Math.random(), (double) j + 1.2D, (double) k + Math.random(), 0.0D, 0.0D, 0.0D);
         }
     }
+
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, id, this.c());
+    }
+    // CraftBukkit end
 }

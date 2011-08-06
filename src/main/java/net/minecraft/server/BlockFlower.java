@@ -28,7 +28,20 @@ public class BlockFlower extends Block {
 
     public void a(World world, int i, int j, int k, Random random) {
         this.g(world, i, j, k);
+        // CraftBukkit start
+        if (world.getData(i, j, k) == this.id) {
+            this.queueBlockTick(world, i, j, k);
+        }
     }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(1));
+    }
+
+    public void c(World world, int x, int y, int z) {
+        this.queueBlockTick(world, x, y, z);
+    }
+    // CraftBukkit end
 
     protected final void g(World world, int i, int j, int k) {
         if (!this.f(world, i, j, k)) {

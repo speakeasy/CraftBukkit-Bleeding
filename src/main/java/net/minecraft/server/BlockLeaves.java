@@ -29,12 +29,19 @@ public class BlockLeaves extends BlockLeavesBase {
                             int i2 = world.getData(i + i1, j + j1, k + k1);
 
                             world.setRawData(i + i1, j + j1, k + k1, i2 | 8);
+                            this.queueBlockTick(world, i + i1, j + j1, k + k1); // CraftBukkit
                         }
                     }
                 }
             }
         }
     }
+
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(1));
+    }
+    // CraftBukkit end
 
     public void a(World world, int i, int j, int k, Random random) {
         if (!world.isStatic) {

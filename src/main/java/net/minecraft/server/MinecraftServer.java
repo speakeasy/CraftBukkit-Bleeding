@@ -437,10 +437,10 @@ public class MinecraftServer implements Runnable, ICommandListener {
                         EntityPlayer entityplayer = (EntityPlayer) this.serverConfigurationManager.players.get(i);
                         entityplayer.netServerHandler.sendPacket(new Packet4UpdateTime(entityplayer.getPlayerTime())); // Add support for per player time
                     }
-                    // CraftBukkit end
                 }
 
-                worldserver.doTick();
+                worldserver.doTick(this.ticks);
+                // CraftBukkit end
 
                 while (worldserver.doLighting()) {
                     ;

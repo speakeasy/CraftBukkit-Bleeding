@@ -13,7 +13,12 @@ public class NibbleArray {
     }
 
     public int a(int i, int j, int k) {
-        int l = i << 11 | k << 7 | j;
+        // CraftBukkit start
+        return this.a(i << 11 | k << 7 | j);
+    }
+
+    public int a(int l) {
+        // CraftBukkit end
         int i1 = l >> 1;
         int j1 = l & 1;
 

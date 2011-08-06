@@ -35,7 +35,18 @@ public class BlockIce extends BlockBreakable {
             this.g(world, i, j, k, world.getData(i, j, k));
             world.setTypeId(i, j, k, Block.STATIONARY_WATER.id);
         }
+        // CraftBukkit start
+        else this.queueBlockTick(world, i, j, k);
     }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(1));
+    }
+
+    public void c(World world, int x, int y, int z) {
+        queueBlockTick(world, x, y, z);
+    }
+    // CraftBukkit end
 
     public int e() {
         return 0;

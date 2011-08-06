@@ -532,4 +532,13 @@ public class Block {
         r[0] = true;
         StatisticList.b();
     }
+
+    // CraftBukkit start
+    public final void queueBlockTick(World world, int x, int y, int z) {
+        queueBlockTick(world.getChunkAt(x >> 4, z >> 4), x, y, z);
+    }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+    }
+    // CraftBukkit end
 }

@@ -34,7 +34,7 @@ public class BlockSoil extends Block {
     }
 
     public void a(World world, int i, int j, int k, Random random) {
-        if (random.nextInt(5) == 0) {
+        // if (random.nextInt(5) == 0) { // CraftBukkit
             if (!this.h(world, i, j, k) && !world.s(i, j + 1, k)) {
                 int l = world.getData(i, j, k);
 
@@ -42,11 +42,18 @@ public class BlockSoil extends Block {
                     world.setData(i, j, k, l - 1);
                 } else if (!this.g(world, i, j, k)) {
                     world.setTypeId(i, j, k, Block.DIRT.id);
+                    return; // CraftBukkit
                 }
             } else {
                 world.setData(i, j, k, 7);
             }
-        }
+        // CraftBukkit start
+        this.queueBlockTick(world, i, j, k);
+    }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(.2));
+        // CraftBukkit end
     }
 
     public void b(World world, int i, int j, int k, Entity entity) {

@@ -73,7 +73,7 @@ public class BlockFire extends Block {
                 world.setRawData(i, j, k, l + random.nextInt(3) / 2);
             }
 
-            world.c(i, j, k, this.id, this.c());
+            this.queueBlockTick(world, i, j, k); // CraftBukkit
             if (!flag && !this.g(world, i, j, k)) {
                 if (!world.e(i, j - 1, k) || l > 3) {
                     world.setTypeId(i, j, k, 0);
@@ -229,12 +229,18 @@ public class BlockFire extends Block {
         }
     }
 
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, this.c());
+    }
+    // CraftBukkit end
+
     public void c(World world, int i, int j, int k) {
         if (world.getTypeId(i, j - 1, k) != Block.OBSIDIAN.id || !Block.PORTAL.a_(world, i, j, k)) {
             if (!world.e(i, j - 1, k) && !this.g(world, i, j, k)) {
                 world.setTypeId(i, j, k, 0);
             } else {
-                world.c(i, j, k, this.id, this.c());
+                this.queueBlockTick(world, i, j, k); // CraftBukkit
             }
         }
     }

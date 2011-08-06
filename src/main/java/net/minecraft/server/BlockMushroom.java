@@ -15,17 +15,18 @@ public class BlockMushroom extends BlockFlower {
     }
 
     public void a(World world, int i, int j, int k, Random random) {
-        if (random.nextInt(100) == 0) {
+        // if (random.nextInt(100) == 0) { // CraftBukkit
             int l = i + random.nextInt(3) - 1;
             int i1 = j + random.nextInt(2) - random.nextInt(2);
             int j1 = k + random.nextInt(3) - 1;
 
             if (world.isEmpty(l, i1, j1) && this.f(world, l, i1, j1)) {
+                /* CraftBukkit start
                 int k1 = i + (random.nextInt(3) - 1);
 
                 k1 = k + (random.nextInt(3) - 1);
                 if (world.isEmpty(l, i1, j1) && this.f(world, l, i1, j1)) {
-                    // CraftBukkit start
+                    */
                     org.bukkit.World bworld = world.getWorld();
                     org.bukkit.block.BlockState blockState = bworld.getBlockAt(l, i1, j1).getState();
                     blockState.setTypeId(this.id);
@@ -36,11 +37,19 @@ public class BlockMushroom extends BlockFlower {
                     if (!event.isCancelled()) {
                         blockState.update(true);
                     }
+                    this.queueBlockTick(world, i, j, k);
                     // CraftBukkit end
                 }
             }
+        /* CraftBukkit start
         }
     }
+    */
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(1D/100D));
+    }
+    // CraftBukkit end
 
     protected boolean c(int i) {
         return Block.o[i];

@@ -139,4 +139,10 @@ public class BlockTorch extends Block {
 
         return super.a(world, i, j, k, vec3d, vec3d1);
     }
+
+    // CraftBukkit start
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+        this.a(chunk.world, x, y, z, chunk.world.random);
+    }
+    // CraftBukkit end
 }
