@@ -18,11 +18,13 @@ public class BlockSapling extends BlockFlower {
                 // CraftBukkit start
                 this.b(world, i, j, k, random);
                 if (world.getData(i, j, k) != this.id) {
+                    // If growing fails, requeue on half the time
+                    world.queueBlockTick(i, j, k, this.id, World.getTicksForChance(1D/30, 1));
                     return;
                 }
             }
-            this.queueBlockTick(world, i, j, k);
         }
+        this.queueBlockTick(world, i, j, k);
     }
 
     public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
@@ -41,7 +43,7 @@ public class BlockSapling extends BlockFlower {
         world.setRawTypeId(i, j, k, 0);
 
         // CraftBukkit start - fixes client updates on recently grown trees
-        boolean grownTree;
+        boolean grownTree = false;
         BlockChangeWithNotify delegate = new BlockChangeWithNotify(world);
 
         if (l == 1) {
@@ -51,7 +53,10 @@ public class BlockSapling extends BlockFlower {
         } else {
             if (random.nextInt(10) == 0) {
                 grownTree = new WorldGenBigTree().generate(delegate, random, i, j, k);
-            } else {
+            }
+
+            // Try growing a small tree if the big one failed
+            if (!grownTree) {
                 grownTree = new WorldGenTrees().generate(delegate, random, i, j, k);
             }
         }
