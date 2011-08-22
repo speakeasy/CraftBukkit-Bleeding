@@ -7,6 +7,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+// CraftBukkit start
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+// CraftBukkit end
+
 public class ChunkLoader implements IChunkLoader {
 
     private File a;
@@ -125,6 +131,16 @@ public class ChunkLoader implements IChunkLoader {
         nbttagcompound.a("BlockLight", chunk.g.a);
         nbttagcompound.a("HeightMap", chunk.heightMap);
         nbttagcompound.a("TerrainPopulated", chunk.done);
+
+        // CraftBukkit start
+        byte[] tickList = chunk.tickQueue.toByteArray();
+        if (tickList.length > 0) {
+            nbttagcompound.a("TickList", tickList);
+            nbttagcompound.setLong("TickRandom", world.startupRandom);
+            nbttagcompound.a("TickLast", chunk.world.lastServerTick);
+        }
+        // CraftBukkit end
+
         chunk.q = false;
         NBTTagList nbttaglist = new NBTTagList();
 
@@ -172,6 +188,13 @@ public class ChunkLoader implements IChunkLoader {
         chunk.g = new NibbleArray(nbttagcompound.j("BlockLight"));
         chunk.heightMap = nbttagcompound.j("HeightMap");
         chunk.done = nbttagcompound.m("TerrainPopulated");
+
+        // CraftBukkit start
+        chunk.loadedTickRandom = nbttagcompound.getLong("TickRandom");
+        chunk.loadedTickList = nbttagcompound.j("TickList");
+        chunk.loadedTickLast = nbttagcompound.e("TickLast");
+        // CraftBukkit end
+
         if (!chunk.e.a()) {
             chunk.e = new NibbleArray(chunk.b.length);
         }

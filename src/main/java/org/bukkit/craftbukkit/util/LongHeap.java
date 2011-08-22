@@ -1,4 +1,9 @@
 package org.bukkit.craftbukkit.util;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class LongHeap {
     long elements[] = new long[1];
 
@@ -88,5 +93,25 @@ public class LongHeap {
                 return;
             }
         }
+    }
+
+    public byte[] toByteArray() {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+
+        try {
+            for (int i = 1; i <= elements[0]; i++) {
+                dos.writeLong(elements[i]);
+            }
+        } catch (IOException e) {
+            // yes, out of memory, ./care
+        } finally {
+            try {
+                dos.close();
+                bos.close();
+            } catch (IOException e) {
+            }
+        }
+        return bos.toByteArray();
     }
 }

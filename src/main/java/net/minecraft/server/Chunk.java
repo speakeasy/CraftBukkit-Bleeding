@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.util.TickQueue; // CraftBukkit
+import org.bukkit.craftbukkit.util.TickQueue;
 import org.bukkit.event.block.BlockFormEvent;
 
 public class Chunk {
@@ -57,6 +57,10 @@ public class Chunk {
     }
 
     public TickQueue tickQueue = new TickQueue();
+    public byte[] loadedTickList;
+    public long loadedTickRandom;
+    public int loadedTickLast;
+
     public void queueBlockTick(int x, int y, int z, int id, int delta) {
         this.queueBlockTick(x, y, z, id, delta, false);
     }
@@ -155,6 +159,11 @@ public class Chunk {
             if (y == 0) {
                 this.queueColumnTick(x, z, 1 + World.getTicksForChance(.1));
             }
+        }
+
+        if (this.loadedTickList != null && this.loadedTickList.length > 0) {
+            this.tickQueue.fromByteArray(this.loadedTickList, this.loadedTickRandom != this.world.startupRandom, this.world.lastServerTick - this.loadedTickLast);
+            this.loadedTickList = null;
         }
     }
 

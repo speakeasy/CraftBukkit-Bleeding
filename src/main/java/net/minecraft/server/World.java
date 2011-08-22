@@ -92,7 +92,8 @@ public class World implements IBlockAccess {
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
     private List<TileEntity> tileEntitiesToUnload;
-    public long lastServerTick;
+    public int lastServerTick;
+    public long startupRandom;
 
     private boolean canSpawn(int x, int z) {
         if (this.generator != null) {
@@ -119,6 +120,7 @@ public class World implements IBlockAccess {
         this.generator = gen;
         this.world = new CraftWorld((WorldServer) this, gen, env);
         tileEntitiesToUnload = new ArrayList<TileEntity>();
+        this.startupRandom = Double.doubleToLongBits(Math.random());
         // CraftBukkit end
 
         this.Q = this.random.nextInt(12000);

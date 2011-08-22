@@ -1,6 +1,11 @@
 package org.bukkit.craftbukkit.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.BitSet;
+
+import net.minecraft.server.Chunk;
 
 public class TickQueue {
     private BitSet blockCache = new BitSet(32768);
@@ -54,5 +59,36 @@ public class TickQueue {
     public long peek() {
         if (heap.isEmpty()) return Long.MAX_VALUE;
         return heap.peekHead();
+    }
+
+    public void fromByteArray(byte[] data, boolean hasRestarted, int deltaTime) {
+        long value;
+        ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        DataInputStream dis = new DataInputStream(bis);
+        try {
+            while(dis.available() > 0) {
+                value = dis.readLong();
+                if (hasRestarted) {
+                    deltaTime += (value >>> 32);
+                    if (deltaTime < 0) deltaTime = 0;
+
+                    value = (value & 0xFFFFFFFF) | (((long) deltaTime) << 32);
+                }
+
+                this.insert(value);
+            }
+        } catch (IOException e) {
+            // yeah blah memory, i dont care.
+        } finally {
+            try {
+                dis.close();
+                bis.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    public byte[] toByteArray() {
+        return heap.toByteArray();
     }
 }
