@@ -8,9 +8,9 @@ import java.util.BitSet;
 import net.minecraft.server.Chunk;
 
 public class TickQueue {
-    private BitSet blockCache = new BitSet(32768);
-    private BitSet columnCache = new BitSet(256);
-    private LongHeap heap = new LongHeap();
+    public BitSet blockCache = new BitSet(32768);
+    public BitSet columnCache = new BitSet(256);
+    public LongHeap heap = new LongHeap();
 
     /**
      * Each long has on the inside:
@@ -63,19 +63,24 @@ public class TickQueue {
 
     public void fromByteArray(byte[] data, boolean hasRestarted, int deltaTime) {
         long value;
+        int newTime;
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         DataInputStream dis = new DataInputStream(bis);
+
         try {
             while(dis.available() > 0) {
                 value = dis.readLong();
+                newTime = (int) (value >>> 32);
                 if (hasRestarted) {
-                    deltaTime += (value >>> 32);
-                    if (deltaTime < 0) deltaTime = 0;
+                    newTime += deltaTime;
+                    if (newTime < 0) newTime = 0;
 
-                    value = (value & 0xFFFFFFFF) | (((long) deltaTime) << 32);
+                    value = (value & 0xFFFFFFFF) | (((long) newTime) << 32);
                 }
 
-                this.insert(value);
+                // Due to an early bug; only queue stuff that is supposed to happen within the next hour
+                if (newTime < 20 * 60 * 60)
+                    this.insert(value);
             }
         } catch (IOException e) {
             // yeah blah memory, i dont care.
