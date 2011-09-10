@@ -28,12 +28,14 @@ public class BlockGrass extends Block {
                     int k1 = world.getTypeId(l, i1 + 1, j1);
                     if (world.getTypeId(l, i1, j1) == Block.DIRT.id && world.getLightLevel(l, i1 + 1, j1) >= 4 && Block.q[k1] <= 2) {
                         world.setTypeId(l, i1, j1, Block.GRASS.id);
-                        return;
+                        this.queueBlockTick(world, l, i1, j1);
+                        break;
                     }
                     // CraftBukkit end
                 }
             }
         }
+        this.queueBlockTick(world, i, j, k); // CraftBukkit
     }
 
     // CraftBukkit start
