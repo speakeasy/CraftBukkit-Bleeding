@@ -106,7 +106,10 @@ public class BlockFlowing extends BlockFluids {
                 if (l >= 8) {
                     world.setTypeIdAndData(i, j - 1, k, this.id, l);
                 } else {
+                    boolean suppress = world.suppressPhysics;
+                    world.suppressPhysics = true;
                     world.setTypeIdAndData(i, j - 1, k, this.id, l + 8);
+                    world.suppressPhysics = suppress;
                 }
             }
             // CraftBukkit end
