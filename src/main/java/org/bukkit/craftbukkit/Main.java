@@ -17,7 +17,48 @@ public class Main {
 
     public static void main(String[] args) {
         // Todo: Installation script
-        OptionParser parser = new OptionParser() {
+        OptionParser parser = defaultOptionParser();
+
+
+        OptionSet options = null;
+
+        try {
+            options = parser.parse(args);
+        } catch (joptsimple.OptionException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
+        }
+
+        if ((options == null) || (options.has("?"))) {
+            try {
+                parser.printHelpOn(System.out);
+            } catch (IOException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (options.has("v")) {
+            System.out.println(CraftServer.class.getPackage().getImplementationVersion());
+        } else {
+            try {
+                useJline = !"jline.UnsupportedTerminal".equals(System.getProperty("jline.terminal"));
+
+                if (options.has("nojline")) {
+                    System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
+                    System.setProperty("user.language", "en");
+                    useJline = false;
+                }
+                
+                if (options.has("noconsole")) {
+                    useConsole = false;
+                }
+
+                MinecraftServer.main(options);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+
+    public static OptionParser defaultOptionParser() {
+        return new OptionParser() {
             {
                 acceptsAll(asList("?", "help"), "Show the help");
 
@@ -100,42 +141,6 @@ public class Main {
                 acceptsAll(asList("v", "version"), "Show the CraftBukkit Version");
             }
         };
-
-        OptionSet options = null;
-
-        try {
-            options = parser.parse(args);
-        } catch (joptsimple.OptionException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
-        }
-
-        if ((options == null) || (options.has("?"))) {
-            try {
-                parser.printHelpOn(System.out);
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (options.has("v")) {
-            System.out.println(CraftServer.class.getPackage().getImplementationVersion());
-        } else {
-            try {
-                useJline = !"jline.UnsupportedTerminal".equals(System.getProperty("jline.terminal"));
-
-                if (options.has("nojline")) {
-                    System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-                    System.setProperty("user.language", "en");
-                    useJline = false;
-                }
-                
-                if (options.has("noconsole")) {
-                    useConsole = false;
-                }
-
-                MinecraftServer.main(options);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }
     }
 
     private static List<String> asList(String... params) {
