@@ -13,6 +13,12 @@ public class ServerShutdownThread extends Thread {
 
     @Override
     public void run() {
-        server.stop();
+        if (!server.isStopped) {
+            if (server.isAlive()) {
+                server.safeShutdown();
+            } else {
+                server.stop();
+            }
+        }
     }
 }
