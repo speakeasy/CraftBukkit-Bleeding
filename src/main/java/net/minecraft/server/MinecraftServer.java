@@ -73,6 +73,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
     public RemoteConsoleCommandSender remoteConsole;
     public ConsoleReader reader;
     public static int currentTick;
+    private ThreadServerApplication serverThread;
 
     public MinecraftServer(OptionSet options) { // CraftBukkit - adds argument OptionSet
         final ThreadSleepForever thread = new ThreadSleepForever(this);
@@ -578,7 +579,10 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
 
             // CraftBukkit - remove gui
 
-            (new ThreadServerApplication("Server thread", minecraftserver)).start();
+            // CraftBukkit start - keep track of the server thread
+            minecraftserver.serverThread = new ThreadServerApplication("Server thread", minecraftserver);
+            minecraftserver.serverThread.start();
+            // CraftBukkit end
         } catch (Exception exception) {
             log.log(Level.SEVERE, "Failed to start the minecraft server", exception);
         }
@@ -736,4 +740,10 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
     public static boolean isRunning(MinecraftServer minecraftserver) {
         return minecraftserver.isRunning;
     }
+
+    // CraftBukkit start - check if the thread running the server is still going or not
+    public boolean isAlive() {
+        return serverThread.isAlive();
+    }
+    // CraftBukkit end
 }
