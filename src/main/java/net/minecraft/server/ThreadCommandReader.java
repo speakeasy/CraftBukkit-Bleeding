@@ -12,6 +12,7 @@ public class ThreadCommandReader extends Thread {
 
     public ThreadCommandReader(MinecraftServer minecraftserver) {
         this.server = minecraftserver;
+        this.setName("Command Reader Thread"); // CraftBukkit - name the thread
     }
 
     public void run() {

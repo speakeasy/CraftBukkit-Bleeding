@@ -73,10 +73,11 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
     public RemoteConsoleCommandSender remoteConsole;
     public ConsoleReader reader;
     public static int currentTick;
-    // CraftBukkit end
 
     public MinecraftServer(OptionSet options) { // CraftBukkit - adds argument OptionSet
-        new ThreadSleepForever(this);
+        final ThreadSleepForever thread = new ThreadSleepForever(this);
+        thread.setName("Sleep Forever Thread"); // CraftBukkit - add thread name
+        // CraftBukkit end
 
         // CraftBukkit start
         this.options = options;

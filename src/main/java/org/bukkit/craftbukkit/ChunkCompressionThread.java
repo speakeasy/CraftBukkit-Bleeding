@@ -29,7 +29,9 @@ public final class ChunkCompressionThread implements Runnable {
     public static void startThread() {
         if (!isRunning) {
             isRunning = true;
-            new Thread(instance).start();
+            Thread t = new Thread(instance);
+            t.setName("Chunk Compression Thread");
+            t.start();
         }
     }
 

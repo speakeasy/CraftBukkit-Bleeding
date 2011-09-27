@@ -112,6 +112,7 @@ public class CraftScheduler implements BukkitScheduler, Runnable {
         this.server = server;
 
         Thread t = new Thread(this);
+        t.setName("CraftScheduler Thread");
         t.start();
 
     }

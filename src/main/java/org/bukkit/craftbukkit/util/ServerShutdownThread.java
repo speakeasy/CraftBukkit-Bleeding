@@ -8,6 +8,7 @@ public class ServerShutdownThread extends Thread {
 
     public ServerShutdownThread(MinecraftServer server) {
         this.server = server;
+        this.setName("Server Shutdown Thread");
     }
 
     @Override

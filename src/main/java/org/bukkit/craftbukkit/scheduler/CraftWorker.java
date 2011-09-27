@@ -25,6 +25,7 @@ public class CraftWorker implements Runnable, BukkitWorker {
         this.owner = owner;
         this.hashId = CraftWorker.getNextHashId();
         t = new Thread(this);
+        t.setName("CraftWorker Thread");
         t.start();
     }
 
