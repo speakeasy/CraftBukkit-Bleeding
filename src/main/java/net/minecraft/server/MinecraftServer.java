@@ -18,6 +18,7 @@ import java.io.PrintStream;
 import java.net.UnknownHostException;
 import jline.ConsoleReader;
 import joptsimple.OptionSet;
+import org.bukkit.Server;
 import org.bukkit.World.Environment;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
@@ -74,6 +75,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
     public ConsoleReader reader;
     public static int currentTick;
     private ThreadServerApplication serverThread;
+    private boolean finishedInit;
 
     public MinecraftServer(OptionSet options) { // CraftBukkit - adds argument OptionSet
         final ThreadSleepForever thread = new ThreadSleepForever(this);
@@ -82,6 +84,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
 
         // CraftBukkit start
         this.options = options;
+        this.finishedInit = false;
         try {
             this.reader = new ConsoleReader();
         } catch (IOException ex) {
@@ -192,6 +195,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
             this.propertyManager.properties.remove("spawn-protection");
             this.propertyManager.savePropertiesFile();
         }
+        this.finishedInit = true; // CraftBukkit - flag that the start-up has finished
         // CratBukkit end
 
         return true;
@@ -575,18 +579,49 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
         StatisticList.a();
 
         try {
-            MinecraftServer minecraftserver = new MinecraftServer(options); // CraftBukkit - pass in the options
+            startServer(options); // CraftBukkit - abstract logic for starting a server
 
-            // CraftBukkit - remove gui
-
-            // CraftBukkit start - keep track of the server thread
-            minecraftserver.serverThread = new ThreadServerApplication("Server thread", minecraftserver);
-            minecraftserver.serverThread.start();
-            // CraftBukkit end
         } catch (Exception exception) {
             log.log(Level.SEVERE, "Failed to start the minecraft server", exception);
         }
     }
+
+    // CraftBukkit start - abstracted the logic for starting a server
+    private static MinecraftServer startServer(OptionSet options) throws InterruptedException {
+        MinecraftServer minecraftserver = new MinecraftServer(options); // CraftBukkit - pass in the options
+
+        // CraftBukkit - remove gui
+
+        // CraftBukkit - keep track of the server thread
+        minecraftserver.serverThread = new ThreadServerApplication("Server thread", minecraftserver);
+        minecraftserver.serverThread.start();
+        // CraftBukkit - make sure the server has started before returning
+        while (!minecraftserver.finishedInit) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                log.log(Level.SEVERE, "Server interrupted while starting up");
+                minecraftserver.safeShutdown();
+                throw e;
+            }
+        }
+        return minecraftserver;
+    }
+     // CraftBukkit end
+
+    // CraftBukkit start - create and return a test server
+    /**
+     * More or less a clone of main(), but returns a org.bukkit.Server for us to use.
+     * @param options an option set to start the server with.
+     * @return a server for us to play with!
+     *
+     * @throws InterruptedException if the server is interrupted while starting
+     */
+    public static CraftServer createTestServer(final OptionSet options) throws InterruptedException {
+        StatisticList.a();
+        return startServer(options).server;
+    }
+    // CraftBukkit end
 
     public File a(String s) {
         return new File(s);
@@ -741,9 +776,16 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
         return minecraftserver.isRunning;
     }
 
-    // CraftBukkit start - check if the thread running the server is still going or not
+    // CraftBukkit start
+    // Check if the thread running the server is still going or not
     public boolean isAlive() {
         return serverThread.isAlive();
     }
+
+    // Check if the server has finished starting yet
+    public static boolean hasFinishedInit(MinecraftServer minecraftserver) {
+        return minecraftserver.finishedInit;
+    }
     // CraftBukkit end
 }
+
