@@ -19,8 +19,15 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.craftbukkit.CraftChunk;
+<<<<<<< HEAD
 import org.bukkit.inventory.ItemStack;
+=======
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+>>>>>>> Added a Metadata framework for Entities, Blocks, and Worlds
 import org.bukkit.util.BlockVector;
+
+import java.util.List;
 
 public class CraftBlock implements Block {
     private final CraftChunk chunk;
@@ -403,5 +410,21 @@ public class CraftBlock implements Block {
                 throw new IllegalArgumentException("Missing Biome mapping for BiomeBase[" + i + "]");
             }
         }
+    }
+
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+        chunk.getWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+    }
+
+    public List<MetadataValue> getMetadata(String metadataKey) {
+        return chunk.getWorld().getBlockMetadata().getMetadata(this, metadataKey);
+    }
+
+    public boolean hasMetadata(String metadataKey) {
+        return chunk.getWorld().getBlockMetadata().hasMetadata(this, metadataKey);
+    }
+
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+        chunk.getWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 }
