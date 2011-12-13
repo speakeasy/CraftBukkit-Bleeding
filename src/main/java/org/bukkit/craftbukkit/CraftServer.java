@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jline.ConsoleReader;
+import net.minecraft.server.Block;
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.ConvertProgressUpdater;
 import net.minecraft.server.Convertable;
@@ -80,8 +81,10 @@ import org.bukkit.craftbukkit.util.DatFileFilter;
 import org.bukkit.craftbukkit.util.Versioning;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.types.block.BlockType;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.bukkit.types.ItemType;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -117,7 +120,12 @@ public final class CraftServer implements Server {
         // Register all the Enchantments now so we can stop new registration immediately after
         Enchantment.DAMAGE_ALL.getClass();
         org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();
-        // Ugly hack :(
+        // And now the Blocks and Items...
+        Block.BED.getClass();
+        Item.APPLE.getClass();
+        BlockType.stopAcceptingRegistrations();
+        ItemType.stopAcceptingRegistrations();
+        // Ugly hacks :(
 
         if (!Main.useConsole) {
             getLogger().info("Console input is disabled due to --noconsole command argument");

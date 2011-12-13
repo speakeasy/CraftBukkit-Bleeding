@@ -2,6 +2,8 @@ package net.minecraft.server;
 
 import java.util.ArrayList;
 import java.util.Random;
+import org.bukkit.craftbukkit.types.CraftBlockType;
+import org.bukkit.types.block.BlockType;
 
 public class Block {
 
@@ -181,6 +183,7 @@ public class Block {
             r[i] = !material.blocksLight();
             isTileEntity[i] = false;
         }
+        BlockType.registerBlock(CraftBlockType.fromNative(this)); // CraftBukkit
     }
 
     protected Block i() {

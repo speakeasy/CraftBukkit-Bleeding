@@ -162,6 +162,7 @@ public class Item {
         }
 
         byId[256 + i] = this;
+        ItemType.registerItem(CraftItemType.fromNative(this)); // CraftBukkit
     }
 
     public Item d(int i) {
