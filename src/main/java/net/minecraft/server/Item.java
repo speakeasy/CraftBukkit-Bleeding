@@ -1,6 +1,8 @@
 package net.minecraft.server;
 
 import java.util.Random;
+import org.bukkit.craftbukkit.types.item.CraftItemType;
+import org.bukkit.types.item.ItemType;
 
 public class Item {
 

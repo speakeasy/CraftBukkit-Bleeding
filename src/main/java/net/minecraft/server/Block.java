@@ -2,7 +2,7 @@ package net.minecraft.server;
 
 import java.util.ArrayList;
 import java.util.Random;
-import org.bukkit.craftbukkit.types.CraftBlockType;
+import org.bukkit.craftbukkit.types.block.CraftBlockType;
 import org.bukkit.types.block.BlockType;
 
 public class Block {

@@ -2,7 +2,7 @@ package net.minecraft.server;
 
 public class ItemSword extends Item {
 
-    private int a;
+    public int a; // CraftBukkit - priv to pub - "damage"
     private final EnumToolMaterial b;
 
     public ItemSword(int i, EnumToolMaterial enumtoolmaterial) {

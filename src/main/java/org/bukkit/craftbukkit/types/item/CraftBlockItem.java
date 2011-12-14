@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.types.item;
 
 import net.minecraft.server.Item;
 import net.minecraft.server.ItemBlock;
-import org.bukkit.types.BlockItem;
+import org.bukkit.types.item.BlockItem;
 
 public class CraftBlockItem extends BlockItem {
     private final ItemBlock item;

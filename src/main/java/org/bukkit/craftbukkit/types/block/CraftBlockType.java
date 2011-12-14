@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.types;
+package org.bukkit.craftbukkit.types.block;
 
 import net.minecraft.server.Block;
 import org.bukkit.types.block.BlockType;

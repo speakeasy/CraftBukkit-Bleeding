@@ -84,7 +84,7 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.types.block.BlockType;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginLoadOrder;
-import org.bukkit.types.ItemType;
+import org.bukkit.types.item.ItemType;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
