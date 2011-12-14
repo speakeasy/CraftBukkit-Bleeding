@@ -219,7 +219,7 @@ public class Item {
         return this.durability;
     }
 
-    protected Item f(int i) {
+    public Item f(int i) { // CraftBukkit - priv to pub. "setMaxDurability"
         this.durability = i;
         return this;
     }

@@ -16,4 +16,17 @@ public class CraftBlockItem extends BlockItem {
     public String getName() {
         return item.k();
     }
+
+    @Override
+    public int getMaxUses() {
+        return item.getMaxDurability();
+    }
+
+    @Override
+    public void setMaxUses(int uses) {
+        if (uses < 0) {
+            throw new IllegalArgumentException("Max uses cannot be below zero");
+        }
+        item.f(uses);
+    }
 }
