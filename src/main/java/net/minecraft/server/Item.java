@@ -2,7 +2,7 @@ package net.minecraft.server;
 
 import java.util.Random;
 import org.bukkit.craftbukkit.types.item.CraftItemType;
-import org.bukkit.types.item.ItemType;
+import org.bukkit.types.item.Items;
 
 public class Item {
 
@@ -164,7 +164,7 @@ public class Item {
         }
 
         byId[256 + i] = this;
-        ItemType.registerItem(CraftItemType.fromNative(this)); // CraftBukkit
+        Items.registerItem(CraftItemType.fromNative(this)); // CraftBukkit
     }
 
     public Item d(int i) {

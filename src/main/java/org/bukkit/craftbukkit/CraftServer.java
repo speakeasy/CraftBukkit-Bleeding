@@ -81,10 +81,10 @@ import org.bukkit.craftbukkit.util.DatFileFilter;
 import org.bukkit.craftbukkit.util.Versioning;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.bukkit.event.world.WorldInitEvent;
-import org.bukkit.types.block.BlockType;
+import org.bukkit.types.block.Blocks;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginLoadOrder;
-import org.bukkit.types.item.ItemType;
+import org.bukkit.types.item.Items;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -123,8 +123,8 @@ public final class CraftServer implements Server {
         // And now the Blocks and Items...
         Block.BED.getClass();
         Item.APPLE.getClass();
-        BlockType.stopAcceptingRegistrations();
-        ItemType.stopAcceptingRegistrations();
+        Blocks.stopAcceptingRegistrations();
+        Items.stopAcceptingRegistrations();
         // Ugly hacks :(
 
         if (!Main.useConsole) {

@@ -2,22 +2,19 @@ package org.bukkit.craftbukkit.types.item;
 
 import net.minecraft.server.ItemSword;
 
-public class CraftItemSword extends org.bukkit.types.item.ItemSword {
-    private final ItemSword item;
-
+public class CraftItemSword extends CraftItemType implements org.bukkit.types.item.ItemSword {
     public CraftItemSword(ItemSword item) {
-        super(item.id);
-        this.item = item;
+        super(item);
     }
 
     @Override
-    public String getName() {
-        return item.k();
+    public ItemSword getHandle() {
+        return (ItemSword)super.getHandle();
     }
 
     @Override
     public int getDamage() {
-        return item.a;
+        return getHandle().a;
     }
 
     @Override
@@ -25,19 +22,6 @@ public class CraftItemSword extends org.bukkit.types.item.ItemSword {
         if (damage < 0) {
             throw new IllegalArgumentException("Damage cannot be less than 0");
         }
-        item.a = damage;
-    }
-
-    @Override
-    public int getMaxUses() {
-        return item.getMaxDurability();
-    }
-
-    @Override
-    public void setMaxUses(int uses) {
-        if (uses < 0) {
-            throw new IllegalArgumentException("Max uses cannot be below zero");
-        }
-        item.f(uses);
+        getHandle().a = damage;
     }
 }

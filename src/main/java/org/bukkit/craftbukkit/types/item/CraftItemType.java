@@ -3,9 +3,10 @@ package org.bukkit.craftbukkit.types.item;
 import net.minecraft.server.Item;
 import net.minecraft.server.ItemBlock;
 import net.minecraft.server.ItemSword;
+import org.bukkit.types.item.BaseItemType;
 import org.bukkit.types.item.ItemType;
 
-public class CraftItemType extends ItemType {
+public class CraftItemType extends BaseItemType {
     private final Item item;
 
     public CraftItemType(Item item) {
@@ -13,9 +14,12 @@ public class CraftItemType extends ItemType {
         this.item = item;
     }
 
-    @Override
+    public Item getHandle() {
+        return item;
+    }
+
     public String getName() {
-        return item.k();
+        return item.b();
     }
 
     public static ItemType fromNative(Item item) {
@@ -28,12 +32,10 @@ public class CraftItemType extends ItemType {
         }
     }
 
-    @Override
     public int getMaxUses() {
         return item.getMaxDurability();
     }
 
-    @Override
     public void setMaxUses(int uses) {
         if (uses < 0) {
             throw new IllegalArgumentException("Max uses cannot be below zero");

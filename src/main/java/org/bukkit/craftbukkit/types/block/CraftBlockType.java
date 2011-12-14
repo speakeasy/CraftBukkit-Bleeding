@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.types.block;
 
 import net.minecraft.server.Block;
+import org.bukkit.types.block.BaseBlockType;
 import org.bukkit.types.block.BlockType;
 
-public class CraftBlockType extends BlockType {
+public class CraftBlockType extends BaseBlockType {
     private final Block block;
 
     public CraftBlockType(Block block) {
@@ -18,10 +19,6 @@ public class CraftBlockType extends BlockType {
     @Override
     public String getName() {
         return block.m();
-    }
-
-    public static BlockType fromNative(Block block) {
-        return new CraftBlockType(block);
     }
 
     @Override
@@ -55,5 +52,9 @@ public class CraftBlockType extends BlockType {
         if (result > 15) result = 15;
         if (result < 0) result = 0;
         return result;
+    }
+
+    public static BlockType fromNative(Block block) {
+        return new CraftBlockType(block);
     }
 }
