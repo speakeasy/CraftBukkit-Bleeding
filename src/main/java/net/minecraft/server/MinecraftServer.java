@@ -98,7 +98,15 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
         ConsoleLogManager.init(this); // CraftBukkit
 
         // CraftBukkit start
-        System.setOut(new PrintStream(new LoggerOutputStream(log, Level.INFO), true));
+        Level verbosity = Level.INFO;
+        try {
+            String verbosityLevel = options.valueOf("verbosity").toString();
+            verbosity = Level.parse(verbosityLevel);
+            log.info("Setting the log verbosity level to " + verbosityLevel);
+        } catch (Exception e) {
+            log.warning("The verbosity level requested at startup is not a valid verbosity value. Defaulting to INFO.");
+        }
+        System.setOut(new PrintStream(new LoggerOutputStream(log, verbosity), true));
         System.setErr(new PrintStream(new LoggerOutputStream(log, Level.SEVERE), true));
         // CraftBukkit end
 

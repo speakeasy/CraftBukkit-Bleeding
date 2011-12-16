@@ -93,6 +93,12 @@ public class Main {
                         .defaultsTo(new File("bukkit.yml"))
                         .describedAs("Yml file");
 
+                acceptsAll(asList("V", "verbosity"), "Console verbosity level")
+                        .withRequiredArg()
+                        .ofType(String.class)
+                        .defaultsTo("INFO")
+                        .describedAs("Console verbosity");
+
                 acceptsAll(asList("nojline"), "Disables jline and emulates the vanilla console");
                 
                 acceptsAll(asList("noconsole"), "Disables the console");
