@@ -25,6 +25,14 @@ public class ConsoleLogManager {
         a.setUseParentHandlers(false);
         // CraftBukkit start
         ConsoleHandler consolehandler = new TerminalConsoleHandler(server.reader);
+        Level verbosity = Level.INFO;
+        try {
+            String verbosityLevel = server.options.valueOf("verbosity").toString();
+            verbosity = Level.parse(verbosityLevel);
+        } catch (Exception e) {
+            // Do nothing. Warnings about bad verbosity level handled in MinecraftServer.
+        }
+        consolehandler.setLevel(verbosity);
 
         for (Handler handler: global.getHandlers()) {
             global.removeHandler(handler);
