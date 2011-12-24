@@ -5,10 +5,16 @@ import java.util.List;
 public class TileEntityBrewingStand extends TileEntity implements IInventory {
 
     private ItemStack[] a = new ItemStack[4];
-    private int b;
+    public int b; // Craftbukkit private -> public
     private int c;
     private int d;
 
+    // CraftBukkit start
+    public ItemStack[] getContents() {
+        return this.a;
+    }
+    // CraftBukkit end
+    
     public TileEntityBrewingStand() {}
 
     public String getName() {
