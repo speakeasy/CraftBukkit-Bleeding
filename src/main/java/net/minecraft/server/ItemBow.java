@@ -1,5 +1,10 @@
 package net.minecraft.server;
 
+// CraftBukkit start
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.event.player.PlayerShootBowEvent;
+// CraftBukkit end
+
 public class ItemBow extends Item {
 
     public ItemBow(int i) {
@@ -28,6 +33,13 @@ public class ItemBow extends Item {
                 entityarrow.d = true;
             }
 
+            // CraftBukkit start
+            PlayerShootBowEvent event = CraftEventFactory.callPlayerShootBowEvent(entityhuman, itemstack, entityarrow, f);
+            if (event.isCancelled()) {
+                return;
+            }
+            // CraftBukkit end
+            
             itemstack.damage(1, entityhuman);
             world.makeSound(entityhuman, "random.bow", 1.0F, 1.0F / (c.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
             entityhuman.inventory.b(Item.ARROW.id);

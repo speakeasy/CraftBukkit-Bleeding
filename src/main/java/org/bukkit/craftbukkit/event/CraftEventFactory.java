@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.util.List;
 
 import net.minecraft.server.ChunkCoordinates;
+import net.minecraft.server.EntityArrow;
 import net.minecraft.server.EntityBlaze;
 import net.minecraft.server.EntityCaveSpider;
 import net.minecraft.server.EntityChicken;
@@ -50,6 +51,7 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Type;
@@ -177,6 +179,26 @@ public class CraftEventFactory {
         PlayerInteractEvent event = new PlayerInteractEvent(player, action, itemInHand, blockClicked, blockFace);
         craftServer.getPluginManager().callEvent(event);
 
+        return event;
+    }
+    
+    /**
+     * PlayerShootBowEvent
+     */
+    public static PlayerShootBowEvent callPlayerShootBowEvent(EntityHuman who, ItemStack itemstack, EntityArrow entityArrow, float force) {
+        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
+        CraftItemStack itemInHand = new CraftItemStack(itemstack);
+        Arrow arrow = (Arrow) entityArrow.getBukkitEntity();
+
+        CraftServer craftServer = (CraftServer) player.getServer();
+
+        if (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0) {
+            itemInHand = null;
+        }
+
+        PlayerShootBowEvent event = new PlayerShootBowEvent(player, itemInHand, arrow, force);
+        craftServer.getPluginManager().callEvent(event);
+        
         return event;
     }
 
