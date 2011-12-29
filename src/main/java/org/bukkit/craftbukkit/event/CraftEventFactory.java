@@ -181,7 +181,7 @@ public class CraftEventFactory {
 
         return event;
     }
-    
+
     /**
      * PlayerShootBowEvent
      */
@@ -198,7 +198,7 @@ public class CraftEventFactory {
 
         PlayerShootBowEvent event = new PlayerShootBowEvent(player, itemInHand, arrow, force);
         craftServer.getPluginManager().callEvent(event);
-        
+
         return event;
     }
 

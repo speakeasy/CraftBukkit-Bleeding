@@ -39,7 +39,7 @@ public class ItemBow extends Item {
                 return;
             }
             // CraftBukkit end
-            
+
             itemstack.damage(1, entityhuman);
             world.makeSound(entityhuman, "random.bow", 1.0F, 1.0F / (c.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
             entityhuman.inventory.b(Item.ARROW.id);
