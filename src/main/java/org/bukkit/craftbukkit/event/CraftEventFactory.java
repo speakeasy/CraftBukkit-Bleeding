@@ -185,18 +185,18 @@ public class CraftEventFactory {
     /**
      * PlayerShootBowEvent
      */
-    public static PlayerShootBowEvent callPlayerShootBowEvent(EntityHuman who, ItemStack itemstack, EntityArrow entityArrow, float force) {
-        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
+    public static ArrowFireEvent callPlayerShootBowEvent(net.minecraft.server.Entity who, ItemStack itemstack, EntityArrow entityArrow, float force) {
+        org.bukkit.entity.Entity entity= who.getBukkitEntity();
         CraftItemStack itemInHand = new CraftItemStack(itemstack);
         Arrow arrow = (Arrow) entityArrow.getBukkitEntity();
 
-        CraftServer craftServer = (CraftServer) player.getServer();
+        CraftServer craftServer = (CraftServer) entity.getServer();
 
         if (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0) {
             itemInHand = null;
         }
 
-        PlayerShootBowEvent event = new PlayerShootBowEvent(player, itemInHand, arrow, force);
+        ArrowFireEvent event = new ArrowFireEvent(entity, itemInHand, arrow, force);
         craftServer.getPluginManager().callEvent(event);
 
         return event;

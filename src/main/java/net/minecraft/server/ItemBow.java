@@ -2,7 +2,7 @@ package net.minecraft.server;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.player.PlayerShootBowEvent;
+import org.bukkit.event.entity.ArrowFireEvent;
 // CraftBukkit end
 
 public class ItemBow extends Item {
@@ -34,7 +34,7 @@ public class ItemBow extends Item {
             }
 
             // CraftBukkit start
-            PlayerShootBowEvent event = CraftEventFactory.callPlayerShootBowEvent(entityhuman, itemstack, entityarrow, f);
+            ArrowFireEvent event = CraftEventFactory.callPlayerShootBowEvent(entityhuman, itemstack, entityarrow, f);
             if (event.isCancelled()) {
                 return;
             }
