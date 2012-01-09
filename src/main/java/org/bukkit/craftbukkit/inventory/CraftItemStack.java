@@ -187,12 +187,10 @@ public class CraftItemStack extends ItemStack {
     private void rebuildEnchantments(Map<Enchantment, Integer> enchantments) {
         if (item == null) return;
 
+        item.tag = new NBTTagCompound();
         NBTTagCompound tag = item.tag;
         NBTTagList list = new NBTTagList("ench");
 
-        if (tag == null) {
-            tag = item.tag = new NBTTagCompound();
-        }
 
         for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
             NBTTagCompound subtag = new NBTTagCompound();
@@ -203,7 +201,9 @@ public class CraftItemStack extends ItemStack {
             list.add(subtag);
         }
 
-        tag.set("ench", list);
+        if (list.size() != 0){
+            tag.set("ench", list);
+        }
     }
 
     public net.minecraft.server.ItemStack getHandle() {
