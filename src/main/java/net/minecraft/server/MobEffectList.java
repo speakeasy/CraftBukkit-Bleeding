@@ -2,10 +2,13 @@ package net.minecraft.server;
 
 // CraftBukkit start
 import org.bukkit.Bukkit;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.potions.PotionType;
 // CraftBukkit end
 
 public class MobEffectList {
@@ -62,6 +65,8 @@ public class MobEffectList {
         }
 
         this.N = j;
+
+        PotionEffectType.registerPotionEffectType(new CraftPotionEffectType(this)); // CraftBukkit
     }
 
     protected MobEffectList a(int i, int j) {
@@ -76,6 +81,8 @@ public class MobEffectList {
     public void tick(EntityLiving entityliving, int i) {
         if (this.id == REGENERATION.id) {
             if (entityliving.getHealth() < entityliving.getMaxHealth()) {
+<<<<<<< HEAD
+<<<<<<< HEAD
                 entityliving.heal(1, RegainReason.MAGIC_REGEN); // CraftBukkit
             }
         } else if (this.id == POISON.id) {
@@ -104,16 +111,58 @@ public class MobEffectList {
             }
         } else {
             entityliving.heal(6 << i, RegainReason.MAGIC); // CraftBukkit
+=======
+                entityliving.d(1);
+=======
+                entityliving.heal(1, RegainReason.MAGIC_REGEN); // CraftBukkit
+>>>>>>> cd5f4bf... Update MobEffectList
+            }
+        } else if (this.id == POISON.id) {
+            if (entityliving.getHealth() > 1) {
+                // CraftBukkit start
+                EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, entityliving, DamageCause.POISON, 1);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if (!event.isCancelled() && event.getDamage() > 0) {
+                    entityliving.damageEntity(DamageSource.MAGIC, event.getDamage());
+                }
+                // CraftBukkit end
+            }
+        } else if (this.id == HUNGER.id && entityliving instanceof EntityHuman) {
+            ((EntityHuman) entityliving).c(0.025F * (float) (i + 1));
+        } else if ((this.id != HEAL.id || entityliving.aE()) && (this.id != HARM.id || !entityliving.aE())) {
+            if (this.id == HARM.id && !entityliving.aE() || this.id == HEAL.id && entityliving.aE()) {
+                // CraftBukkit start
+                EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(null, entityliving, DamageCause.MAGIC, 6 << i);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if (!event.isCancelled() && event.getDamage() > 0) {
+                    entityliving.damageEntity(DamageSource.MAGIC, event.getDamage());
+                }
+                // CraftBukkit end
+            }
+        } else {
+<<<<<<< HEAD
+            entityliving.d(6 << i);
+>>>>>>> c98f107... Initial commit
+=======
+            entityliving.heal(6 << i, RegainReason.MAGIC); // CraftBukkit
+>>>>>>> cd5f4bf... Update MobEffectList
         }
     }
 
     public void a(EntityLiving entityliving, EntityLiving entityliving1, int i, double d0) {
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cd5f4bf... Update MobEffectList
         // CraftBukkit start - delegate; we need EntityPotion
         a(entityliving, entityliving1, i, d0, null);
     }
 
     public void a(EntityLiving entityliving, EntityLiving entityliving1, int i, double d0, EntityPotion potion) {
         // CraftBukkit end
+<<<<<<< HEAD
         int j;
 
         if ((this.id != HEAL.id || entityliving1.aE()) && (this.id != HARM.id || !entityliving1.aE())) {
@@ -128,6 +177,29 @@ public class MobEffectList {
                 }
                 // CraftBukkit end
 
+=======
+        int j;
+
+        if ((this.id != HEAL.id || entityliving1.at()) && (this.id != HARM.id || !entityliving1.at())) {
+            if (this.id == HARM.id && !entityliving1.at() || this.id == HEAL.id && entityliving1.at()) {
+                j = (int) (d0 * (6 << i) + 0.5D);
+>>>>>>> c98f107... Initial commit
+=======
+        int j;
+
+        if ((this.id != HEAL.id || entityliving1.aE()) && (this.id != HARM.id || !entityliving1.aE())) {
+            if (this.id == HARM.id && !entityliving1.aE() || this.id == HEAL.id && entityliving1.aE()) {
+                j = (int) (d0 * (double) (6 << i) + 0.5D);
+
+                // CraftBukkit start
+                EntityDamageEvent event = CraftEventFactory.callEntityDamageEvent(potion != null ? potion : entityliving, entityliving1, DamageCause.MAGIC, j);
+                j = event.getDamage();
+                if (event.isCancelled() || j == 0) {
+                    return;
+                }
+                // CraftBukkit end
+
+>>>>>>> cd5f4bf... Update MobEffectList
                 if (entityliving == null) {
                     entityliving1.damageEntity(DamageSource.MAGIC, j);
                 } else {
@@ -135,8 +207,18 @@ public class MobEffectList {
                 }
             }
         } else {
+<<<<<<< HEAD
+<<<<<<< HEAD
             j = (int) (d0 * (double) (6 << i) + 0.5D);
             entityliving1.heal(j, RegainReason.MAGIC); // CraftBukkit
+=======
+            j = (int) (d0 * (6 << i) + 0.5D);
+            entityliving1.d(j);
+>>>>>>> c98f107... Initial commit
+=======
+            j = (int) (d0 * (double) (6 << i) + 0.5D);
+            entityliving1.heal(j, RegainReason.MAGIC); // CraftBukkit
+>>>>>>> cd5f4bf... Update MobEffectList
         }
     }
 
