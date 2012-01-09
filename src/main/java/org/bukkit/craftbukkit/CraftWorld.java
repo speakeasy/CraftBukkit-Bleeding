@@ -879,6 +879,17 @@ public class CraftWorld implements World {
             }
         }
     }
+    
+    public boolean getAllowGrowth() {
+        return world.growth;
+    }
+    
+    public void setAllowGrowth(boolean growth) {
+        // A simple switch to enable/disable the growth checks in nms world
+        // This will disable grass, crops, trees etc without disabling physics such as water flow
+        // and as a result increase tps.
+        world.growth = growth;
+    }
 
     @Override
     public int hashCode() {

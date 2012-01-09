@@ -90,6 +90,7 @@ public class World implements IBlockAccess {
     private final CraftWorld world;
     public boolean pvpMode;
     public boolean keepSpawnInMemory = true;
+    public boolean growth = true;
     public ChunkGenerator generator;
     Chunk lastChunkAccessed;
     int lastXAccessed = Integer.MIN_VALUE;
@@ -1975,21 +1976,25 @@ public class World implements IBlockAccess {
             // MethodProfiler.b("checkLight"); // CraftBukkit -- not in production code
             this.s(k1 + this.random.nextInt(16), this.random.nextInt(this.height), j + this.random.nextInt(16));
             // MethodProfiler.b("tickTiles"); // CraftBukkit -- not in production code
+            
+            // CraftBukkit start
+            if(growth) {
+                for (l1 = 0; l1 < 20; ++l1) {
+                    this.l = this.l * 3 + 1013904223;
+                    i2 = this.l >> 2;
+                    j2 = i2 & 15;
+                    k2 = i2 >> 8 & 15;
+                    l2 = i2 >> 16 & this.heightMinusOne;
+                    int i3 = chunk.b[j2 << this.heightBitsPlusFour | k2 << this.heightBits | l2] & 255;
 
-            for (l1 = 0; l1 < 20; ++l1) {
-                this.l = this.l * 3 + 1013904223;
-                i2 = this.l >> 2;
-                j2 = i2 & 15;
-                k2 = i2 >> 8 & 15;
-                l2 = i2 >> 16 & this.heightMinusOne;
-                int i3 = chunk.b[j2 << this.heightBitsPlusFour | k2 << this.heightBits | l2] & 255;
-
-                ++j1;
-                if (Block.n[i3]) {
-                    ++i;
-                    Block.byId[i3].a(this, j2 + k1, l2, k2 + j, this.random);
+                    ++j1;
+                    if (Block.n[i3]) {
+                        ++i;
+                        Block.byId[i3].a(this, j2 + k1, l2, k2 + j, this.random);
+                    }
                 }
             }
+            // CraftBukkit end
 
             // MethodProfiler.a(); // CraftBukkit -- not in production code
         }
