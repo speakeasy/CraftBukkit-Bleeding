@@ -1940,24 +1940,26 @@ public class World implements IBlockAccess {
                     this.r = 2;
                 }
             }
-
-            // MethodProfiler.b("iceandsnow"); // CraftBukkit -- not in production code
-            this.l = this.l * 3 + 1013904223;
-            l1 = this.l >> 2;
-            i2 = l1 & 15;
-            j2 = l1 >> 8 & 15;
-            k2 = this.e(i2 + k1, j2 + j);
-            if (this.q(i2 + k1, k2 - 1, j2 + j)) {
+            
+            // CraftBukkit start
+            if(growth) {
+                // MethodProfiler.b("iceandsnow"); // CraftBukkit -- not in production code
+                this.l = this.l * 3 + 1013904223;
+                l1 = this.l >> 2;
+                i2 = l1 & 15;
+                j2 = l1 >> 8 & 15;
+                k2 = this.e(i2 + k1, j2 + j);
+                if (this.q(i2 + k1, k2 - 1, j2 + j)) {
                 // CraftBukkit start
                 BlockState blockState = this.getWorld().getBlockAt(i2 + k1, k2 - 1, j2 + j).getState();
                 blockState.setTypeId(Block.ICE.id);
 
                 BlockFormEvent iceBlockForm = new BlockFormEvent(blockState.getBlock(), blockState);
                 this.getServer().getPluginManager().callEvent(iceBlockForm);
-                if (!iceBlockForm.isCancelled()) {
-                    blockState.update(true);
-                }
-                // CraftBukkit end
+                    if (!iceBlockForm.isCancelled()) {
+                        blockState.update(true);
+                    }
+                    // CraftBukkit end
             }
 
             if (this.w() && this.r(i2 + k1, k2, j2 + j)) {
@@ -1977,23 +1979,22 @@ public class World implements IBlockAccess {
             this.s(k1 + this.random.nextInt(16), this.random.nextInt(this.height), j + this.random.nextInt(16));
             // MethodProfiler.b("tickTiles"); // CraftBukkit -- not in production code
             
-            // CraftBukkit start
-            if(growth) {
-                for (l1 = 0; l1 < 20; ++l1) {
-                    this.l = this.l * 3 + 1013904223;
-                    i2 = this.l >> 2;
-                    j2 = i2 & 15;
-                    k2 = i2 >> 8 & 15;
-                    l2 = i2 >> 16 & this.heightMinusOne;
-                    int i3 = chunk.b[j2 << this.heightBitsPlusFour | k2 << this.heightBits | l2] & 255;
 
-                    ++j1;
-                    if (Block.n[i3]) {
-                        ++i;
-                        Block.byId[i3].a(this, j2 + k1, l2, k2 + j, this.random);
-                    }
+            for (l1 = 0; l1 < 20; ++l1) {
+                this.l = this.l * 3 + 1013904223;
+                i2 = this.l >> 2;
+                j2 = i2 & 15;
+                k2 = i2 >> 8 & 15;
+                l2 = i2 >> 16 & this.heightMinusOne;
+                int i3 = chunk.b[j2 << this.heightBitsPlusFour | k2 << this.heightBits | l2] & 255;
+
+                ++j1;
+                if (Block.n[i3]) {
+                ++i;
+                Block.byId[i3].a(this, j2 + k1, l2, k2 + j, this.random);
                 }
             }
+         }
             // CraftBukkit end
 
             // MethodProfiler.a(); // CraftBukkit -- not in production code
