@@ -2,14 +2,13 @@ package org.bukkit.craftbukkit.command;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.craftbukkit.conversations.ConversationTracker;
 
 /**
  * Represents CLI input from a console
  */
-public class CraftConsoleCommandSender extends ServerCommandSender implements ConsoleCommandSender, Conversable {
+public class CraftConsoleCommandSender extends ServerCommandSender implements ConsoleCommandSender {
 
     protected ConversationTracker conversationTracker = new ConversationTracker();
 
