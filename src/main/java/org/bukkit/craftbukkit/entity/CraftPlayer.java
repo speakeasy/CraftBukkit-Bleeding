@@ -30,9 +30,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.conversations.ConversationTracker;
 import org.bukkit.craftbukkit.map.CraftMapView;
 import org.bukkit.craftbukkit.map.RenderData;
 import org.bukkit.entity.Player;
@@ -45,6 +47,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private long firstPlayed = 0;
     private long lastPlayed = 0;
     private boolean hasPlayedBefore = false;
+    private ConversationTracker conversationTracker = new ConversationTracker();
 
     public CraftPlayer(CraftServer server, EntityPlayer entity) {
         super(server, entity);
@@ -120,7 +123,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void sendMessage(String message) {
-        this.sendRawMessage(message);
+        if (!conversationTracker.isConversingModaly()) {
+            this.sendRawMessage(message);
+        }
     }
 
     public String getDisplayName() {
@@ -615,5 +620,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         NBTTagCompound data = nbttagcompound.getCompound("bukkit");
         data.setLong("firstPlayed", getFirstPlayed());
         data.setLong("lastPlayed", System.currentTimeMillis());
+    }
+
+    public void beginConversation(Conversation conversation) {
+        conversationTracker.beginConversation(conversation);
+    }
+
+    public void abandonConversation(Conversation conversation) {
+        conversationTracker.abandonConversation(conversation);
+    }
+
+    public void acceptConversationInput(String input) {
+        conversationTracker.acceptConversationInput(input);
+    }
+
+    public boolean isConversing() {
+        return conversationTracker.isConversing();
     }
 }
