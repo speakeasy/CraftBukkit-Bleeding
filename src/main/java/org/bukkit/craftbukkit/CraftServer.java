@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit;
 
 import java.io.FileNotFoundException;
 
+import org.bukkit.conversations.Conversable;
 import org.bukkit.generator.ChunkGenerator;
 import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebean.config.ServerConfig;
@@ -375,6 +376,14 @@ public final class CraftServer implements Server {
     }
 
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
+        if (sender instanceof Conversable) {
+            Conversable conversable = (Conversable)sender;
+            if (conversable.isConversing()) {
+                conversable.acceptConversationInput(commandLine);
+                return true;
+            }
+        }
+
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
         }
