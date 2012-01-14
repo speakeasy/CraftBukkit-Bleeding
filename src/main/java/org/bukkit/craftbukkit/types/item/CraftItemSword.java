@@ -1,8 +1,9 @@
 package org.bukkit.craftbukkit.types.item;
 
 import net.minecraft.server.ItemSword;
+import org.bukkit.types.item.Weapon;
 
-public class CraftItemSword extends CraftItemType implements org.bukkit.types.item.ItemSword {
+public class CraftItemSword extends CraftItemType implements Weapon {
     public CraftItemSword(ItemSword item) {
         super(item);
     }
