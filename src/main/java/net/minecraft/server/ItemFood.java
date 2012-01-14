@@ -5,7 +5,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent; // CraftBukkit
 public class ItemFood extends Item {
 
     public final int a;
-    private final int b;
+    public int b; // CraftBukkit - private final -> public
     private final float bS;
     private final boolean bT;
     private boolean bU;

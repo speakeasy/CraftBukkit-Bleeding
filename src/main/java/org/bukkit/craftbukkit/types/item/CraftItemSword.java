@@ -13,12 +13,10 @@ public class CraftItemSword extends CraftItemType implements Weapon {
         return (ItemSword)super.getItem();
     }
 
-    @Override
     public int getDamage() {
         return getItem().a;
     }
 
-    @Override
     public void setDamage(int damage) {
         if (damage < 0) {
             throw new IllegalArgumentException("Damage cannot be less than 0");

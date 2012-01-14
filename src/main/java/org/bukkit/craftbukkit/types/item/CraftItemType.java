@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.types.item;
 
 import net.minecraft.server.Item;
 import net.minecraft.server.ItemBlock;
+import net.minecraft.server.ItemFood;
 import net.minecraft.server.ItemSword;
 import org.bukkit.craftbukkit.types.block.CraftBlockType;
 import org.bukkit.types.block.BlockType;
@@ -55,7 +56,10 @@ public class CraftItemType extends BaseItemType {
     public static ItemType itemFromNative(Item item) {
         if (item instanceof ItemSword) {
             return new CraftItemSword((ItemSword)item);
-        } else {
+        } else if (item instanceof ItemFood) {
+            return new CraftFood((ItemFood)item);
+        }
+        else {
             return new CraftItemType(item);
         }
     }
