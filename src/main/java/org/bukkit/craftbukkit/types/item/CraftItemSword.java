@@ -8,13 +8,13 @@ public class CraftItemSword extends CraftItemType implements org.bukkit.types.it
     }
 
     @Override
-    public ItemSword getHandle() {
-        return (ItemSword)super.getHandle();
+    public ItemSword getItem() {
+        return (ItemSword)super.getItem();
     }
 
     @Override
     public int getDamage() {
-        return getHandle().a;
+        return getItem().a;
     }
 
     @Override
@@ -22,6 +22,6 @@ public class CraftItemSword extends CraftItemType implements org.bukkit.types.it
         if (damage < 0) {
             throw new IllegalArgumentException("Damage cannot be less than 0");
         }
-        getHandle().a = damage;
+        getItem().a = damage;
     }
 }

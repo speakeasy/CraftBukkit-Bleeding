@@ -1,18 +1,19 @@
 package org.bukkit.craftbukkit.types.block;
 
 import net.minecraft.server.Block;
-import org.bukkit.types.block.BaseBlockType;
+import net.minecraft.server.Item;
+import org.bukkit.craftbukkit.types.item.CraftItemType;
 import org.bukkit.types.block.BlockType;
 
-public class CraftBlockType extends BaseBlockType {
+public class CraftBlockType extends CraftItemType implements BlockType {
     private final Block block;
 
-    public CraftBlockType(Block block) {
-        super(block.id);
-        this.block = block;
+    public CraftBlockType(Item item) {
+        super(item);
+        this.block = Block.byId[item.id];
     }
 
-    public Block getHandle() {
+    public Block getBlock() {
         return block;
     }
 
@@ -21,7 +22,6 @@ public class CraftBlockType extends BaseBlockType {
         return block.m();
     }
 
-    @Override
     public void setLightEmission(int amount) {
         if (amount < 0 || amount > 15) {
             throw new IllegalArgumentException("Light emission must be between 0 and 15");
@@ -29,7 +29,6 @@ public class CraftBlockType extends BaseBlockType {
         Block.s[block.id] = amount;
     }
 
-    @Override
     public int getLightEmission() {
         int result = Block.s[block.id];
         if (result > 15) result = 15;
@@ -37,7 +36,6 @@ public class CraftBlockType extends BaseBlockType {
         return result;
     }
 
-    @Override
     public void setLightBlock(int amount) {
         if (amount < 0 || amount > 15) {
             throw new IllegalArgumentException("Light emission must be between 0 and 15");
@@ -46,7 +44,6 @@ public class CraftBlockType extends BaseBlockType {
         Block.q[block.id] = amount;
     }
 
-    @Override
     public int getLightBlock() {
         int result = Block.q[block.id];
         if (result > 15) result = 15;
@@ -54,7 +51,7 @@ public class CraftBlockType extends BaseBlockType {
         return result;
     }
 
-    public static BlockType fromNative(Block block) {
-        return new CraftBlockType(block);
+    public static BlockType blockFromNative(Item item) {
+        return new CraftBlockType(item);
     }
 }

@@ -121,10 +121,10 @@ public final class CraftServer implements Server {
         Enchantment.DAMAGE_ALL.getClass();
         org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();
         // And now the Blocks and Items...
-        Block.BED.getClass();
         Item.APPLE.getClass();
-        Blocks.stopAcceptingRegistrations();
+        Block.BED.getClass();
         Items.stopAcceptingRegistrations();
+        Blocks.stopAcceptingRegistrations();
         // Ugly hacks :(
 
         if (!Main.useConsole) {
