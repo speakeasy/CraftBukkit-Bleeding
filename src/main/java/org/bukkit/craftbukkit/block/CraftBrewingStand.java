@@ -18,9 +18,6 @@ public class CraftBrewingStand extends CraftBlockState implements BrewingStand {
         brewingStand = (TileEntityBrewingStand) world.getTileEntityAt(getX(), getY(), getZ());
     }
     
-    /**
-     * @return Inventory The inventory of the Brewing Stand, where slot 3 is the top slot.
-     */
     public Inventory getInventory() {
         return new CraftInventory(brewingStand);
     }
@@ -36,16 +33,10 @@ public class CraftBrewingStand extends CraftBlockState implements BrewingStand {
         return result;
     }
     
-    /**
-     * How much time is left in the brewing sequence.
-     */
     public int getBrewingTime() {
         return brewingStand.b;
     }
     
-    /**
-     * Set the time left before brewing completes.
-     */
     public void setBrewingTime(int brewTime) {
         brewingStand.b = brewTime;
     }
