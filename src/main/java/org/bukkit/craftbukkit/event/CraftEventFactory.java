@@ -141,7 +141,6 @@ public class CraftEventFactory {
     /**
      * Player Interact event
      */
-
     public static PlayerInteractEvent callPlayerInteractEvent(EntityHuman who, Action action, ItemStack itemstack) {
         if (action != Action.LEFT_CLICK_AIR && action != Action.RIGHT_CLICK_AIR) {
             throw new IllegalArgumentException();
@@ -287,6 +286,18 @@ public class CraftEventFactory {
     }
 
     /**
+     * ItemDespawnEvent
+     */
+    public static ItemDespawnEvent callItemDespawnEvent(EntityItem entityitem) {
+        org.bukkit.entity.Entity entity = entityitem.getBukkitEntity();
+
+        ItemDespawnEvent event = new ItemDespawnEvent(entity, entity.getLocation());
+
+        ((CraftServer) entity.getServer()).getPluginManager().callEvent(event);
+        return event;
+    }
+
+    /**
      * BlockFadeEvent
      */
     public static BlockFadeEvent callBlockFadeEvent(Block block, int type) {
@@ -319,6 +330,10 @@ public class CraftEventFactory {
         org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
 
+        // TODO: Possibly a way to persist this incase of disconnect
+        victim.keepLevel = event.getKeepLevel();
+        victim.newLevel = event.getNewLevel();
+        victim.newTotalExp = event.getNewTotalExp();
         victim.expToDrop = event.getDroppedExp();
         victim.newExp = event.getNewExp();
 

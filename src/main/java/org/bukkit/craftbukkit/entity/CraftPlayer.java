@@ -1,16 +1,22 @@
 package org.bukkit.craftbukkit.entity;
 
+import com.google.common.collect.ImmutableSet;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.Packet131ItemData;
 import net.minecraft.server.Packet200Statistic;
 import net.minecraft.server.Packet201PlayerInfo;
+import net.minecraft.server.Packet250CustomPayload;
 import net.minecraft.server.Packet3Chat;
 import net.minecraft.server.Packet51MapChunk;
 import net.minecraft.server.Packet53BlockChange;
@@ -19,16 +25,7 @@ import net.minecraft.server.Packet61WorldEvent;
 import net.minecraft.server.Packet6SpawnPosition;
 import net.minecraft.server.Packet70Bed;
 import net.minecraft.server.WorldServer;
-import org.bukkit.Achievement;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
@@ -41,6 +38,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.map.MapView;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.messaging.StandardMessenger;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -48,6 +47,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private long lastPlayed = 0;
     private boolean hasPlayedBefore = false;
     private ConversationTracker conversationTracker = new ConversationTracker();
+    private Set<String> channels = new HashSet<String>();
+    private int hash = 0;
 
     public CraftPlayer(CraftServer server, EntityPlayer entity) {
         super(server, entity);
@@ -151,8 +152,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             return;
         }
 
-        if (name.length() > 16) {
-            throw new IllegalArgumentException("Player list names can only be a maximum of 16 characters long");
+        if (ChatColor.stripColor(name).length() > 16) {
+            throw new IllegalArgumentException("Player list names can only be a maximum of 16 characters long without colour codes");
         }
 
         // Collisions will make for invisible people
@@ -166,7 +167,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         // Change the name on the client side
         server.getHandle().sendAll(new Packet201PlayerInfo(oldName, false, 9999));
-        server.getHandle().sendAll(new Packet201PlayerInfo(name, true, getHandle().i));
+        server.getHandle().sendAll(new Packet201PlayerInfo(name, true, getHandle().ping));
     }
 
     @Override
@@ -340,11 +341,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void loadData() {
-        server.getHandle().playerFileData.b(getHandle());
+        server.getHandle().playerFileData.load(getHandle());
     }
 
     public void saveData() {
-        server.getHandle().playerFileData.a(getHandle());
+        server.getHandle().playerFileData.save(getHandle());
     }
 
     public void updateInventory() {
@@ -464,14 +465,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 return;
             }
 
-            getHandle().itemInWorldManager.a(mode.getValue());
+            getHandle().itemInWorldManager.setGameMode(mode.getValue());
             getHandle().netServerHandler.sendPacket(new Packet70Bed(3, mode.getValue()));
         }
     }
 
     @Override
     public GameMode getGameMode() {
-        return GameMode.getByValue(getHandle().itemInWorldManager.a());
+        return GameMode.getByValue(getHandle().itemInWorldManager.getGameMode());
     }
 
     public void giveExp(int exp) {
@@ -502,7 +503,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public void setLevel(int level) {
         getHandle().expLevel = level;
-        getHandle().cf = -1;
+        getHandle().lastSentExp = -1;
     }
 
     public int getTotalExperience() {
@@ -511,7 +512,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public void setTotalExperience(int exp) {
         getHandle().expTotal = exp;
-        getHandle().cf = -1;
+        getHandle().lastSentExp = -1;
 
         if (getTotalExperience() > getExperience()) {
             getHandle().expTotal = getTotalExperience();
@@ -579,8 +580,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+        if (hash == 0 || hash == 485) {
+            hash = 97 * 5 + (this.getName() != null ? this.getName().hashCode() : 0);
+        }
         return hash;
     }
 
@@ -636,5 +638,54 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public boolean isConversing() {
         return conversationTracker.isConversing();
+    }
+
+    public void sendPluginMessage(Plugin source, String channel, byte[] message) {
+        StandardMessenger.validatePluginMessage(server.getMessenger(), source, channel, message);
+
+        if (channels.contains(channel)) {
+            Packet250CustomPayload packet = new Packet250CustomPayload();
+            packet.tag = channel;
+            packet.length = message.length;
+            packet.data = message;
+            getHandle().netServerHandler.sendPacket(packet);
+        }
+    }
+
+    public void addChannel(String channel) {
+        channels.add(channel);
+    }
+
+    public void removeChannel(String channel) {
+        channels.remove(channel);
+    }
+
+    public Set<String> getListeningPluginChannels() {
+        return ImmutableSet.copyOf(channels);
+    }
+
+    public void sendSupportedChannels() {
+        Set<String> listening = server.getMessenger().getIncomingChannels();
+
+        if (!listening.isEmpty()) {
+            Packet250CustomPayload packet = new Packet250CustomPayload();
+
+            packet.tag = "REGISTER";
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            for (String channel : listening) {
+                try {
+                    stream.write(channel.getBytes("UTF8"));
+                    stream.write((byte)0);
+                } catch (IOException ex) {
+                    Logger.getLogger(CraftPlayer.class.getName()).log(Level.SEVERE, "Could not send Plugin Channel REGISTER to " + getName(), ex);
+                }
+            }
+
+            packet.data = stream.toByteArray();
+            packet.length = packet.data.length;
+
+            getHandle().netServerHandler.sendPacket(packet);
+        }
     }
 }

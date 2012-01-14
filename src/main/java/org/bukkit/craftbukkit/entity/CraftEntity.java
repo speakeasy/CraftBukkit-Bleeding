@@ -4,6 +4,7 @@ import com.google.common.collect.MapMaker;
 import net.minecraft.server.*;
 
 import org.bukkit.Location;
+import org.bukkit.EntityEffect;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
@@ -96,7 +97,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
         else if (entity instanceof EntityComplexPart) {
             EntityComplexPart part = (EntityComplexPart) entity;
-            if (part.a instanceof EntityEnderDragon) { return new CraftEnderDragonPart(server, (EntityComplexPart) entity); }
+            if (part.owner instanceof EntityEnderDragon) { return new CraftEnderDragonPart(server, (EntityComplexPart) entity); }
             else { return new CraftComplexPart(server, (EntityComplexPart) entity); }
         }
         else if (entity instanceof EntityExperienceOrb) { return new CraftExperienceOrb(server, (EntityExperienceOrb) entity); }
@@ -173,7 +174,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     public List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z) {
         @SuppressWarnings("unchecked")
-        List<Entity> notchEntityList = entity.world.b(entity, entity.boundingBox.b(x, y, z));
+        List<Entity> notchEntityList = entity.world.getEntities(entity, entity.boundingBox.grow(x, y, z));
         List<org.bukkit.entity.Entity> bukkitEntityList = new java.util.ArrayList<org.bukkit.entity.Entity>(notchEntityList.size());
 
         for (Entity e: notchEntityList) {
@@ -204,24 +205,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     public boolean isDead() {
         return !entity.isAlive();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final CraftEntity other = (CraftEntity) obj;
-        if (this.server != other.server && (this.server == null || !this.server.equals(other.server))) {
-            return false;
-        }
-        if (this.entity != other.entity && (this.entity == null || !this.entity.equals(other.entity))) {
-            return false;
-        }
-        return true;
     }
 
     public Server getServer() {
@@ -310,6 +293,10 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return entity;
     }
 
+    public void playEffect(EntityEffect type) {
+        this.getHandle().world.a(getHandle(), type.getData());
+    }
+
     public void setHandle(final Entity entity) {
         this.entity = entity;
     }
@@ -320,10 +307,21 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CraftEntity other = (CraftEntity) obj;
+        return (this.getEntityId() == other.getEntityId());
+    }
+
+    @Override
     public int hashCode() {
         int hash = 7;
-        hash = 89 * hash + (this.server != null ? this.server.hashCode() : 0);
-        hash = 89 * hash + (this.entity != null ? this.entity.hashCode() : 0);
+        hash = 29 * hash + this.getEntityId();
         return hash;
     }
 }

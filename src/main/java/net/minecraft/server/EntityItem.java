@@ -1,6 +1,9 @@
 package net.minecraft.server;
 
-import org.bukkit.event.player.PlayerPickupItemEvent; // CraftBukkit
+// CraftBukkit start
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+// CraftBukkit End
 
 public class EntityItem extends Entity {
 
@@ -41,8 +44,8 @@ public class EntityItem extends Entity {
 
     protected void b() {}
 
-    public void w_() {
-        super.w_();
+    public void y_() {
+        super.y_();
         // CraftBukkit start
         int currentTick = (int) (System.currentTimeMillis() / 50);
         this.pickupDelay -= (currentTick - this.lastTick);
@@ -83,6 +86,12 @@ public class EntityItem extends Entity {
         ++this.e;
         ++this.b;
         if (this.b >= 6000) {
+            // CraftBukkit start
+            if(CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
+                this.b = 0;
+                return;
+            }
+            // CraftBukkit end
             this.die();
         }
     }
@@ -96,7 +105,7 @@ public class EntityItem extends Entity {
     }
 
     public boolean damageEntity(DamageSource damagesource, int i) {
-        this.aB();
+        this.aM();
         this.f -= i;
         if (this.f <= 0) {
             this.die();

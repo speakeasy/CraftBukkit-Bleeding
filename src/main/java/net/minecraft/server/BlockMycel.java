@@ -1,22 +1,19 @@
 package net.minecraft.server;
 
 import java.util.Random;
+import org.bukkit.event.block.BlockFadeEvent; // CraftBukkit
+import org.bukkit.event.block.BlockSpreadEvent; // CraftBukkit
 
-// CraftBukkit start
-import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-// CraftBukkit end
+public class BlockMycel extends Block {
 
-public class BlockGrass extends Block {
-
-    protected BlockGrass(int i) {
+    protected BlockMycel(int i) {
         super(i, Material.GRASS);
-        this.textureId = 3;
+        this.textureId = 77;
         this.a(true);
     }
 
     public int a(int i, int j) {
-        return i == 1 ? 0 : (i == 0 ? 2 : 3);
+        return i == 1 ? 78 : (i == 0 ? 2 : 77);
     }
 
     public void a(World world, int i, int j, int k, Random random) {
