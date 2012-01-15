@@ -11,7 +11,7 @@ public class CraftFood extends CraftItemType implements Food {
 
     @Override
     public ItemFood getItem() {
-        return (ItemFood)super.getItem();
+        return (ItemFood) super.getItem();
     }
 
     public int getNourishment() {

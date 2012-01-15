@@ -55,11 +55,10 @@ public class CraftItemType extends BaseItemType {
 
     public static ItemType itemFromNative(Item item) {
         if (item instanceof ItemSword) {
-            return new CraftItemSword((ItemSword)item);
+            return new CraftItemSword((ItemSword) item);
         } else if (item instanceof ItemFood) {
-            return new CraftFood((ItemFood)item);
-        }
-        else {
+            return new CraftFood((ItemFood) item);
+        } else {
             return new CraftItemType(item);
         }
     }

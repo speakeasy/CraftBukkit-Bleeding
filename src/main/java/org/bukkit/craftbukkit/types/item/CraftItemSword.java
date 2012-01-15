@@ -10,7 +10,7 @@ public class CraftItemSword extends CraftItemType implements Weapon {
 
     @Override
     public ItemSword getItem() {
-        return (ItemSword)super.getItem();
+        return (ItemSword) super.getItem();
     }
 
     public int getDamage() {
