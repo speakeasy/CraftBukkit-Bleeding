@@ -9,7 +9,7 @@ public class ItemSword extends Item {
         super(i);
         this.b = enumtoolmaterial;
         this.maxStackSize = 1;
-        this.f(enumtoolmaterial.a());
+        this.setMaxDurability(enumtoolmaterial.a());
         this.a = 4 + enumtoolmaterial.c();
     }
 

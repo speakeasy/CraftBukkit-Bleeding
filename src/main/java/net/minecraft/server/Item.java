@@ -185,7 +185,7 @@ public class Item {
         return false;
     }
 
-    public float a(ItemStack itemstack, Block block) {
+    public float getDestroySpeed(ItemStack itemstack, Block block) {
         return 1.0F;
     }
 
@@ -218,7 +218,7 @@ public class Item {
         return this.durability;
     }
 
-    public Item f(int i) { // CraftBukkit - priv to pub. "setMaxDurability"
+    public Item setMaxDurability(int i) { // CraftBukkit - priv to pub
         this.durability = i;
         return this;
     }
@@ -255,7 +255,7 @@ public class Item {
         return this;
     }
 
-    public String b() {
+    public String getName() {
         return this.name;
     }
 
@@ -285,7 +285,7 @@ public class Item {
     }
 
     public String l() {
-        return LocaleI18n.a(this.b() + ".name");
+        return LocaleI18n.a(this.getName() + ".name");
     }
 
     public void a(ItemStack itemstack, World world, Entity entity, int i, boolean flag) {}

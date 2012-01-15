@@ -15,7 +15,7 @@ public class CraftFood extends CraftItemType implements Food {
     }
 
     public int getNourishment() {
-        return getItem().o();
+        return getItem().getNutrition();
     }
 
     public void setNourishment(int amount) {

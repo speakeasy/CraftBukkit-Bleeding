@@ -24,7 +24,7 @@ public class CraftItemType extends BaseItemType {
     }
 
     public String getName() {
-        return item.b();
+        return item.getName();
     }
 
     public int getMaxUses() {
@@ -35,7 +35,7 @@ public class CraftItemType extends BaseItemType {
         if (uses < 0) {
             throw new IllegalArgumentException("Max uses cannot be below zero");
         }
-        item.f(uses);
+        item.setMaxDurability(uses);
     }
 
     public static void registerNative(Item raw) {
