@@ -78,7 +78,7 @@ public class Explosion {
                                 f1 -= (Block.byId[k1].a(this.source) + 0.3F) * f2;
                             }
 
-                            if (f1 > 0.0F) {
+                            if (f1 > 0.0F && i1 < world.height && i1 >= 0) { // CraftBukkit - Don't wrap explosions
                                 this.blocks.add(new ChunkPosition(l, i1, j1));
                             }
 
@@ -109,7 +109,7 @@ public class Explosion {
                 d0 = entity.locX - this.posX;
                 d1 = entity.locY - this.posY;
                 d2 = entity.locZ - this.posZ;
-                double d8 = (double) MathHelper.a(d0 * d0 + d1 * d1 + d2 * d2);
+                double d8 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2); // CraftBukkit
 
                 d0 /= d8;
                 d1 /= d8;
@@ -223,7 +223,7 @@ public class Explosion {
                 double d3 = d0 - this.posX;
                 double d4 = d1 - this.posY;
                 double d5 = d2 - this.posZ;
-                double d6 = (double) MathHelper.a(d3 * d3 + d4 * d4 + d5 * d5);
+                double d6 = (double) MathHelper.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
                 d3 /= d6;
                 d4 /= d6;

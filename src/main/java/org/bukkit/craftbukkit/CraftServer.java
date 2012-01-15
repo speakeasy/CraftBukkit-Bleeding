@@ -136,7 +136,7 @@ public final class CraftServer implements Server {
     }
 
     private File getConfigFile() {
-        return (File)console.options.valueOf("bukkit-settings");
+        return (File) console.options.valueOf("bukkit-settings");
     }
 
     private void saveConfig() {
@@ -373,7 +373,6 @@ public final class CraftServer implements Server {
         return server;
     }
 
-
     // NOTE: Should only be called from MinecraftServer.b()
     public boolean dispatchCommand(CommandSender sender, ServerCommand serverCommand) {
         return dispatchCommand(sender, serverCommand.command);
@@ -466,7 +465,7 @@ public final class CraftServer implements Server {
         Map<String, Map<String, Object>> perms;
 
         try {
-            perms = (Map<String, Map<String, Object>>)yaml.load(stream);
+            perms = (Map<String, Map<String, Object>>) yaml.load(stream);
         } catch (MarkedYAMLException ex) {
             getLogger().log(Level.WARNING, "Server permissions file " + file + " is not valid YAML: " + ex.toString());
             return;
@@ -566,7 +565,7 @@ public final class CraftServer implements Server {
         }
 
         pluginManager.callEvent(new WorldInitEvent(internal.getWorld()));
-        System.out.print("Preparing start region for level " + (console.worlds.size() -1) + " (Seed: " + internal.getSeed() + ")");
+        System.out.print("Preparing start region for level " + (console.worlds.size() - 1) + " (Seed: " + internal.getSeed() + ")");
 
         if (internal.getWorld().getKeepSpawnInMemory()) {
             short short1 = 196;
@@ -820,7 +819,7 @@ public final class CraftServer implements Server {
 
         for (Permissible permissible : permissibles) {
             if (permissible instanceof CommandSender) {
-                CommandSender user = (CommandSender)permissible;
+                CommandSender user = (CommandSender) permissible;
                 user.sendMessage(message);
                 count++;
             }
@@ -863,7 +862,7 @@ public final class CraftServer implements Server {
         Set<OfflinePlayer> result = new HashSet<OfflinePlayer>();
 
         for (Object name : server.banByName) {
-            result.add(getOfflinePlayer((String)name));
+            result.add(getOfflinePlayer((String) name));
         }
 
         return result;
@@ -878,7 +877,7 @@ public final class CraftServer implements Server {
         Set<OfflinePlayer> result = new HashSet<OfflinePlayer>();
 
         for (Object name : server.getWhitelisted()) {
-            result.add(getOfflinePlayer((String)name));
+            result.add(getOfflinePlayer((String) name));
         }
 
         return result;
@@ -888,7 +887,7 @@ public final class CraftServer implements Server {
         Set<OfflinePlayer> result = new HashSet<OfflinePlayer>();
 
         for (Object name : server.operators) {
-            result.add(getOfflinePlayer((String)name));
+            result.add(getOfflinePlayer((String) name));
         }
 
         return result;
@@ -908,7 +907,7 @@ public final class CraftServer implements Server {
         }
 
         for (World world : getWorlds()) {
-            ((CraftWorld)world).getHandle().worldData.setGameType(mode.getValue());
+            ((CraftWorld) world).getHandle().worldData.setGameType(mode.getValue());
         }
     }
 
@@ -919,16 +918,15 @@ public final class CraftServer implements Server {
     public void detectListNameConflict(EntityPlayer entityPlayer) {
         // Collisions will make for invisible people
         for (int i = 0; i < getHandle().players.size(); ++i) {
-            EntityPlayer testEntityPlayer = (EntityPlayer)getHandle().players.get(i);
+            EntityPlayer testEntityPlayer = (EntityPlayer) getHandle().players.get(i);
 
             // We have a problem!
             if (testEntityPlayer != entityPlayer && testEntityPlayer.listName.equals(entityPlayer.listName)) {
                 String oldName = entityPlayer.listName;
                 int spaceLeft = 16 - oldName.length();
 
-                if (spaceLeft <= 1) {  // We also hit the list name length limit!
-                    entityPlayer.listName = oldName.subSequence(0, oldName.length() - 2 - spaceLeft)
-                            + String.valueOf(System.currentTimeMillis() % 99);
+                if (spaceLeft <= 1) { // We also hit the list name length limit!
+                    entityPlayer.listName = oldName.subSequence(0, oldName.length() - 2 - spaceLeft) + String.valueOf(System.currentTimeMillis() % 99);
                 } else {
                     entityPlayer.listName = oldName + String.valueOf(System.currentTimeMillis() % 99);
                 }
