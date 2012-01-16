@@ -322,6 +322,10 @@ public final class CraftServer implements Server {
         return this.getConfigBoolean("allow-nether", true);
     }
 
+    public boolean getWarnOnOverload() {
+        return this.configuration.getBoolean("settings.warn-on-overload");
+    }
+
     public boolean hasWhitelist() {
         return this.getConfigBoolean("white-list", false);
     }
@@ -818,7 +822,7 @@ public final class CraftServer implements Server {
         Set<Permissible> permissibles = getPluginManager().getPermissionSubscriptions(permission);
 
         for (Permissible permissible : permissibles) {
-            if (permissible instanceof CommandSender) {
+            if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
                 CommandSender user = (CommandSender) permissible;
                 user.sendMessage(message);
                 count++;

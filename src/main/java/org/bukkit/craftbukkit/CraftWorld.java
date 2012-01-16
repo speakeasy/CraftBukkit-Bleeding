@@ -650,8 +650,10 @@ public class CraftWorld implements World {
         int packetData = effect.getId();
         Packet61WorldEvent packet = new Packet61WorldEvent(packetData, location.getBlockX(), location.getBlockY(), location.getBlockZ(), data);
         int distance;
+        radius *= radius;
+
         for (Player player : getPlayers()) {
-            distance = (int) player.getLocation().distance(location);
+            distance = (int) player.getLocation().distanceSquared(location);
             if (distance <= radius) {
                 ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
             }
@@ -940,5 +942,9 @@ public class CraftWorld implements World {
         }
 
         return result;
+    }
+
+    public org.bukkit.WorldType getWorldType() {
+        return org.bukkit.WorldType.getByName(world.getWorldData().getType().name());
     }
 }
