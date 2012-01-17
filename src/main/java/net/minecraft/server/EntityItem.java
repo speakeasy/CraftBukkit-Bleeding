@@ -1,7 +1,11 @@
 package net.minecraft.server;
 
 // CraftBukkit start
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 // CraftBukkit end
 
@@ -76,6 +80,34 @@ public class EntityItem extends Entity {
             }
         }
 
+        // CraftBukkit start
+        int maxStackSize = itemStack.getMaxStackSize();
+        if (this.pickupDelay <= 0 && this.age % 40 == 0 && itemStack.count >= 0 && itemStack.count < maxStackSize) {
+            List<EntityItem> toMerge = new ArrayList<EntityItem>();
+            List<?> entities = this.world.getEntities((Entity) this, this.boundingBox);
+
+            int stackSize = itemStack.count;
+            for (Object obj : entities) {
+                if (obj instanceof EntityItem) {
+                    EntityItem other = (EntityItem)obj;
+                    if (!other.dead && other.pickupDelay <= 0
+                            && itemStack.doMaterialsMatch(other.itemStack)
+                            && ItemStack.equals(itemStack,  other.itemStack)
+                            && other.itemStack.count >= 0
+                            && other.itemStack.count < maxStackSize) {
+                        stackSize += other.itemStack.count;
+                        toMerge.add(other);
+                    }
+                }
+            }
+
+            if (!toMerge.isEmpty()) {
+                toMerge.add(this);
+                mergeItems(stackSize, maxStackSize, toMerge);
+            }
+        }
+        // CraftBukkit end
+
         this.motX *= (double) f;
         this.motY *= 0.9800000190734863D;
         this.motZ *= (double) f;
@@ -95,6 +127,26 @@ public class EntityItem extends Entity {
             this.die();
         }
     }
+
+    // CraftBukkit start
+    private static void mergeItems(int stackSize, int maxStackSize, List<EntityItem> items) {
+        for (EntityItem item : items) {
+            if (stackSize > 0) {
+                item.itemStack.count = Math.min(stackSize, maxStackSize);
+                stackSize -= item.itemStack.count;
+
+                sendItemUpdate(item);
+            } else {
+                item.die();
+            }
+        }
+    }
+
+    private static void sendItemUpdate(EntityItem item) {
+        WorldServer world = (WorldServer)item.world;
+        world.server.serverConfigurationManager.sendPacketNearby(item.locX, item.locY, item.locZ, 64.0D, world.dimension, new Packet21PickupSpawn(item));
+    }
+    // CraftBukkit end
 
     public boolean i_() {
         return this.world.a(this.boundingBox, Material.WATER, this);
