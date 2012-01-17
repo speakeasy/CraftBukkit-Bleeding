@@ -4,17 +4,19 @@ import java.util.List;
 
 public class TileEntityBrewingStand extends TileEntity implements IInventory {
 
-    public ItemStack[] a = new ItemStack[4]; //Craftbukkit private -> public
-    public int b; //Craftbukkit private -> public
+    public ItemStack[] a = new ItemStack[4]; // CraftBukkit private -> public
+    public int b; // CraftBukkit private -> public
     private int c;
     private int d;
 
     public TileEntityBrewingStand() {}
 
+    // CraftBukkit start
     public ItemStack[] getContents() {
         return this.a;
     }
-        
+    // CraftBukkit end
+
     public String getName() {
         return "Brewing Stand";
     }
