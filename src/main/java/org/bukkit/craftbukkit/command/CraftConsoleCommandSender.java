@@ -17,9 +17,11 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
     }
 
     public void sendMessage(String message) {
-        if (!conversationTracker.isConversingModaly()) {
-            System.out.println(ChatColor.stripColor(message));
-        }
+        sendRawMessage(message);
+    }
+    
+    public void sendRawMessage(String message) {
+        System.out.println(ChatColor.stripColor(message));
     }
 
     public String getName() {
