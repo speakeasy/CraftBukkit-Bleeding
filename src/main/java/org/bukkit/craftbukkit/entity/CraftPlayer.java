@@ -632,8 +632,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         data.setLong("lastPlayed", System.currentTimeMillis());
     }
 
-    public void beginConversation(Conversation conversation) {
-        conversationTracker.beginConversation(conversation);
+    public boolean beginConversation(Conversation conversation) {
+        return conversationTracker.beginConversation(conversation);
     }
 
     public void abandonConversation(Conversation conversation) {

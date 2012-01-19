@@ -36,8 +36,8 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
         throw new UnsupportedOperationException("Cannot change operator status of server console");
     }
 
-    public void beginConversation(Conversation conversation) {
-        conversationTracker.beginConversation(conversation);
+    public boolean beginConversation(Conversation conversation) {
+        return conversationTracker.beginConversation(conversation);
     }
 
     public void abandonConversation(Conversation conversation) {

@@ -11,22 +11,28 @@ public class ConversationTracker {
 
     private Deque<Conversation> conversationQueue = new LinkedList<Conversation>();
 
-    public synchronized void beginConversation(Conversation conversation) {
+    public synchronized boolean beginConversation(Conversation conversation) {
         if (!conversationQueue.contains(conversation)) {
             conversationQueue.addLast(conversation);
             if (conversationQueue.getFirst() == conversation) {
                 conversation.begin();
+                conversation.outputNextPrompt();
+                return true;
             }
         }
+        return true;
     }
 
     public synchronized void abandonConversation(Conversation conversation) {
-        if (conversationQueue.size() != 0) {
+        if (!conversationQueue.isEmpty()) {
             if (conversationQueue.getFirst() == conversation) {
                 conversation.abandon();
             }
             if (conversationQueue.contains(conversation)) {
                 conversationQueue.remove(conversation);
+            }
+            if (!conversationQueue.isEmpty()) {
+                conversationQueue.getFirst().outputNextPrompt();
             }
         }
     }
