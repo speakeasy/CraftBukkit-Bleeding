@@ -378,19 +378,18 @@ public final class CraftServer implements Server {
     }
 
     // NOTE: Should only be called from MinecraftServer.b()
-    public boolean dispatchCommand(CommandSender sender, ServerCommand serverCommand) {
+    public boolean dispatchServerCommand(CommandSender sender, ServerCommand serverCommand) {
+        if (sender instanceof Conversable) {
+            Conversable conversable = (Conversable)sender;
+            if (conversable.isConversing()) {
+                conversable.acceptConversationInput(serverCommand.command);
+                return true;
+            }
+        }
         return dispatchCommand(sender, serverCommand.command);
     }
 
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
-        if (sender instanceof Conversable) {
-            Conversable conversable = (Conversable)sender;
-            if (conversable.isConversing()) {
-                conversable.acceptConversationInput(commandLine);
-                return true;
-            }
-        }
-
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
         }

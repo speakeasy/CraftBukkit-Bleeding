@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import java.util.Arrays;
 import java.util.HashSet;
 import org.bukkit.ChatColor;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.ChunkCompressionThread;
 import org.bukkit.Location;
 import org.bukkit.command.CommandException;
@@ -733,6 +734,11 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 return false;
             }
 
+            if (getPlayer().isConversing()) {
+                getPlayer().acceptConversationInput(s);
+                return true;
+            }
+
             if (s.startsWith("/")) {
                 this.handleCommand(s);
                 return true;
@@ -784,7 +790,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         }
         // CraftBukkit end
 
-        /* CraftBukkit start - No longer neaded as we have already handled it in server.dispatchCommand above.
+        /* CraftBukkit start - No longer neaded as we have already handled it in server.dispatchServerCommand above.
         if (s.toLowerCase().startsWith("/me ")) {
             s = "* " + this.player.name + " " + s.substring(s.indexOf(" ")).trim();
             logger.info(s);
