@@ -696,4 +696,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             getHandle().netServerHandler.sendPacket(packet);
         }
     }
+    
+    public void disconnect(String reason) {
+        conversationTracker.abandonAllConversations();
+    }
 }

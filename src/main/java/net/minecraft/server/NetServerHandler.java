@@ -136,6 +136,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             if (leaveMessage != null) {
                 this.minecraftServer.serverConfigurationManager.sendAll(new Packet3Chat(leaveMessage));
             }
+            getPlayer().disconnect(s);
             // CraftBukkit end
 
             this.minecraftServer.serverConfigurationManager.disconnect(this.player);
@@ -900,6 +901,9 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
     }
 
     public void a(Packet255KickDisconnect packet255kickdisconnect) {
+        // CraftBukkit start
+        getPlayer().disconnect("disconnect.quitting");
+        // CraftBukkit end
         this.networkManager.a("disconnect.quitting", new Object[0]);
     }
 

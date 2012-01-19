@@ -12,16 +12,31 @@ public class ConversationTracker {
     private Deque<Conversation> conversationQueue = new LinkedList<Conversation>();
 
     public synchronized void beginConversation(Conversation conversation) {
-        if (conversationQueue.contains(conversation)) {
-            throw new IllegalArgumentException("Cannot begin the exact same Conversation object twice!");
-        } else {
+        if (!conversationQueue.contains(conversation)) {
             conversationQueue.addLast(conversation);
+            if (conversationQueue.getFirst() == conversation) {
+                conversation.begin();
+            }
         }
     }
 
     public synchronized void abandonConversation(Conversation conversation) {
-        if (conversationQueue.contains(conversation)) {
-            conversationQueue.remove(conversation);
+        if (conversationQueue.size() != 0) {
+            if (conversationQueue.getFirst() == conversation) {
+                conversation.abandon();
+            }
+            if (conversationQueue.contains(conversation)) {
+                conversationQueue.remove(conversation);
+            }
+        }
+    }
+
+    public synchronized void abandonAllConversations() {
+
+        Deque<Conversation> oldQueue = conversationQueue;
+        conversationQueue = new LinkedList<Conversation>();
+        for(Conversation conversation : oldQueue) {
+            conversation.abandon();
         }
     }
 
