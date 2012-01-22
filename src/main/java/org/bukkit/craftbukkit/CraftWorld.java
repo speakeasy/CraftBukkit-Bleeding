@@ -3,11 +3,14 @@ package org.bukkit.craftbukkit;
 import com.google.common.collect.MapMaker;
 import java.io.File;
 import java.util.Set;
+import org.apache.commons.lang.Validate;
+
 import org.bukkit.craftbukkit.entity.*;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentMap;
 import java.util.List;
@@ -298,6 +301,8 @@ public class CraftWorld implements World {
     }
 
     public org.bukkit.entity.Item dropItem(Location loc, ItemStack item) {
+        Validate.notNull(item, "Cannot drop a Null item.");
+        Validate.isTrue(item.getTypeId() != 0, "Cannot drop AIR.");
         CraftItemStack clone = new CraftItemStack(item);
         EntityItem entity = new EntityItem(world, loc.getX(), loc.getY(), loc.getZ(), clone.getHandle());
         entity.pickupDelay = 10;
@@ -518,6 +523,32 @@ public class CraftWorld implements World {
                 // Assuming that bukkitEntity isn't null
                 if (bukkitEntity != null && bukkitEntity instanceof LivingEntity) {
                     list.add((LivingEntity) bukkitEntity);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> Collection<T> getEntitiesByClass(Class<T>... classes) {
+        Collection<T> list = new ArrayList<T>();
+
+        for (Object entity: world.entityList) {
+            if (entity instanceof net.minecraft.server.Entity) {
+                Entity bukkitEntity = ((net.minecraft.server.Entity) entity).getBukkitEntity();
+
+                if (bukkitEntity == null) {
+                    continue;
+                }
+
+                Class<?> bukkitClass = bukkitEntity.getClass();
+
+                for (Class<?> clazz : classes) {
+                    if (clazz.isAssignableFrom(bukkitClass)) {
+                        list.add((T) bukkitEntity);
+                        break;
+                    }
                 }
             }
         }
