@@ -83,11 +83,6 @@ public class CraftEventFactory {
         return distanceFromSpawn > spawnSize;
     }
 
-    private static <T extends Event> T call(T event) {
-        Bukkit.getPluginManager().callEvent(event);
-        return event;
-    }
-
     /**
      * Block place methods
      */
@@ -338,7 +333,8 @@ public class CraftEventFactory {
         ThrownPotion thrownPotion = (ThrownPotion) potion.getBukkitEntity();
 
         PotionSplashEvent event = new PotionSplashEvent(thrownPotion, affectedEntities);
-        return call(event);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
     /**

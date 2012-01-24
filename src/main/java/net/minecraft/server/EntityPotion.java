@@ -1,11 +1,12 @@
 package net.minecraft.server;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 // CraftBukkit start
+import java.util.Collection;
+import java.util.HashMap;
+
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
@@ -57,9 +58,8 @@ public class EntityPotion extends EntityProjectile {
                 if (list1 != null && !list1.isEmpty()) {
                     Iterator iterator = list1.iterator();
 
-                    // CraftBukkit start
+                    // CraftBukkit
                     HashMap<LivingEntity, Double> affected = new HashMap<LivingEntity, Double>();
-                    // CraftBukkit end
 
                     while (iterator.hasNext()) {
                         Entity entity = (Entity) iterator.next();
@@ -72,8 +72,8 @@ public class EntityPotion extends EntityProjectile {
                                 d1 = 1.0D;
                             }
 
-                    // CraftBukkit start
-                            affected.put((LivingEntity)entity.getBukkitEntity(), d1);
+                            // CraftBukkit start
+                            affected.put((LivingEntity) entity.getBukkitEntity(), d1);
                         }
                     }
 
@@ -85,8 +85,7 @@ public class EntityPotion extends EntityProjectile {
                             }
                             EntityLiving entity = ((CraftLivingEntity) victim).getHandle();
                             double d1 = event.getIntensity(victim);
-
-                    // CraftBukkit end
+                            // CraftBukkit end
 
                             Iterator iterator1 = list.iterator();
 
