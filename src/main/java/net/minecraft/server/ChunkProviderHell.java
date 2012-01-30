@@ -25,8 +25,9 @@ public class ChunkProviderHell implements IChunkProvider {
     double[] f;
     double[] g;
     double[] h;
+    private boolean generateStructures = true; // CraftBukkit - Add generateStructures param
 
-    public ChunkProviderHell(World world, long i) {
+    public ChunkProviderHell(World world, long i, boolean flag) { // CraftBukkit - Add generateStructures flag
         this.o = world;
         this.i = new Random(i);
         this.j = new NoiseGeneratorOctaves(this.i, 16);
@@ -36,6 +37,7 @@ public class ChunkProviderHell implements IChunkProvider {
         this.n = new NoiseGeneratorOctaves(this.i, 4);
         this.a = new NoiseGeneratorOctaves(this.i, 10);
         this.b = new NoiseGeneratorOctaves(this.i, 16);
+        this.generateStructures = flag; // CraftBukkit - Initialize generate structures
     }
 
     public void a(int i, int j, byte[] abyte) {
@@ -190,7 +192,11 @@ public class ChunkProviderHell implements IChunkProvider {
         this.a(i, j, abyte);
         this.b(i, j, abyte);
         this.t.a(this, this.o, i, j, abyte);
-        this.c.a(this, this.o, i, j, abyte);
+        // CraftBukkit Start
+        if (this.generateStructures) {
+            this.c.a(this, this.o, i, j, abyte);
+        }
+        // CraftBukkit End
         Chunk chunk = new Chunk(this.o, abyte, i, j);
 
         return chunk;

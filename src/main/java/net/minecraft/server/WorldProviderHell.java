@@ -23,7 +23,10 @@ public class WorldProviderHell extends WorldProvider {
     }
 
     public IChunkProvider getChunkProvider() {
-        return new ChunkProviderHell(this.a, this.a.getSeed());
+        // CraftBukkit Start
+        // return new ChunkProviderHell(this.a, this.a.getSeed());
+        return (IChunkProvider) (this.type == WorldType.FLAT ? new ChunkProviderFlatNether(this.a, this.a.getSeed(), this.a.getWorldData().o()) : new ChunkProviderHell(this.a, this.a.getSeed(), this.a.getWorldData().o()));
+        // CraftBukkit Start
     }
 
     public boolean canSpawn(int i, int j) {
