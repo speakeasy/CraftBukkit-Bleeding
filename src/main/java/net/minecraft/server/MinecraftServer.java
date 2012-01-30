@@ -27,7 +27,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.LoggerOutputStream;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.util.ServerShutdownThread;
-import org.bukkit.event.Event;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -565,7 +565,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
             ServerCommand servercommand = (ServerCommand) this.y.remove(0);
 
             // CraftBukkit start - ServerCommand for preprocessing
-            RemoteServerCommandEvent event = new RemoteServerCommandEvent(this.console, servercommand.command);
+            ServerCommandEvent event = new ServerCommandEvent(this.console, servercommand.command);
             this.server.getPluginManager().callEvent(event);
             servercommand = new ServerCommand(event.getCommand(), servercommand.source);
             // CraftBukkit end
