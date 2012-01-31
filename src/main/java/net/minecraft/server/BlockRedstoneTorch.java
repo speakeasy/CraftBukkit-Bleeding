@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+import java.util.Iterator; // CraftBukkit
 
 public class BlockRedstoneTorch extends BlockTorch {
 
@@ -92,11 +93,12 @@ public class BlockRedstoneTorch extends BlockTorch {
     public void a(World world, int i, int j, int k, Random random) {
         boolean flag = this.g(world, i, j, k);
 
-        /* CraftBukkit start
-        while (b.size() > 0 && world.getTime() - ((RedstoneUpdateInfo) b.get(0)).d > 100L) {
-            b.remove(0);
+        // CraftBukkit start
+        Iterator<RedstoneUpdateInfo> updates = world.torchUpdates.iterator();
+        while (updates.hasNext() && i - updates.next().d > 100L) {
+            updates.remove();
         }
-        */
+
         org.bukkit.plugin.PluginManager manager = world.getServer().getPluginManager();
         org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
         int oldCurrent = this.isOn ? 15 : 0;
