@@ -2671,22 +2671,15 @@ public class World implements IBlockAccess {
             nextticklistentry = (NextTickListEntry) iterator.next();
         }
 
-        shiftTorchQueue(i); // CraftBukkit - shift the per-world torch update queue
+        // CraftBukkit start - clean redstone torch queue
+        Iterator<RedstoneUpdateInfo> updates = torchUpdates.iterator();
+        while (updates.hasNext() && i - updates.next().d > 100L) {
+            updates.remove();
+        }
+        // CraftBukkit end
 
         this.setTime(i);
     }
-
-    // CraftBukkit start
-    private void shiftTorchQueue(long newTime) {
-        for (Iterator<RedstoneUpdateInfo> iterator = torchUpdates.iterator(); iterator.hasNext();) {
-            if (newTime - iterator.next().d > 100L) {
-                iterator.remove();
-            } else {
-                break;
-            }
-        }
-    }
-    // CraftBukkit end
 
     public long getSeed() {
         return this.worldData.getSeed();
