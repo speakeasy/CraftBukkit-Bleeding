@@ -12,6 +12,8 @@ import java.util.TreeSet;
 // CraftBukkit start
 import java.util.UUID;
 
+import com.google.common.collect.Lists;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.util.LongHash;
@@ -95,6 +97,7 @@ public class World implements IBlockAccess {
     int lastXAccessed = Integer.MIN_VALUE;
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
+    protected List<RedstoneUpdateInfo> torchUpdates = Lists.newLinkedList();
 
     private boolean canSpawn(int x, int z) {
         if (this.generator != null) {
@@ -2668,8 +2671,22 @@ public class World implements IBlockAccess {
             nextticklistentry = (NextTickListEntry) iterator.next();
         }
 
+        shiftTorchQueue(i); // CraftBukkit - shift the per-world torch update queue
+
         this.setTime(i);
     }
+
+    // CraftBukkit start
+    private void shiftTorchQueue(long newTime) {
+        for (Iterator<RedstoneUpdateInfo> iterator = torchUpdates.iterator(); iterator.hasNext();) {
+            if (newTime - iterator.next().d > 100L) {
+                iterator.remove();
+            } else {
+                break;
+            }
+        }
+    }
+    // CraftBukkit end
 
     public long getSeed() {
         return this.worldData.getSeed();

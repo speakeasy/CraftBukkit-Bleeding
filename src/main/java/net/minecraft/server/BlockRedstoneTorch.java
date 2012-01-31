@@ -9,7 +9,7 @@ import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
 public class BlockRedstoneTorch extends BlockTorch {
 
     private boolean isOn = false;
-    private static List b = new ArrayList();
+    // private static List b = new ArrayList(); // CraftBukkit
 
     public int a(int i, int j) {
         return i == 1 ? Block.REDSTONE_WIRE.a(i, j) : super.a(i, j);
@@ -17,13 +17,14 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     private boolean a(World world, int i, int j, int k, boolean flag) {
         if (flag) {
-            b.add(new RedstoneUpdateInfo(i, j, k, world.getTime()));
+            world.torchUpdates.add(new RedstoneUpdateInfo(i, j, k, world.getTime())); // CraftBukkit
         }
 
         int l = 0;
 
-        for (int i1 = 0; i1 < b.size(); ++i1) {
-            RedstoneUpdateInfo redstoneupdateinfo = (RedstoneUpdateInfo) b.get(i1);
+        // CraftBukkit start
+        for (RedstoneUpdateInfo redstoneupdateinfo : world.torchUpdates){
+            // CraftBukkit end
 
             if (redstoneupdateinfo.a == i && redstoneupdateinfo.b == j && redstoneupdateinfo.c == k) {
                 ++l;
@@ -91,11 +92,11 @@ public class BlockRedstoneTorch extends BlockTorch {
     public void a(World world, int i, int j, int k, Random random) {
         boolean flag = this.g(world, i, j, k);
 
+        /* CraftBukkit start
         while (b.size() > 0 && world.getTime() - ((RedstoneUpdateInfo) b.get(0)).d > 100L) {
             b.remove(0);
         }
-
-        // CraftBukkit start
+        */
         org.bukkit.plugin.PluginManager manager = world.getServer().getPluginManager();
         org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
         int oldCurrent = this.isOn ? 15 : 0;
