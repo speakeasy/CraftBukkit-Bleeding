@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.event;
 
 import java.net.InetAddress;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.Entity;
@@ -24,6 +25,7 @@ import net.minecraft.server.EntityMushroomCow;
 import net.minecraft.server.EntityPig;
 import net.minecraft.server.EntityPigZombie;
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.EntityPotion;
 import net.minecraft.server.EntitySheep;
 import net.minecraft.server.EntitySilverfish;
 import net.minecraft.server.EntitySkeleton;
@@ -56,6 +58,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
@@ -65,6 +68,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 
 public class CraftEventFactory {
+    // helper methods
     private static boolean canBuild(CraftWorld world, Player player, int x, int z) {
         WorldServer worldServer = world.getHandle();
         int spawnSize = Bukkit.getServer().getSpawnRadius();
@@ -273,9 +277,6 @@ public class CraftEventFactory {
             type = CreatureType.BLAZE;
         } else if (entityliving instanceof EntitySilverfish) {
             type = CreatureType.SILVERFISH;
-            // Supertype of many, last!
-        } else if (entityliving instanceof EntityMonster) {
-            type = CreatureType.MONSTER;
         }
 
         CreatureSpawnEvent event = new CreatureSpawnEvent(entity, type, entity.getLocation(), spawnReason);
@@ -322,6 +323,17 @@ public class CraftEventFactory {
     }
 
     /**
+     * PotionSplashEvent
+     */
+    public static PotionSplashEvent callPotionSplashEvent(EntityPotion potion, Map<LivingEntity, Double> affectedEntities) {
+        ThrownPotion thrownPotion = (ThrownPotion) potion.getBukkitEntity();
+
+        PotionSplashEvent event = new PotionSplashEvent(thrownPotion, affectedEntities);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    /**
      * BlockFadeEvent
      */
     public static BlockFadeEvent callBlockFadeEvent(Block block, int type) {
@@ -362,6 +374,8 @@ public class CraftEventFactory {
         victim.newExp = event.getNewExp();
 
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
+            if (stack == null || stack.getType() == Material.AIR) continue;
+
             world.dropItemNaturally(entity.getLocation(), stack);
         }
 

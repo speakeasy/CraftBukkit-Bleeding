@@ -203,6 +203,15 @@ public class ItemInWorldManager {
         if (this.player instanceof EntityPlayer) {
             org.bukkit.block.Block block = this.world.getWorld().getBlockAt(i, j, k);
 
+            // Tell client the block is gone immediately then process events
+            if (world.getTileEntity(i, j, k) == null) {
+                Packet53BlockChange packet = new Packet53BlockChange(i, j, k, this.world);
+
+                packet.material = 0;
+                packet.data = 0;
+                ((EntityPlayer) this.player).netServerHandler.sendPacket(packet);
+            }
+
             BlockBreakEvent event = new BlockBreakEvent(block, (org.bukkit.entity.Player) this.player.getBukkitEntity());
             this.world.getServer().getPluginManager().callEvent(event);
 

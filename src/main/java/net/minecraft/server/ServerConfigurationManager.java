@@ -111,20 +111,22 @@ public class ServerConfigurationManager {
     }
 
     public void c(EntityPlayer entityplayer) {
-        // CraftBukkit start
-        cserver.detectListNameConflict(entityplayer);
-        this.sendAll(new Packet201PlayerInfo(entityplayer.listName, true, 1000));
-        // CraftBukkit end
+        cserver.detectListNameConflict(entityplayer); // CraftBukkit
+        //this.sendAll(new Packet201PlayerInfo(entityplayer.name, true, 1000)); // CraftBukkit - replaced with loop below
         this.players.add(entityplayer);
         WorldServer worldserver = this.server.getWorldServer(entityplayer.dimension);
 
         worldserver.chunkProviderServer.getChunkAt((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
 
-        while (worldserver.a(entityplayer, entityplayer.boundingBox).size() != 0) {
-            entityplayer.setPosition(entityplayer.locX, entityplayer.locY + 1.0D, entityplayer.locZ);
+        // CraftBukkit start
+        if (!cserver.useExactLoginLocation()) {
+            while (worldserver.a(entityplayer, entityplayer.boundingBox).size() != 0) {
+                entityplayer.setPosition(entityplayer.locX, entityplayer.locY + 1.0D, entityplayer.locZ);
+            }
+        } else {
+            entityplayer.setPosition(entityplayer.locX, entityplayer.locY + entityplayer.getBukkitEntity().getEyeHeight(), entityplayer.locZ);
         }
 
-        // CraftBukkit start
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this.cserver.getPlayer(entityplayer), "\u00A7e" + entityplayer.name + " joined the game.");
         this.cserver.getPluginManager().callEvent(playerJoinEvent);
 
@@ -138,11 +140,24 @@ public class ServerConfigurationManager {
         worldserver.addEntity(entityplayer);
         this.getPlayerManager(entityplayer.dimension).addPlayer(entityplayer);
 
+        // CraftBukkit start - sendAll above replaced with this loop
+        Packet201PlayerInfo packet = new Packet201PlayerInfo(entityplayer.listName, true, 1000);
+        for (int i = 0; i < this.players.size(); ++i) {
+            EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
+
+            if (entityplayer1.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
+                entityplayer1.netServerHandler.sendPacket(packet);
+            }
+        }
+        // CraftBukkit end
+
         for (int i = 0; i < this.players.size(); ++i) {
             EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
 
             // CraftBukkit start - .name -> .listName
-            entityplayer.netServerHandler.sendPacket(new Packet201PlayerInfo(entityplayer1.listName, true, entityplayer1.ping));
+            if (entityplayer.getBukkitEntity().canSee(entityplayer1.getBukkitEntity())) {
+                entityplayer.netServerHandler.sendPacket(new Packet201PlayerInfo(entityplayer1.listName, true, entityplayer1.ping));
+            }
             // CraftBukkit end
         }
     }
@@ -165,8 +180,15 @@ public class ServerConfigurationManager {
         this.server.getWorldServer(entityplayer.dimension).kill(entityplayer);
         this.players.remove(entityplayer);
         this.getPlayerManager(entityplayer.dimension).removePlayer(entityplayer);
-        // CraftBukkit start - .name -> .listName
-        this.sendAll(new Packet201PlayerInfo(entityplayer.listName, false, 9999));
+        // CraftBukkit start - .name -> .listName, replace sendAll with loop
+        Packet201PlayerInfo packet = new Packet201PlayerInfo(entityplayer.listName, false, 9999);
+        for (int i = 0; i < this.players.size(); ++i) {
+            EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
+
+            if (entityplayer1.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
+                entityplayer1.netServerHandler.sendPacket(packet);
+            }
+        }
         // CraftBukkit end
 
         return playerQuitEvent.getQuitMessage(); // CraftBukkit
@@ -279,7 +301,7 @@ public class ServerConfigurationManager {
 
         // CraftBukkit start
         byte actualDimension = (byte) (worldserver.getWorld().getEnvironment().getId());
-        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn(actualDimension, (byte) worldserver.difficulty, worldserver.getSeed(), entityplayer1.world.getWorldData().getType(), worldserver.height, entityplayer.itemInWorldManager.getGameMode()));
+        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn(actualDimension, (byte) worldserver.difficulty, worldserver.getSeed(), worldserver.getWorldData().getType(), worldserver.height, entityplayer.itemInWorldManager.getGameMode()));
         entityplayer1.spawnIn(worldserver);
         entityplayer1.dead = false;
         entityplayer1.netServerHandler.teleport(new Location(worldserver.getWorld(), entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch));

@@ -187,6 +187,14 @@ public class EntityTrackerEntry {
 
             if (d0 >= (double) (-this.b) && d0 <= (double) this.b && d1 >= (double) (-this.b) && d1 <= (double) this.b) {
                 if (!this.trackedPlayers.contains(entityplayer)) {
+                    // CraftBukkit start
+                    if (tracker instanceof EntityPlayer) {
+                        org.bukkit.entity.Player player = ((EntityPlayer) tracker).getBukkitEntity();
+                        if (!entityplayer.getBukkitEntity().canSee(player)) {
+                            return;
+                        }
+                    }
+                    // CraftBukkit end
                     this.trackedPlayers.add(entityplayer);
                     entityplayer.netServerHandler.sendPacket(this.b());
                     if (this.isMoving) {
@@ -248,11 +256,6 @@ public class EntityTrackerEntry {
             entityitem.locZ = (double) packet21pickupspawn.d / 32.0D;
             return packet21pickupspawn;
         } else if (this.tracker instanceof EntityPlayer) {
-            // CraftBukkit start - limit name length to 16 characters
-            if (((EntityHuman) this.tracker).name.length() > 16) {
-                ((EntityHuman) this.tracker).name = ((EntityHuman) this.tracker).name.substring(0, 16);
-            }
-            // CraftBukkit end
             return new Packet20NamedEntitySpawn((EntityHuman) this.tracker);
         } else {
             if (this.tracker instanceof EntityMinecart) {
