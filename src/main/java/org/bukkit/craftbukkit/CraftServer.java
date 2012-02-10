@@ -460,11 +460,11 @@ public final class CraftServer implements Server {
                 author = plugin.getDescription().getAuthors().get(0);
             }
             getLogger().log(Level.SEVERE, String.format(
-                    "Nag author: '%s' of '%s' about the following: %s",
-                    author,
-                    plugin.getDescription().getName(),
-                    "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
-                    ));
+                "Nag author: '%s' of '%s' about the following: %s",
+                author,
+                plugin.getDescription().getName(),
+                "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+            ));
         }
         loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);

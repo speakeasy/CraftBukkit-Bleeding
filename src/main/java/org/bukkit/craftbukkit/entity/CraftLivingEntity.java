@@ -269,7 +269,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public Collection<PotionEffect> getActivePotionEffects() {
         List<PotionEffect> effects = new ArrayList<PotionEffect>();
         for (Object raw : getHandle().effects.values()) {
-            if (!(raw instanceof MobEffect)) 
+            if (!(raw instanceof MobEffect))
                 continue;
             MobEffect handle = (MobEffect) raw;
             effects.add(new PotionEffect(PotionEffectType.getById(handle.getEffectId()), handle.getDuration(), handle.getAmplifier()));
