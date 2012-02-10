@@ -86,7 +86,7 @@ public class EntityTrackerEntry {
                 this.h = i1;
             }
             // CraftBukkit end
-            
+
             if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.t <= 400) {
                 if (flag && flag1) {
                     object = new Packet33RelEntityMoveLook(this.tracker.id, (byte) j1, (byte) k1, (byte) l1, (byte) l, (byte) i1);
@@ -100,7 +100,11 @@ public class EntityTrackerEntry {
                 this.tracker.locX = (double) i / 32.0D;
                 this.tracker.locY = (double) j / 32.0D;
                 this.tracker.locZ = (double) k / 32.0D;
-                if(this.tracker instanceof EntityPlayer) this.scanPlayers(new ArrayList(this.trackedPlayers)); // CraftBukkit
+                // CraftBukkit start
+                if (this.tracker instanceof EntityPlayer) {
+                    this.scanPlayers(new ArrayList(this.trackedPlayers));
+                }
+                // CraftBukkit end
                 object = new Packet34EntityTeleport(this.tracker.id, i, j, k, (byte) l, (byte) i1);
             }
 
@@ -128,8 +132,18 @@ public class EntityTrackerEntry {
             if (datawatcher.a()) {
                 this.broadcastIncludingSelf(new Packet40EntityMetadata(this.tracker.id, datawatcher));
             }
-            
-            // CraftBukkit - code moved up
+            // CraftBukkit start - code moved up
+            /* if (flag) {
+                this.d = i;
+                this.e = j;
+                this.f = k;
+            }
+
+            if (flag1) {
+                this.g = l;
+                this.h = i1;
+            } */
+            // CraftBukkit end
         }
 
         this.tracker.ce = false;
