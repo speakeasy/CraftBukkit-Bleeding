@@ -43,8 +43,11 @@ public class ConsoleLogManager {
             String pattern = (String) server.options.valueOf("log-pattern");
             int limit = ((Integer) server.options.valueOf("log-limit")).intValue();
             int count = ((Integer) server.options.valueOf("log-count")).intValue();
+            Level level = Level.parse(((String) server.options.valueOf("log-level")).toUpperCase());
             boolean append = ((Boolean) server.options.valueOf("log-append")).booleanValue();
             FileHandler filehandler = new FileHandler(pattern, limit, count, append);
+            a.setLevel(level);
+            global.setLevel(level);
             // CraftBukkit end
 
             filehandler.setFormatter(consolelogformatter);

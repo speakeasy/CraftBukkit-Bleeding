@@ -87,6 +87,12 @@ public class Main {
                         .defaultsTo(true)
                         .describedAs("Log append");
 
+                acceptsAll(asList("log-level"), "The minimum level to log")
+                        .withRequiredArg()
+                        .ofType(String.class)
+                        .defaultsTo("INFO")
+                        .describedAs("Log level");
+
                 acceptsAll(asList("b", "bukkit-settings"), "File for bukkit settings")
                         .withRequiredArg()
                         .ofType(File.class)
