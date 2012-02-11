@@ -97,6 +97,8 @@ public class World implements IBlockAccess {
     int lastXAccessed = Integer.MIN_VALUE;
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
+    public int lastServerTick;
+    public long startupRandom;
 
     private boolean canSpawn(int x, int z) {
         if (this.generator != null) {
@@ -118,6 +120,7 @@ public class World implements IBlockAccess {
     public World(IDataManager idatamanager, String s, WorldSettings worldsettings, WorldProvider worldprovider, ChunkGenerator gen, org.bukkit.World.Environment env) {
         this.generator = gen;
         this.world = new CraftWorld((WorldServer) this, gen, env);
+        this.startupRandom = Double.doubleToLongBits(Math.random());
         // CraftBukkit end
 
         this.heightBitsPlusFour = this.heightBits + 4;
@@ -234,7 +237,7 @@ public class World implements IBlockAccess {
 
             int l = 0;
 
-            // CraftBukkit - use out own canSpawn
+            // CraftBukkit - use our own canSpawn
             while (!this.canSpawn(i, k)) {
                 i += random.nextInt(64) - random.nextInt(64);
                 k += random.nextInt(64) - random.nextInt(64);
@@ -1701,7 +1704,7 @@ public class World implements IBlockAccess {
         this.allowAnimals = flag1;
     }
 
-    public void doTick() {
+    public void doTick(int ticks) { // CraftBukkit - changed signature
         if (this.getWorldData().isHardcore() && this.difficulty < 3) {
             this.difficulty = 3;
         }
@@ -1749,7 +1752,7 @@ public class World implements IBlockAccess {
         // MethodProfiler.b("tickPending"); // CraftBukkit - not in production code
         this.a(false);
         // MethodProfiler.b("tickTiles"); // CraftBukkit - not in production code
-        this.k();
+        this.k(ticks); // CraftBukkit
         // MethodProfiler.a(); // CraftBukkit - not in production code
     }
 
@@ -1867,8 +1870,12 @@ public class World implements IBlockAccess {
         this.worldData.setWeatherDuration(1);
     }
 
-    protected void k() {
-        // this.T.clear(); // CraftBukkit - removed
+    // CraftBukkit start
+    protected void k(int serverTickTime) { // CraftBukkit - changed signature
+        this.lastServerTick = serverTickTime;
+
+        /*
+        this.chunkTickList.clear(); // CraftBukkit - removed
         // MethodProfiler.a("buildList"); // CraftBukkit - not in production code
 
         int i;
@@ -1886,27 +1893,31 @@ public class World implements IBlockAccess {
                 }
             }
         }
+        */ // CraftBukkit end
 
         if (this.U > 0) {
             --this.U;
         }
 
-        i = 0;
-        int j1 = 0;
+        // CraftBukkit start
+        // i = 0;
+        // int j1 = 0;
 
         // MethodProfiler.a(); // CraftBukkit - not in production code
-        // Iterator iterator = this.T.iterator(); // CraftBukkit - removed
+        // Iterator iterator = this.chunkTickList.iterator(); // CraftBukkit - removed
+        LongHashset chunkTickList = new LongHashset();
+        for (EntityHuman player: (List<EntityHuman>) players) {
+            chunkTickList.addAll(player.getChunks());
+        }
 
-        // CraftBukkit start
+
         for (long chunkCoord : this.chunkTickList.popAll()) {
             int chunkX = LongHash.msw(chunkCoord);
             int chunkZ = LongHash.lsw(chunkCoord);
             // ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair) iterator.next();
-            int k1 = chunkX * 16;
-
-            j = chunkZ * 16;
             // MethodProfiler.a("getChunk"); // CraftBukkit - not in production code
             Chunk chunk = this.getChunkAt(chunkX, chunkZ);
+            chunk.flushTicks(serverTickTime);
             // CraftBukkit end
 
             // MethodProfiler.b("tickChunk"); // CraftBukkit - not in production code
@@ -1919,6 +1930,7 @@ public class World implements IBlockAccess {
             int l2;
 
             if (this.U == 0) {
+                /* // CraftBukkit start
                 this.l = this.l * 3 + 1013904223;
                 l1 = this.l >> 2;
                 i2 = l1 & 15;
@@ -1927,6 +1939,14 @@ public class World implements IBlockAccess {
                 l2 = chunk.getTypeId(i2, k2, j2);
                 i2 += k1;
                 j2 += j;
+                */
+                i2 = this.random.nextInt(16);
+                j2 = this.random.nextInt(16);
+                k2 = this.random.nextInt(this.height);
+                l2 = chunk.getTypeId(i2, k2, j2);
+                i2 += chunk.x << 4;
+                j2 += chunk.z << 4;
+                // CraftBukkit end
                 if (l2 == 0 && this.k(i2, k2, j2) <= this.random.nextInt(8) && this.a(EnumSkyBlock.SKY, i2, k2, j2) <= 0) {
                     EntityHuman entityhuman1 = this.findNearbyPlayer((double) i2 + 0.5D, (double) k2 + 0.5D, (double) j2 + 0.5D, 8.0D);
 
@@ -1939,10 +1959,14 @@ public class World implements IBlockAccess {
 
             // MethodProfiler.b("thunder"); // CraftBukkit - not in production code
             if (this.random.nextInt(100000) == 0 && this.w() && this.v()) {
+                /* // CraftBukkit start
                 this.l = this.l * 3 + 1013904223;
                 l1 = this.l >> 2;
                 i2 = k1 + (l1 & 15);
                 j2 = j + (l1 >> 8 & 15);
+                */ // CraftBukkit end
+                i2 = this.random.nextInt(16) + chunk.x << 4;
+                j2 = this.random.nextInt(16) + chunk.z << 4;
                 k2 = this.e(i2, j2);
                 if (this.v(i2, k2, j2)) {
                     this.strikeLightning(new EntityWeatherLighting(this, (double) i2, (double) k2, (double) j2));
@@ -1950,6 +1974,7 @@ public class World implements IBlockAccess {
                 }
             }
 
+            /*  // CraftBukkit start
             // MethodProfiler.b("iceandsnow"); // CraftBukkit - not in production code
             if (this.random.nextInt(16) == 0) {
                 this.l = this.l * 3 + 1013904223;
@@ -1958,36 +1983,20 @@ public class World implements IBlockAccess {
                 j2 = l1 >> 8 & 15;
                 k2 = this.e(i2 + k1, j2 + j);
                 if (this.q(i2 + k1, k2 - 1, j2 + j)) {
-                    // CraftBukkit start
-                    BlockState blockState = this.getWorld().getBlockAt(i2 + k1, k2 - 1, j2 + j).getState();
-                    blockState.setTypeId(Block.ICE.id);
-
-                    BlockFormEvent iceBlockForm = new BlockFormEvent(blockState.getBlock(), blockState);
-                    this.getServer().getPluginManager().callEvent(iceBlockForm);
-                    if (!iceBlockForm.isCancelled()) {
-                        blockState.update(true);
-                    }
-                    // CraftBukkit end
+                    this.setTypeId(i2 + k1, k2 - 1, j2 + j, Block.ICE.id);
                 }
 
                 if (this.w() && this.r(i2 + k1, k2, j2 + j)) {
-                    // CraftBukkit start
-                    BlockState blockState = this.getWorld().getBlockAt(i2 + k1, k2, j2 + j).getState();
-                    blockState.setTypeId(Block.SNOW.id);
-
-                    BlockFormEvent snow = new BlockFormEvent(blockState.getBlock(), blockState);
-                    this.getServer().getPluginManager().callEvent(snow);
-                    if (!snow.isCancelled()) {
-                        blockState.update(true);
-                    }
-                    // CraftBukkit end
+                    this.setTypeId(i2 + k1, k2, j2 + j, Block.SNOW.id);
                 }
             }
+            */ // CraftBukkit end
 
             // MethodProfiler.b("checkLight"); // CraftBukkit - not in production code
-            this.s(k1 + this.random.nextInt(16), this.random.nextInt(this.height), j + this.random.nextInt(16));
+            this.s((chunk.x << 4) + this.random.nextInt(16), this.random.nextInt(this.height), (chunk.z << 4) + this.random.nextInt(16));
             // MethodProfiler.b("tickTiles"); // CraftBukkit - not in production code
 
+            /* // CraftBukkit start
             for (l1 = 0; l1 < 20; ++l1) {
                 this.l = this.l * 3 + 1013904223;
                 i2 = this.l >> 2;
@@ -2004,8 +2013,34 @@ public class World implements IBlockAccess {
             }
 
             // MethodProfiler.a(); // CraftBukkit - not in production code
+            */
         }
     }
+
+    public static final int BLOCKS_PER_CHUNK = 20;
+    public static final double CHANCE_PER_CHUNK = (double) BLOCKS_PER_CHUNK / 32768;
+
+    public static int getTicksForChance(double chance) {
+        return getTicksForChance(chance, 1);
+    }
+
+    public static int getTicksForChance(double chance, int amount) {
+        int total = 0;
+        for (int i = 0; i < amount; i++) {
+            total += 1 + (int) (Math.log(Math.random()) / Math.log(1.0 - (chance * CHANCE_PER_CHUNK)));
+        }
+
+        return total;
+    }
+
+    public void queueBlockTick(int x, int y, int z, int id, int deltaTick) {
+        this.queueBlockTick(this.getChunkAt(x >> 4, z >> 4), x, y, z, id, deltaTick);
+    }
+
+    public void queueBlockTick(Chunk chunk, int x, int y, int z, int id, int deltaTick) {
+        chunk.queueBlockTick(x, y, z, id, deltaTick);
+    }
+    // CraftBukkit end
 
     public boolean p(int i, int j, int k) {
         return this.c(i, j, k, false);

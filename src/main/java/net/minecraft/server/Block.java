@@ -621,5 +621,12 @@ public class Block {
     public static int getDropData(Block block, int data) {
         return block.getDropData(data);
     }
+
+    public final void queueBlockTick(World world, int x, int y, int z) {
+        queueBlockTick(world.getChunkAt(x >> 4, z >> 4), x, y, z);
+    }
+
+    public void queueBlockTick(net.minecraft.server.Chunk chunk, int x, int y, int z) {
+    }
     // CraftBukkit end
 }

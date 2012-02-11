@@ -521,7 +521,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
                 }
                 // CraftBukkit end */
 
-                worldserver.doTick();
+                worldserver.doTick(this.ticks);
 
                 while (true) {
                     if (!worldserver.updateLights()) {

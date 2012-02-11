@@ -12,6 +12,7 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.util.LongHashset;
 import org.bukkit.event.entity.PlayerDeathEvent;
 // CraftBukkit end
 
@@ -672,6 +673,16 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
     @Override
     public CraftPlayer getBukkitEntity() {
         return (CraftPlayer) super.getBukkitEntity();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public LongHashset getChunks() {
+        LongHashset list = new LongHashset();
+        for (ChunkCoordIntPair pos: (Set<ChunkCoordIntPair>) playerChunkCoordIntPairs) {
+            list.add(pos.x, pos.z);
+        }
+        return list;
     }
     // CraftBukkit end
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.craftbukkit.TrigMath;
+import org.bukkit.craftbukkit.util.LongHashset;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -66,6 +67,22 @@ public abstract class EntityHuman extends EntityLiving {
     protected float P = 0.1F;
     protected float Q = 0.02F;
     public EntityFishingHook hookedFish = null;
+
+    // CraftBukkit start
+    public LongHashset getChunks() {
+        LongHashset list = new LongHashset();
+        int xx = MathHelper.floor(this.x / 16);
+        int zz = MathHelper.floor(this.y / 16);
+
+        int r = world.getServer().getViewDistance();
+        for (int x = -r; x <= r; x++) {
+            for (int z = -r; z <= r; z++) {
+                list.add(x + xx, z + zz);
+            }
+        }
+        return list;
+    }
+    // CraftBukkit end
 
     public EntityHuman(World world) {
         super(world);

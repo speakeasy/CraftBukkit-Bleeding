@@ -7,7 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.bukkit.Bukkit; // CraftBukkit
+
+// CraftBukkit start
+import org.bukkit.Bukkit;
+import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.util.TickQueue;
+import org.bukkit.event.block.BlockFormEvent;
+// CraftBukkit end
 
 public class Chunk {
 
@@ -63,6 +69,90 @@ public class Chunk {
             if (this.bukkitChunk == null) {
                 this.bukkitChunk = new org.bukkit.craftbukkit.CraftChunk(this);
             }
+        }
+    }
+    public TickQueue tickQueue = new TickQueue();
+    public byte[] loadedTickList;
+    public long loadedTickRandom;
+    public int loadedTickLast;
+
+    public void queueBlockTick(int x, int y, int z, int id, int delta) {
+        this.queueBlockTick(x, y, z, id, delta, false);
+    }
+
+    public void queueColumnTick(int x, int z, int delta) {
+        this.queueBlockTick(x, 0, z, 0, delta, true);
+    }
+
+    public void queueBlockTick(int x, int y, int z, int id, int delta, boolean column) {
+        if (column) y = 0;
+        long entry = (((long) this.world.lastServerTick) + delta) << 32 | ((long) ((column ? 1 << 15 : 0) | (x & 0xF) << 11 | (z & 0xF) << 7 | (y & 0x7F))) << 16 | (id & 0xFFFF);
+        this.tickQueue.insert(entry);
+    }
+
+    public void flushTicks(int serverTickTime) {
+        int data, coords, column, x, y, z, id;
+        while ((this.tickQueue.peek() >>> 32) <= serverTickTime) {
+            data = (int) (tickQueue.pop() & 0xFFFFFFFF);
+            column = (data >> 31) & 0x1;
+            coords = (data >> 16) & 0x7FFF;
+            x = (coords >> 11) & 0xF;
+            y = coords & 0x7F;
+            z = (coords >> 7) & 0xF;
+            id = data & 0xFFFF;
+            if (column == 1) {
+                this.tickColumn(x,z);
+            } else if (id == this.b[coords]) {
+                Block.byId[id].a(this.world, (this.x << 4) + x, y, (this.z << 4) + z, this.world.random);
+            }
+        }
+    }
+
+    private void tickColumn(int x, int z) {
+        int i2 = this.x << 4, j2 = this.z << 4;
+        int k2 = this.c(x, z);
+        if (this.world.q(i2 + x, k2 - 1, j2 + z)) {
+            BlockState blockState = this.world.getWorld().getBlockAt(i2 + x, k2 - 1, j2 + z).getState();
+            blockState.setTypeId(Block.ICE.id);
+
+            BlockFormEvent iceBlockForm = new BlockFormEvent(blockState.getBlock(), blockState);
+            this.world.getServer().getPluginManager().callEvent(iceBlockForm);
+            if (!iceBlockForm.isCancelled()) {
+                blockState.update(true);
+            }
+        }
+
+        if (this.world.w() && this.world.r(i2 + x, k2, j2 + z)) {
+            BlockState blockState = this.world.getWorld().getBlockAt(i2 + x, k2, j2 + z).getState();
+            blockState.setTypeId(Block.SNOW.id);
+
+            BlockFormEvent snow = new BlockFormEvent(blockState.getBlock(), blockState);
+            this.world.getServer().getPluginManager().callEvent(snow);
+            if (!snow.isCancelled()) {
+                blockState.update(true);
+            }
+        }
+
+        this.queueColumnTick(x, z, 1 + World.getTicksForChance(.1));
+    }
+
+    public void setupTickList() {
+        for (int i = 0; i < this.b.length; i++) {
+            if (this.b[i] == 0) continue;
+
+            int x = (i >> 11) & 0xF;
+            int y = i & 0x7F;
+            int z = (i >> 7) & 0xF;
+
+            Block.byId[this.b[i]].queueBlockTick(this, (this.x << 4) + x, y, (this.z << 4) + z);
+            if (y == 0) {
+                this.queueColumnTick(x, z, 1 + World.getTicksForChance(.1));
+            }
+        }
+
+        if (this.loadedTickList != null && this.loadedTickList.length > 0) {
+            this.tickQueue.fromByteArray(this.loadedTickList, this.loadedTickRandom != this.world.startupRandom, this.world.lastServerTick - this.loadedTickLast);
+            this.loadedTickList = null;
         }
     }
 
@@ -628,6 +718,7 @@ public class Chunk {
         for (int i = 0; i < this.entitySlices.length; ++i) {
             this.world.a(this.entitySlices[i]);
         }
+        this.setupTickList(); // CraftBukkit
     }
 
     public void removeEntities() {
