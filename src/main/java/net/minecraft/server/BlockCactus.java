@@ -23,14 +23,11 @@ public class BlockCactus extends Block {
             }
 
             if (l < 3) {
-                int i1 = world.getData(i, j, k);
-
-                if (i1 == 15) {
-                    world.setTypeId(i, j + 1, k, this.id);
-                    world.setData(i, j, k, 0);
-                } else {
-                    world.setData(i, j, k, i1 + 1);
-                }
+                // CraftBukkit start
+                j++;
+                world.setTypeId(i, j, k, this.id);
+                this.doPhysics(world, i, j, k, this.id);
+                // CraftBukkit end
             }
         }
     }
@@ -65,8 +62,20 @@ public class BlockCactus extends Block {
         if (!this.f(world, i, j, k)) {
             this.b(world, i, j, k, world.getData(i, j, k), 0);
             world.setTypeId(i, j, k, 0);
+            // CraftBukkit start
+            j--;
         }
+        this.queueBlockTick(world, i, j, k);
     }
+
+    public void queueBlockTick(Chunk chunk, int x, int y, int z) {
+        chunk.queueBlockTick(x, y, z, this.id, World.getTicksForChance(1, 16));
+    }
+
+    public void onPlace(World world, int i, int j, int k) {
+        this.queueBlockTick(world, i, j, k);
+    }
+    // CraftBukkit end
 
     public boolean f(World world, int i, int j, int k) {
         if (world.getMaterial(i - 1, j, k).isBuildable()) {

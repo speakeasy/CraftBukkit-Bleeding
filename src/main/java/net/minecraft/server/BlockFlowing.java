@@ -301,7 +301,8 @@ public class BlockFlowing extends BlockFluids {
     public void onPlace(World world, int i, int j, int k) {
         super.onPlace(world, i, j, k);
         if (world.getTypeId(i, j, k) == this.id) {
-            world.c(i, j, k, this.id, this.d());
+            //world.c(i, j, k, this.id, this.d()); // CraftBukkit - replaced with below
+            world.queueBlockTick(i, j, k, this.id, this.d()); // CraftBukkit
         }
     }
 }

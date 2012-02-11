@@ -144,7 +144,8 @@ public class BlockPressurePlate extends Block {
         }
 
         if (flag1) {
-            world.c(i, j, k, this.id, this.d());
+            //world.c(i, j, k, this.id, this.d()); // CraftBukkit - replaced with below
+            world.queueBlockTick(i, j, k, this.id, this.d()); // CraftBukkit
         }
     }
 

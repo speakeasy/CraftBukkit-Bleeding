@@ -27,7 +27,8 @@ public class BlockStationary extends BlockFluids {
         world.suppressPhysics = true;
         world.setRawTypeIdAndData(i, j, k, this.id - 1, l);
         world.b(i, j, k, i, j, k);
-        world.c(i, j, k, this.id - 1, this.d());
+        //world.c(i, j, k, this.id - 1, this.d()); // CraftBukkit - replaced with below
+        world.queueBlockTick(i, j, k, this.id - 1, this.d()); // CraftBukkit
         world.suppressPhysics = false;
     }
 

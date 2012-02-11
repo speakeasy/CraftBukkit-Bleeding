@@ -83,7 +83,8 @@ public class BlockFire extends Block {
                 world.setRawData(i, j, k, l + random.nextInt(3) / 2);
             }
 
-            world.c(i, j, k, this.id, this.d());
+            //world.c(i, j, k, this.id, this.d()); // CraftBukkit - replaced with below
+            world.queueBlockTick(i, j, k, this.id, this.d()); // CraftBukkit
             if (!flag && !this.g(world, i, j, k)) {
                 if (!world.e(i, j - 1, k) || l > 3) {
                     fireExtinguished(world, i, j, k);   // CraftBukkit - burn out
@@ -244,7 +245,8 @@ public class BlockFire extends Block {
             if (!world.e(i, j - 1, k) && !this.g(world, i, j, k)) {
                 fireExtinguished(world, i, j, k);   // CraftBukkit - fuel block broke
             } else {
-                world.c(i, j, k, this.id, this.d());
+                //world.c(i, j, k, this.id, this.d()); // CraftBukkit - replaced with below
+                world.queueBlockTick(i, j, k, this.id, this.d()); // CraftBukkit
             }
         }
     }

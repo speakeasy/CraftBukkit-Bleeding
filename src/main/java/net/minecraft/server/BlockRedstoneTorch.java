@@ -145,7 +145,8 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     public void doPhysics(World world, int i, int j, int k, int l) {
         super.doPhysics(world, i, j, k, l);
-        world.c(i, j, k, this.id, this.d());
+        //world.c(i, j, k, this.id, this.d()); // CraftBukkit - replaced with below
+        world.queueBlockTick(i, j, k, this.id, this.d()); // CraftBukkit
     }
 
     public boolean d(World world, int i, int j, int k, int l) {

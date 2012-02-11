@@ -11,11 +11,13 @@ public class BlockSand extends Block {
     }
 
     public void onPlace(World world, int i, int j, int k) {
-        world.c(i, j, k, this.id, this.d());
+        //world.c(i, j, k, this.id, this.d()); // CraftBukkit - replaced with below
+        world.queueBlockTick(i, j, k, this.id, this.d()); // CraftBukkit
     }
 
     public void doPhysics(World world, int i, int j, int k, int l) {
-        world.c(i, j, k, this.id, this.d());
+        //world.c(i, j, k, this.id, this.d()); // CraftBukkit - replaced with below
+        world.queueBlockTick(i, j, k, this.id, this.d()); // CraftBukkit
     }
 
     public void a(World world, int i, int j, int k, Random random) {
