@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.MapMaker;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -39,7 +40,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private boolean hasPlayedBefore = false;
     private ConversationTracker conversationTracker = new ConversationTracker();
     private Set<String> channels = new HashSet<String>();
-    private Set<Player> hiddenPlayers = new HashSet<Player>();
+    private Map<String, Player> hiddenPlayers = new MapMaker().softValues().makeMap();
     private int hash = 0;
 
     public CraftPlayer(CraftServer server, EntityPlayer entity) {
@@ -569,8 +570,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void hidePlayer(Player player) {
-        if (hiddenPlayers.contains(player)) return;
-        hiddenPlayers.add(player);
+        if (hiddenPlayers.containsKey(player.getName())) return;
+        hiddenPlayers.put(player.getName(), player);
 
         //remove this player from the hidden player's EntityTrackerEntry
         EntityTracker tracker = ((WorldServer) entity.world).tracker;
@@ -585,8 +586,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void showPlayer(Player player) {
-        if (!hiddenPlayers.contains(player)) return;
-        hiddenPlayers.remove(player);
+        if (!hiddenPlayers.containsKey(player.getName())) return;
+        hiddenPlayers.remove(player.getName());
 
         EntityTracker tracker = ((WorldServer) entity.world).tracker;
         EntityPlayer other = ((CraftPlayer) player).getHandle();
@@ -599,7 +600,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public boolean canSee(Player player) {
-        return !hiddenPlayers.contains(player);
+        return !hiddenPlayers.containsKey(player.getName());
     }
 
     public Map<String, Object> serialize() {
