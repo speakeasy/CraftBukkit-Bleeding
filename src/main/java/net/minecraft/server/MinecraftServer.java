@@ -565,7 +565,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
             ServerCommand servercommand = (ServerCommand) this.y.remove(0);
 
             // CraftBukkit start - ServerCommand for preprocessing
-            ServerCommandEvent event = new ServerCommandEvent(Event.Type.SERVER_COMMAND, this.console, servercommand.command);
+            ServerCommandEvent event = new ServerCommandEvent(this.console, servercommand.command);
             this.server.getPluginManager().callEvent(event);
             servercommand = new ServerCommand(event.getCommand(), servercommand.source);
             // CraftBukkit end
@@ -711,7 +711,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
     public String d(String s) {
         RemoteControlCommandListener.instance.a();
         // CraftBukkit start
-        ServerCommandEvent event = new ServerCommandEvent(Event.Type.REMOTE_COMMAND, this.remoteConsole, s);
+        ServerCommandEvent event = new ServerCommandEvent(this.remoteConsole, s);
         this.server.getPluginManager().callEvent(event);
         ServerCommand servercommand = new ServerCommand(event.getCommand(), RemoteControlCommandListener.instance);
         // this.consoleCommandHandler.handle(new ServerCommand(s, RemoteControlCommandListener.instance)); // CraftBukkit - removed
