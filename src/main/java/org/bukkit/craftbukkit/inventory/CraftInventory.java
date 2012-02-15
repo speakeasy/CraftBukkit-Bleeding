@@ -160,7 +160,23 @@ public class CraftInventory implements org.bukkit.inventory.Inventory {
     }
 
     public int first(ItemStack item) {
-        return first(item, true);
+        return next(item, 0, false, true);
+
+    }
+
+    public int first(ItemStack item, boolean forceDurability, boolean forceAmount) {
+        return next(item, 0, forceDurability, forceAmount);
+    }
+
+    public int next(ItemStack item, int start, boolean forceDurability, boolean forceAmount) {
+        ItemStack[] inventory = getContents();
+        for (int i = start; i < inventory.length; i++) {
+            ItemStack cItem = inventory[i];
+            if (item.getTypeId() == cItem.getTypeId() && (!forceAmount || item.getAmount() == cItem.getAmount()) && (!forceDurability || cItem.getDurability() == item.getDurability())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int first(ItemStack item, boolean withAmount) {
@@ -287,16 +303,30 @@ public class CraftInventory implements org.bukkit.inventory.Inventory {
     }
 
     public HashMap<Integer, ItemStack> removeItem(ItemStack... items) {
+        return removeItem(false, items);
+    }
+
+    public HashMap<Integer, ItemStack> removeItem(boolean forceDurability, ItemStack... items) {
         HashMap<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
 
         // TODO: optimization
 
         for (int i = 0; i < items.length; i++) {
             ItemStack item = items[i];
+            if (item == null) {
+                continue;
+            }
             int toDelete = item.getAmount();
 
             while (true) {
-                int first = first(item, false);
+
+                // Bail when done
+                if (toDelete <= 0) {
+                    break;
+                }
+
+                // get first Item, ignore the amount
+                int first = first(item, forceDurability, false);
 
                 // Drat! we don't have this type in the inventory
                 if (first == -1) {
@@ -317,11 +347,6 @@ public class CraftInventory implements org.bukkit.inventory.Inventory {
                         setItem(first, itemStack);
                         toDelete = 0;
                     }
-                }
-
-                // Bail when done
-                if (toDelete <= 0) {
-                    break;
                 }
             }
         }
@@ -362,5 +387,64 @@ public class CraftInventory implements org.bukkit.inventory.Inventory {
         for (int i = 0; i < getSize(); i++) {
             clear(i);
         }
+    }
+    public boolean containsItem(boolean forceDurability, ItemStack... items) {
+        HashMap<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
+
+        // TODO: optimization
+
+        // combine items
+
+        ItemStack[] combined = new ItemStack[items.length];
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] == null) {
+                continue;
+            }
+            for (int j = 0; j < combined.length; j++) {
+                if (combined[j] == null) {
+                    combined[j] = new ItemStack(items[i].getType(), items[i].getAmount(), items[i].getDurability());
+                    break;
+                }
+                if (combined[j].getTypeId() == items[i].getTypeId() && (!forceDurability || combined[j].getDurability() == items[i].getDurability())) {
+                    combined[j].setAmount(combined[j].getAmount() + items[i].getAmount());
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < combined.length; i++) {
+            ItemStack item = combined[i];
+            if (item == null) {
+                continue;
+            }
+            int mustHave = item.getAmount();
+            int position = 0;
+
+            while (true) {
+                // Bail when done
+                if (mustHave <= 0) {
+                    break;
+                }
+
+                int slot = next(item, position, forceDurability, false);
+
+                // Drat! we don't have this type in the inventory
+                if (slot == -1) {
+                    leftover.put(i, item);
+                    break;
+                } else {
+                    ItemStack itemStack = getItem(slot);
+                    int amount = itemStack.getAmount();
+
+                    if (amount <= mustHave) {
+                        mustHave -= amount;
+                    } else {
+                        mustHave = 0;
+                    }
+                    position = slot + 1;
+                }
+            }
+        }
+        return leftover.isEmpty();
     }
 }
