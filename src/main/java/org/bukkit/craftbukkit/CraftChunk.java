@@ -7,7 +7,9 @@ import net.minecraft.server.EmptyChunk;
 import net.minecraft.server.WorldServer;
 
 import org.bukkit.Chunk;
+import org.bukkit.ChunkSectionSnapshot;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -130,15 +132,26 @@ public class CraftChunk implements Chunk {
 
     public ChunkSnapshot getChunkSnapshot(boolean includeMaxblocky, boolean includeBiome, boolean includeBiomeTempRain) {
         net.minecraft.server.Chunk chunk = getHandle();
-        byte[] buf = new byte[32768 + 16384 + 16384 + 16384]; // Get big enough buffer for whole chunk
-        chunk.getData(buf, 0, 0, 0, 16, 128, 16, 0); // Get whole chunk
-        byte[] hmap = null;
 
-        if (includeMaxblocky) {
-            hmap = new byte[256]; // Get copy of height map
-            System.arraycopy(chunk.heightMap, 0, hmap, 0, 256);
+        int[] hmap = null;
+        int maxy = 0;
+        World world = getWorld();
+        
+        hmap = new int[256]; // Get copy of height map
+        /* Scan for max Y - find which sections are empty */
+        for(int i = 0; i < 256; i++) {
+            hmap[i] = 0xFF & (int)chunk.heightMap[i];
+            if(hmap[i] > maxy) maxy = hmap[i];
         }
-
+        maxy = (maxy + 15) >> 4;    /* Round up, and make into section Y coord */
+        /* Now, read sections that aren't empty */
+        int sectionCount = world.getMaxHeight() >> 4;
+        byte[][] buf = new byte[sectionCount][];
+        for(int i = 0; (i < sectionCount) && (i < maxy); i++) {
+            buf[i] = new byte[4096 + 2048 + 2048 + 2048]; // Get big enough buffer for whole section
+            chunk.getData(buf[i], 0, i << 4, 0, 16, (i << 4) + 16, 16, 0); // Get whole section
+        }
+        
         BiomeBase[] biome = null;
         double[] biomeTemp = null;
         double[] biomeRain = null;
@@ -162,37 +175,7 @@ public class CraftChunk implements Chunk {
                     biomeRain[i] = dat[i];
             }
         }
-        World world = getWorld();
         return new CraftChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), buf, hmap, biome, biomeTemp, biomeRain);
-    }
-
-    /**
-     * Empty chunk snapshot - nothing but air blocks, but can include valid biome data
-     */
-    private static class EmptyChunkSnapshot extends CraftChunkSnapshot {
-        EmptyChunkSnapshot(int x, int z, String worldName, long time, BiomeBase[] biome, double[] biomeTemp, double[] biomeRain) {
-            super(x, z, worldName, time, null, null, biome, biomeTemp, biomeRain);
-        }
-
-        public final int getBlockTypeId(int x, int y, int z) {
-            return 0;
-        }
-
-        public final int getBlockData(int x, int y, int z) {
-            return 0;
-        }
-
-        public final int getBlockSkyLight(int x, int y, int z) {
-            return 15;
-        }
-
-        public final int getBlockEmittedLight(int x, int y, int z) {
-            return 0;
-        }
-
-        public final int getHighestBlockYAt(int x, int z) {
-            return 0;
-        }
     }
 
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, CraftWorld world, boolean includeBiome, boolean includeBiomeTempRain) {
@@ -219,6 +202,104 @@ public class CraftChunk implements Chunk {
                     biomeRain[i] = dat[i];
             }
         }
-        return new EmptyChunkSnapshot(x, z, world.getName(), world.getFullTime(), biome, biomeTemp, biomeRain);
+        return new CraftChunkSnapshot(x, z, world.getName(), world.getFullTime(), new byte[world.getMaxHeight() >> 4][], 
+                new int[16*16], biome, biomeTemp, biomeRain);
+    }
+
+    private static class EmptySectionSnapshot implements ChunkSectionSnapshot {
+        private final int x, y, z;
+        private final String worldName;
+        private final long captureFullTime;
+        
+        EmptySectionSnapshot(int x, int y, int z, String worldName, long captureFullTime) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.worldName = worldName;
+            this.captureFullTime = captureFullTime;
+        }
+        
+        public final int getX() {
+            return x;
+        }
+
+        public final int getY() {
+            return y;
+        }
+
+        public final int getZ() {
+            return z;
+        }
+
+        public final String getWorldName() {
+            return worldName;
+        }
+
+        public final int getBlockTypeId(int x, int y, int z) {
+            return 0;
+        }
+
+        public int getBlockData(int x, int y, int z) {
+            return 0;
+        }
+
+        public int getBlockSkyLight(int x, int y, int z) {
+            return 15;
+        }
+
+        public int getBlockEmittedLight(int x, int y, int z) {
+            return 0;
+        }
+
+        public boolean isEmpty() {
+            return true;
+        }
+
+        public long getCaptureFullTime() {
+            return captureFullTime;
+        }
+        
+    }
+    
+    public ChunkSectionSnapshot getChunkSectionSnapshot(int sy) {
+        net.minecraft.server.Chunk chunk = getHandle();
+
+        World world = getWorld();
+     
+        if(isSectionEmpty(sy)) { /* If empty section */
+            return new EmptySectionSnapshot(getX(), sy, getZ(), world.getName(), world.getFullTime());
+        }
+        else {
+            byte[] buf = new byte[4096 + 2048 + 2048 + 2048]; // Get big enough buffer for whole section
+            chunk.getData(buf, 0, sy << 4, 0, 16, (sy << 4) + 16, 16, 0); // Get whole section
+            return new CraftChunkSectionSnapshot(getX(), sy, getZ(), world.getName(), world.getFullTime(), buf);
+        }
+    }
+
+    public boolean isSectionEmpty(int sy) {
+        return (sy > getTopNonEmptySection());
+    }
+
+    public int getTopNonEmptySection() {
+        net.minecraft.server.Chunk chunk = getHandle();
+        int maxy = 0;
+        /* Scan for max Y - find which sections are empty */
+        for(int i = 0; i < 256; i++) {
+            int hmax = 0xFF & (int)chunk.heightMap[i];
+            if(hmax > maxy) maxy = hmax;
+        }
+        maxy = (maxy + 15) >> 4;    /* Round up, and make into section Y coord */
+
+        return (maxy - 1);
+    }
+
+    public Biome getBiome(int x, int z) {
+        BiomeBase base = worldServer.getWorldChunkManager().getBiome((getX() << 4) + x, (getZ() << 4) + z);
+
+        return CraftBlock.biomeBaseToBiome(base);
+    }
+
+    public boolean setBiome(int x, int z, Biome biome) {
+        throw new UnsupportedOperationException("Not compatible with 1.1");
     }
 }

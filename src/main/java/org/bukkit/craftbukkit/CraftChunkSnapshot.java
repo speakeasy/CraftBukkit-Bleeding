@@ -13,18 +13,19 @@ import net.minecraft.server.BiomeBase;
 public class CraftChunkSnapshot implements ChunkSnapshot {
     private final int x, z;
     private final String worldname;
-    private final byte[] buf; // Flat buffer in uncompressed chunk file format
-    private final byte[] hmap; // Height map
+    private final byte[][] buf; // Flat buffer in uncompressed chunk section file format, indexed by section
+    private final int[] hmap; // Height map
     private final long captureFulltime;
     private final BiomeBase[] biome;
     private final double[] biomeTemp;
     private final double[] biomeRain;
+    private final int topNonEmpty;
 
-    private static final int BLOCKDATA_OFF = 32768;
-    private static final int BLOCKLIGHT_OFF = BLOCKDATA_OFF + 16384;
-    private static final int SKYLIGHT_OFF = BLOCKLIGHT_OFF + 16384;
+    private static final int BLOCKDATA_OFF = 16 * 16 * 16;
+    private static final int BLOCKLIGHT_OFF = BLOCKDATA_OFF + (16 * 16 * 16 / 2);
+    private static final int SKYLIGHT_OFF = BLOCKLIGHT_OFF + (16 * 16 * 16 / 2);
 
-    CraftChunkSnapshot(int x, int z, String wname, long wtime, byte[] buf, byte[] hmap, BiomeBase[] biome, double[] biomeTemp, double[] biomeRain) {
+    CraftChunkSnapshot(int x, int z, String wname, long wtime, byte[][] buf, int[] hmap, BiomeBase[] biome, double[] biomeTemp, double[] biomeRain) {
         this.x = x;
         this.z = z;
         this.worldname = wname;
@@ -34,59 +35,85 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         this.biome = biome;
         this.biomeTemp = biomeTemp;
         this.biomeRain = biomeRain;
+        int top;
+        for(top = buf.length - 1; top >= 0; top--) {
+            if(buf[top] != null) break;
+        }
+        topNonEmpty = top;
     }
 
-    public int getX() {
+    public final int getX() {
         return x;
     }
 
-    public int getZ() {
+    public final int getZ() {
         return z;
     }
 
-    public String getWorldName() {
+    public final String getWorldName() {
         return worldname;
     }
 
-    public int getBlockTypeId(int x, int y, int z) {
-        return buf[x << 11 | z << 7 | y] & 255;
+    public final int getBlockTypeId(int x, int y, int z) {
+        byte[] bp = buf[y >> 4];
+        if(bp != null) {
+            return bp[x << 8 | z << 4 | (y & 0x0F)] & 255;
+        }
+        return 0;
     }
 
-    public int getBlockData(int x, int y, int z) {
-        int off = ((x << 10) | (z << 6) | (y >> 1)) + BLOCKDATA_OFF;
-
-        return ((y & 1) == 0) ? (buf[off] & 0xF) : ((buf[off] >> 4) & 0xF);
+    public final int getBlockData(int x, int y, int z) {
+        byte[] bp = buf[y >> 4];
+        if(bp != null) {
+            int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + BLOCKDATA_OFF;
+            return ((y & 1) == 0) ? (bp[off] & 0xF) : ((bp[off] >> 4) & 0xF);
+        }
+        return 0;
     }
 
-    public int getBlockSkyLight(int x, int y, int z) {
-        int off = ((x << 10) | (z << 6) | (y >> 1)) + SKYLIGHT_OFF;
-
-        return ((y & 1) == 0) ? (buf[off] & 0xF) : ((buf[off] >> 4) & 0xF);
+    public final int getBlockSkyLight(int x, int y, int z) {
+        byte[] bp = buf[y >> 4];
+        if(bp != null) {
+            int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + SKYLIGHT_OFF;
+            return ((y & 1) == 0) ? (bp[off] & 0xF) : ((bp[off] >> 4) & 0xF);
+        }
+        return 15;
     }
 
-    public int getBlockEmittedLight(int x, int y, int z) {
-        int off = ((x << 10) | (z << 6) | (y >> 1)) + BLOCKLIGHT_OFF;
-
-        return ((y & 1) == 0) ? (buf[off] & 0xF) : ((buf[off] >> 4) & 0xF);
+    public final int getBlockEmittedLight(int x, int y, int z) {
+        byte[] bp = buf[y >> 4];
+        if(bp != null) {
+            int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + BLOCKLIGHT_OFF;
+            return ((y & 1) == 0) ? (bp[off] & 0xF) : ((bp[off] >> 4) & 0xF);
+        }
+        return 0;
     }
 
-    public int getHighestBlockYAt(int x, int z) {
-        return hmap[z << 4 | x] & 255;
+    public final int getHighestBlockYAt(int x, int z) {
+        return hmap[z << 4 | x];
     }
 
-    public Biome getBiome(int x, int z) {
+    public final Biome getBiome(int x, int z) {
         return CraftBlock.biomeBaseToBiome(biome[z << 4 | x]);
     }
 
-    public double getRawBiomeTemperature(int x, int z) {
+    public final double getRawBiomeTemperature(int x, int z) {
         return biomeTemp[z << 4 | x];
     }
 
-    public double getRawBiomeRainfall(int x, int z) {
+    public final double getRawBiomeRainfall(int x, int z) {
         return biomeRain[z << 4 | x];
     }
 
-    public long getCaptureFullTime() {
+    public final long getCaptureFullTime() {
         return captureFulltime;
+    }
+
+    public final boolean isSectionEmpty(int sy) {
+        return (buf[sy] == null);
+    }
+
+    public final int getTopNonEmptySection() {
+        return topNonEmpty;
     }
 }
