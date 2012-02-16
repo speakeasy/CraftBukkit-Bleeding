@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
+
 import net.minecraft.server.ChunkPosition;
 
 import net.minecraft.server.EmptyChunk;
@@ -23,6 +25,7 @@ public class CraftChunk implements Chunk {
     private WorldServer worldServer;
     private int x;
     private int z;
+    private static byte[] trivialSectionSnapshot = new byte[4096 + 2048 + 2048 + 2048];
 
     public CraftChunk(net.minecraft.server.Chunk chunk) {
         if (!(chunk instanceof EmptyChunk)) {
@@ -129,27 +132,46 @@ public class CraftChunk implements Chunk {
     public ChunkSnapshot getChunkSnapshot() {
         return getChunkSnapshot(true, false, false);
     }
-
+    
     public ChunkSnapshot getChunkSnapshot(boolean includeMaxblocky, boolean includeBiome, boolean includeBiomeTempRain) {
         net.minecraft.server.Chunk chunk = getHandle();
 
         int[] hmap = null;
-        int maxy = 0;
         World world = getWorld();
-        
-        hmap = new int[256]; // Get copy of height map
-        /* Scan for max Y - find which sections are empty */
-        for(int i = 0; i < 256; i++) {
-            hmap[i] = 0xFF & (int)chunk.heightMap[i];
-            if(hmap[i] > maxy) maxy = hmap[i];
+
+        if (includeMaxblocky) {
+            hmap = new int[256]; // Get copy of height map
+            for(int i = 0; i < 256; i++) {
+                hmap[i] = 0xFF & (int)chunk.heightMap[i];
+            }
         }
-        maxy = (maxy + 15) >> 4;    /* Round up, and make into section Y coord */
-        /* Now, read sections that aren't empty */
+        /* Now, read sections - see which are empty/trivial */
         int sectionCount = world.getMaxHeight() >> 4;
         byte[][] buf = new byte[sectionCount][];
-        for(int i = 0; (i < sectionCount) && (i < maxy); i++) {
-            buf[i] = new byte[4096 + 2048 + 2048 + 2048]; // Get big enough buffer for whole section
-            chunk.getData(buf[i], 0, i << 4, 0, 16, (i << 4) + 16, 16, 0); // Get whole section
+        boolean[] notempty = new boolean[sectionCount];
+        byte[] wrkbuf = null;
+        for(int i = 0; i < sectionCount; i++) {
+            if(wrkbuf == null)
+                wrkbuf = new byte[10240]; // Get big enough buffer for whole section
+            chunk.getData(wrkbuf, 0, i << 4, 0, 16, (i << 4) + 16, 16, 0); // Get whole section
+            /* Test if trivial section (all zero, except sky light, which is all 15 */
+            int j;
+            for(j = 0; j < 8192; j++) {
+                if(wrkbuf[j] != 0) break;
+            }
+            if(j == 8192) {
+                for(; j < 10240; j++) {
+                    if(wrkbuf[j] != (byte)0xFF) break;
+                }
+            }
+            if(j == 10240) {
+                buf[i] = trivialSectionSnapshot;
+            }
+            else {
+                buf[i] = wrkbuf;
+                wrkbuf = null;
+                notempty[i] = true;
+            }
         }
         
         BiomeBase[] biome = null;
@@ -175,7 +197,7 @@ public class CraftChunk implements Chunk {
                     biomeRain[i] = dat[i];
             }
         }
-        return new CraftChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), buf, hmap, biome, biomeTemp, biomeRain);
+        return new CraftChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), buf, notempty, hmap, biome, biomeTemp, biomeRain);
     }
 
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, CraftWorld world, boolean includeBiome, boolean includeBiomeTempRain) {
@@ -202,7 +224,12 @@ public class CraftChunk implements Chunk {
                     biomeRain[i] = dat[i];
             }
         }
-        return new CraftChunkSnapshot(x, z, world.getName(), world.getFullTime(), new byte[world.getMaxHeight() >> 4][], 
+        int sectionCount = world.getMaxHeight() >> 4;
+        byte[][] buf = new byte[sectionCount][];
+        boolean[] notempty = new boolean[sectionCount];
+        for(int i = 0; i < sectionCount; i++)
+            buf[i] = trivialSectionSnapshot;
+        return new CraftChunkSnapshot(x, z, world.getName(), world.getFullTime(), buf, notempty, 
                 new int[16*16], biome, biomeTemp, biomeRain);
     }
 
@@ -302,4 +329,10 @@ public class CraftChunk implements Chunk {
     public boolean setBiome(int x, int z, Biome biome) {
         throw new UnsupportedOperationException("Not compatible with 1.1");
     }
+    
+    static {
+        /* Trivial is all zero, except sky light, which is all 15 */
+        Arrays.fill(trivialSectionSnapshot, 8192, 8192+2048, (byte)255);
+    }
+
 }

@@ -48,29 +48,26 @@ public class CraftChunkSectionSnapshot implements ChunkSectionSnapshot {
         return buf[x << 8 | z << 4 | y] & 255;
     }
 
-    public int getBlockData(int x, int y, int z) {
+    public final int getBlockData(int x, int y, int z) {
         int off = ((x << 8) | (z << 4) | (y >> 1)) + BLOCKDATA_OFF;
-
-        return ((y & 1) == 0) ? (buf[off] & 0xF) : ((buf[off] >> 4) & 0xF);
+        return (buf[off] >> ((y & 1) << 2)) & 0xF;
     }
 
-    public int getBlockSkyLight(int x, int y, int z) {
+    public final int getBlockSkyLight(int x, int y, int z) {
         int off = ((x << 10) | (z << 6) | (y >> 1)) + SKYLIGHT_OFF;
-
-        return ((y & 1) == 0) ? (buf[off] & 0xF) : ((buf[off] >> 4) & 0xF);
+        return (buf[off] >> ((y & 1) << 2)) & 0xF;
     }
 
-    public int getBlockEmittedLight(int x, int y, int z) {
+    public final int getBlockEmittedLight(int x, int y, int z) {
         int off = ((x << 10) | (z << 6) | (y >> 1)) + BLOCKLIGHT_OFF;
-
-        return ((y & 1) == 0) ? (buf[off] & 0xF) : ((buf[off] >> 4) & 0xF);
+        return (buf[off] >> ((y & 1) << 2)) & 0xF;
     }
 
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return false;
     }
 
-    public long getCaptureFullTime() {
+    public final long getCaptureFullTime() {
         return captureFulltime;
     }
 }

@@ -20,12 +20,13 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     private final double[] biomeTemp;
     private final double[] biomeRain;
     private final int topNonEmpty;
+    private final boolean[] notEmpty;
 
     private static final int BLOCKDATA_OFF = 16 * 16 * 16;
     private static final int BLOCKLIGHT_OFF = BLOCKDATA_OFF + (16 * 16 * 16 / 2);
     private static final int SKYLIGHT_OFF = BLOCKLIGHT_OFF + (16 * 16 * 16 / 2);
 
-    CraftChunkSnapshot(int x, int z, String wname, long wtime, byte[][] buf, int[] hmap, BiomeBase[] biome, double[] biomeTemp, double[] biomeRain) {
+    CraftChunkSnapshot(int x, int z, String wname, long wtime, byte[][] buf, boolean[] notempty, int[] hmap, BiomeBase[] biome, double[] biomeTemp, double[] biomeRain) {
         this.x = x;
         this.z = z;
         this.worldname = wname;
@@ -35,9 +36,10 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         this.biome = biome;
         this.biomeTemp = biomeTemp;
         this.biomeRain = biomeRain;
+        this.notEmpty = notempty;
         int top;
         for(top = buf.length - 1; top >= 0; top--) {
-            if(buf[top] != null) break;
+            if(notEmpty[top]) break;
         }
         topNonEmpty = top;
     }
@@ -55,38 +57,22 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     }
 
     public final int getBlockTypeId(int x, int y, int z) {
-        byte[] bp = buf[y >> 4];
-        if(bp != null) {
-            return bp[x << 8 | z << 4 | (y & 0x0F)] & 255;
-        }
-        return 0;
+        return buf[y >> 4][x << 8 | z << 4 | (y & 0x0F)] & 255;
     }
 
     public final int getBlockData(int x, int y, int z) {
-        byte[] bp = buf[y >> 4];
-        if(bp != null) {
-            int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + BLOCKDATA_OFF;
-            return ((y & 1) == 0) ? (bp[off] & 0xF) : ((bp[off] >> 4) & 0xF);
-        }
-        return 0;
+        int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + BLOCKDATA_OFF;
+        return (buf[y >> 4][off] >> ((y & 1) << 2)) & 0xF;
     }
 
     public final int getBlockSkyLight(int x, int y, int z) {
-        byte[] bp = buf[y >> 4];
-        if(bp != null) {
-            int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + SKYLIGHT_OFF;
-            return ((y & 1) == 0) ? (bp[off] & 0xF) : ((bp[off] >> 4) & 0xF);
-        }
-        return 15;
+        int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + SKYLIGHT_OFF;
+        return (buf[y >> 4][off] >> ((y & 1) << 2)) & 0xF;
     }
 
     public final int getBlockEmittedLight(int x, int y, int z) {
-        byte[] bp = buf[y >> 4];
-        if(bp != null) {
-            int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + BLOCKLIGHT_OFF;
-            return ((y & 1) == 0) ? (bp[off] & 0xF) : ((bp[off] >> 4) & 0xF);
-        }
-        return 0;
+        int off = ((x << 7) | (z << 3) | ((y & 0x0F) >> 1)) + BLOCKLIGHT_OFF;
+        return (buf[y >> 4][off] >> ((y & 1) << 2)) & 0xF;
     }
 
     public final int getHighestBlockYAt(int x, int z) {
@@ -110,7 +96,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     }
 
     public final boolean isSectionEmpty(int sy) {
-        return (buf[sy] == null);
+        return !notEmpty[sy];
     }
 
     public final int getTopNonEmptySection() {
