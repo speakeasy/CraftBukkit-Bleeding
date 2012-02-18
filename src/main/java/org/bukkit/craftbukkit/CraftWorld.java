@@ -760,6 +760,12 @@ public class CraftWorld implements World {
         return spawn(location, clazz, SpawnReason.CUSTOM);
     }
 
+    public FallingBlock spawnFallingBlock(Location location, Material material) {
+        FallingBlock block = spawn(location, FallingBlock.class);
+        block.setBlockType(material);
+        return block;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Entity> T spawn(Location location, Class<T> clazz, SpawnReason reason) throws IllegalArgumentException {
         if (location == null || clazz == null) {
