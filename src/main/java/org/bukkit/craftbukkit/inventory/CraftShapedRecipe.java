@@ -50,9 +50,10 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
             data[i] = shape[i];
         }
         for (char c : ingred.keySet()) {
+            ItemStack mdata = ingred.get(c);
+            if (mdata == null) continue;
             data[i] = c;
             i++;
-            ItemStack mdata = ingred.get(c);
             int id = mdata.getTypeId();
             short dmg = mdata.getDurability();
             data[i] = new net.minecraft.server.ItemStack(id, 1, dmg);
