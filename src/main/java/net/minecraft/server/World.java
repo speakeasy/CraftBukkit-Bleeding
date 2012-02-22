@@ -27,7 +27,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Vehicle;
 // CraftBukkit end
 
 public class World implements IBlockAccess {
@@ -880,25 +879,8 @@ public class World implements IBlockAccess {
         }
 
         // CraftBukkit start
-        if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
-            boolean isAnimal = entity instanceof EntityAnimal || entity instanceof EntityWaterAnimal;
-            boolean isMonster = entity instanceof EntityMonster || entity instanceof EntityGhast || entity instanceof EntitySlime;
-
-            if (spawnReason == SpawnReason.NATURAL || spawnReason == SpawnReason.SPAWNER || spawnReason == SpawnReason.BED || spawnReason == SpawnReason.EGG) {
-                if (isAnimal && !allowAnimals || isMonster && !allowMonsters) return false;
-            }
-
-            if (CraftEventFactory.callCreatureSpawnEvent((EntityLiving) entity, spawnReason).isCancelled()) {
-                return false;
-            }
-        } else if (entity instanceof EntityItem) {
-            if (CraftEventFactory.callItemSpawnEvent((EntityItem) entity).isCancelled()) {
-                return false;
-            }
-        } else if (!(entity instanceof EntityPlayer || entity instanceof EntityArrow || entity.getBukkitEntity() instanceof Vehicle || entity instanceof EntityPainting)) {
-            if (CraftEventFactory.callEntitySpawnEvent(entity).isCancelled()) {
-                return false;
-            }
+        if (CraftEventFactory.handleEntitySpawn(entity, spawnReason)) {
+            return false;
         }
         // CraftBukkit end
 

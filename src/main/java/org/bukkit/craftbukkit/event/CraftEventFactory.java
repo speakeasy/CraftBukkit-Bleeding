@@ -24,6 +24,7 @@ import net.minecraft.server.EntityItem;
 import net.minecraft.server.EntityMagmaCube;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityMushroomCow;
+import net.minecraft.server.EntityPainting;
 import net.minecraft.server.EntityPig;
 import net.minecraft.server.EntityPigZombie;
 import net.minecraft.server.EntityPlayer;
@@ -56,12 +57,16 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -444,5 +449,28 @@ public class CraftEventFactory {
         EntitySpawnEvent event = new EntitySpawnEvent(e, e.getLocation());
         e.getServer().getPluginManager().callEvent(event);
         return event;
+    }
+
+    public static boolean handleEntitySpawn(Entity entity, SpawnReason spawnReason) {
+        Cancellable event = null;
+        if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
+            boolean isAnimal = entity.getBukkitEntity() instanceof Animals;
+            boolean isMonster = entity.getBukkitEntity() instanceof Monster;
+
+            // Should we be overriding EGG?
+            if (spawnReason == SpawnReason.NATURAL || spawnReason == SpawnReason.SPAWNER || spawnReason == SpawnReason.BED || spawnReason == SpawnReason.EGG) {
+                if (isAnimal && !entity.world.allowAnimals || isMonster && !entity.world.allowMonsters) {
+                    return false;
+                }
+            }
+
+            event = CraftEventFactory.callCreatureSpawnEvent((EntityLiving) entity, spawnReason);
+        } else if (entity instanceof EntityItem) {
+            event = CraftEventFactory.callItemSpawnEvent((EntityItem) entity);
+        } else if (!(entity instanceof EntityPlayer || entity instanceof EntityArrow || entity.getBukkitEntity() instanceof Vehicle || entity instanceof EntityPainting)) {
+            event = CraftEventFactory.callEntitySpawnEvent(entity);
+        }
+
+        return !event.isCancelled(); // If it's cancelled, return false
     }
 }
