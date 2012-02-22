@@ -66,7 +66,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -452,7 +451,7 @@ public class CraftEventFactory {
     }
 
     public static boolean handleEntitySpawn(Entity entity, SpawnReason spawnReason) {
-        Cancellable event = null;
+        EntitySpawnEvent event = null;
         if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
             boolean isAnimal = entity.getBukkitEntity() instanceof Animals;
             boolean isMonster = entity.getBukkitEntity() instanceof Monster;
@@ -471,6 +470,6 @@ public class CraftEventFactory {
             event = CraftEventFactory.callEntitySpawnEvent(entity);
         }
 
-        return !event.isCancelled(); // If it's cancelled, return false
+        return event.isCancelled();
     }
 }
