@@ -2,15 +2,13 @@ package net.minecraft.server;
 
 import java.util.Random;
 
-// CraftBukkit start
-import org.bukkit.BlockChangeDelegate;
-// CraftBukkit end
+import org.bukkit.BlockChangeDelegate; // CraftBukkit
 
 public class WorldGenBigTree extends WorldGenerator {
 
     static final byte[] a = new byte[] { (byte) 2, (byte) 0, (byte) 0, (byte) 1, (byte) 2, (byte) 1};
     Random b = new Random();
-    BlockChangeDelegate world;  // CraftBukkit start
+    BlockChangeDelegate world;  // CraftBukkit
     int[] d = new int[] { 0, 0, 0};
     int e = 0;
     int f;
