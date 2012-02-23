@@ -2,6 +2,12 @@ package net.minecraft.server;
 
 import java.util.Random;
 
+// CraftBukkit start
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.event.block.BlockTeleportEvent;
+// CraftBukkit end
+
 public class BlockDragonEgg extends Block {
 
     public BlockDragonEgg(int i, int j) {
@@ -61,6 +67,18 @@ public class BlockDragonEgg extends Block {
                     int k1 = k + world.random.nextInt(16) - world.random.nextInt(16);
 
                     if (world.getTypeId(i1, j1, k1) == 0) {
+                        // CraftBukkit start - EntityTeleportEvent
+                        org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
+                        Location from = new Location(world.getWorld(), i, j, k);
+                        Location to = new Location(world.getWorld(), i, j, k);
+                        BlockTeleportEvent event = new BlockTeleportEvent(block, from, to);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (!event.isCancelled()) {
+                            i1 = event.getTo().getBlockX();
+                            j1 = event.getTo().getBlockY();
+                            k1 = event.getTo().getBlockZ();
+                        } else return;
+                        // CraftBukkit end
                         world.setTypeIdAndData(i1, j1, k1, this.id, world.getData(i, j, k));
                         world.setTypeId(i, j, k, 0);
                         short short1 = 128;
