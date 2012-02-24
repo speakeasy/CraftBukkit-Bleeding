@@ -70,7 +70,7 @@ public class BlockDragonEgg extends Block {
                         // CraftBukkit start - EntityTeleportEvent
                         org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
                         Location from = new Location(world.getWorld(), i, j, k);
-                        Location to = new Location(world.getWorld(), i, j, k);
+                        Location to = new Location(world.getWorld(), i1, j1, k1);
                         BlockTeleportEvent event = new BlockTeleportEvent(block, from, to);
                         Bukkit.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
