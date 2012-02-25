@@ -2,12 +2,6 @@ package net.minecraft.server;
 
 import java.util.Random;
 
-// CraftBukkit start
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.event.block.BlockTeleportEvent;
-// CraftBukkit end
-
 public class BlockDragonEgg extends Block {
 
     public BlockDragonEgg(int i, int j) {
@@ -68,15 +62,14 @@ public class BlockDragonEgg extends Block {
 
                     if (world.getTypeId(i1, j1, k1) == 0) {
                         // CraftBukkit start - EntityTeleportEvent
-                        org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
-                        Location from = new Location(world.getWorld(), i, j, k);
-                        Location to = new Location(world.getWorld(), i1, j1, k1);
-                        BlockTeleportEvent event = new BlockTeleportEvent(block, from, to);
-                        Bukkit.getPluginManager().callEvent(event);
+                        org.bukkit.block.Block from = world.getWorld().getBlockAt(i, j, k);
+                        org.bukkit.block.Block to = world.getWorld().getBlockAt(i1, j1, k1);
+                        org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(from, to);
+                        org.bukkit.Bukkit.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            i1 = event.getTo().getBlockX();
-                            j1 = event.getTo().getBlockY();
-                            k1 = event.getTo().getBlockZ();
+                            i1 = event.getToBlock().getX();
+                            j1 = event.getToBlock().getY();
+                            k1 = event.getToBlock().getZ();
                         } else return;
                         // CraftBukkit end
                         world.setTypeIdAndData(i1, j1, k1, this.id, world.getData(i, j, k));
