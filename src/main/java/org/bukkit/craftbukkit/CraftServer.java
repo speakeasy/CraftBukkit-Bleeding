@@ -190,6 +190,7 @@ public final class CraftServer implements Server {
             commandMap.registerServerAliases();
             loadCustomPermissions();
             DefaultPermissions.registerCorePermissions();
+            helpMap.initialize(this);
         }
     }
 
@@ -1019,5 +1020,9 @@ public final class CraftServer implements Server {
     
     public HelpMap getHelpMap() {
         return helpMap;
+    }
+
+    public SimpleCommandMap getCommandMap() {
+        return commandMap;
     }
 }

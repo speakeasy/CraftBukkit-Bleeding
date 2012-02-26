@@ -1,21 +1,23 @@
 package org.bukkit.craftbukkit.help;
 
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.help.HelpTopic;
 
-public class PluginCommandHelpTopic implements HelpTopic {
+public class GenericCommandHelpTopic implements HelpTopic {
 
-    private PluginCommand command;
+    private Command command;
 
-    public PluginCommandHelpTopic(PluginCommand command) {
+    public GenericCommandHelpTopic(Command command) {
         this.command = command;
     }
 
     public boolean canSee(CommandSender sender) {
-        if (!command.isRegistered() || command.getExecutor() == null) {
+        if (!command.isRegistered()) {
+            // Unregistered commands should not show up in the help
             return false;
         }
 

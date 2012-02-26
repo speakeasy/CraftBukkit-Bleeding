@@ -1,5 +1,9 @@
 package org.bukkit.craftbukkit.help;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.MultipleCommandAlias;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
 
@@ -33,5 +37,18 @@ public class SimpleHelpMap implements HelpMap {
 
     public synchronized void clear() {
         helpTopics.clear();
+    }
+
+    public synchronized void initialize(CraftServer server) {
+        clear();
+
+        // Initialize help topics from the server's command map
+        for (Command command : server.getCommandMap().getCommands()) {
+            if (command instanceof MultipleCommandAlias) {
+                addTopic(new MultipleCommandAliasHelpTopic((MultipleCommandAlias)command));
+            } else {
+                addTopic(new GenericCommandHelpTopic(command));
+            }
+        }
     }
 }
