@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit;
 
 import java.io.FileNotFoundException;
 
+import org.bukkit.craftbukkit.help.SimpleHelpMap;
 import org.bukkit.generator.ChunkGenerator;
 import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebean.config.ServerConfig;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.help.HelpMap;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -98,6 +100,7 @@ public final class CraftServer implements Server {
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final BukkitScheduler scheduler = new CraftScheduler(this);
     private final SimpleCommandMap commandMap = new SimpleCommandMap(this);
+    private final SimpleHelpMap helpMap = new SimpleHelpMap();
     private final StandardMessenger messenger = new StandardMessenger();
     private final PluginManager pluginManager = new SimplePluginManager(this, commandMap);
     protected final MinecraftServer console;
@@ -1012,5 +1015,9 @@ public final class CraftServer implements Server {
         }
 
         return result;
+    }
+    
+    public HelpMap getHelpMap() {
+        return helpMap;
     }
 }
