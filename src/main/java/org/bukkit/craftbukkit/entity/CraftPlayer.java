@@ -13,12 +13,16 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.*;
+
+import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.Achievement;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.craftbukkit.CraftEffect;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -31,6 +35,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
+import org.bukkit.potion.Potion;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -223,6 +228,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         int packetData = effect.getId();
         Packet61WorldEvent packet = new Packet61WorldEvent(packetData, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), data);
         getHandle().netServerHandler.sendPacket(packet);
+    }
+
+    public <T> void playEffect(Location loc, Effect effect, T data) {
+        if (data != null) {
+            Validate.isTrue(data.getClass().equals(effect.getData()), "Wrong kind of data for this effect!");
+        } else {
+            Validate.isTrue(effect.getData() == null, "Wrong kind of data for this effect!");
+        }
+
+        int datavalue = data == null ? 0 : CraftEffect.getDataValue(effect, data);
+        playEffect(loc, effect, datavalue);
     }
 
     public void sendBlockChange(Location loc, Material material, byte data) {
