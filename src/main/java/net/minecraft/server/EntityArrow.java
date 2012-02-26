@@ -26,6 +26,7 @@ public class EntityArrow extends Entity {
     private double damage = 2.0D;
     private int n;
     public boolean d = false;
+    public int sourceX, sourceY, sourceZ; // CraftBukkit - new variables
 
     public EntityArrow(World world) {
         super(world);
@@ -381,4 +382,20 @@ public class EntityArrow extends Entity {
     public boolean k_() {
         return false;
     }
+
+    // CraftBukkit start
+    public void setSourceBlock(int x, int y, int z) {
+        this.sourceX = x;
+        this.sourceY = y;
+        this.sourceZ = z;
+    }
+
+    public void setSourceBlock(org.bukkit.Location loc) {
+        setSourceBlock(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    public org.bukkit.Location getSourceBlock() {
+        return new org.bukkit.Location(world.getWorld(), sourceX, sourceY, sourceZ);
+    }
+    // CraftBukkit end
 }

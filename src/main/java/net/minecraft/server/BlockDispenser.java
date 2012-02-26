@@ -144,6 +144,7 @@ public class BlockDispenser extends BlockContainer {
 
                 if (itemstack.id == Item.ARROW.id) {
                     EntityArrow entityarrow = new EntityArrow(world, d0, d1, d2);
+                    entityarrow.setSourceBlock(i, j, k); // CraftBukkit
 
                     entityarrow.shoot((double) b0, 0.10000000149011612D, (double) b1, 1.1F, 6.0F);
                     entityarrow.fromPlayer = true;
@@ -151,18 +152,21 @@ public class BlockDispenser extends BlockContainer {
                     world.triggerEffect(1002, i, j, k, 0);
                 } else if (itemstack.id == Item.EGG.id) {
                     EntityEgg entityegg = new EntityEgg(world, d0, d1, d2);
+                    entityegg.setSourceBlock(i, j, k); // CraftBukkit
 
                     entityegg.a((double) b0, 0.10000000149011612D, (double) b1, 1.1F, 6.0F);
                     world.addEntity(entityegg);
                     world.triggerEffect(1002, i, j, k, 0);
                 } else if (itemstack.id == Item.SNOW_BALL.id) {
                     EntitySnowball entitysnowball = new EntitySnowball(world, d0, d1, d2);
+                    entitysnowball.setSourceBlock(i, j, k); // CraftBukkit
 
                     entitysnowball.a((double) b0, 0.10000000149011612D, (double) b1, 1.1F, 6.0F);
                     world.addEntity(entitysnowball);
                     world.triggerEffect(1002, i, j, k, 0);
                 } else if (itemstack.id == Item.POTION.id && ItemPotion.c(itemstack.getData())) {
                     EntityPotion entitypotion = new EntityPotion(world, d0, d1, d2, itemstack.getData());
+                    entitypotion.setSourceBlock(i, j, k); // CraftBukkit
 
                     entitypotion.a((double) b0, 0.10000000149011612D, (double) b1, 1.375F, 3.0F);
                     world.addEntity(entitypotion);

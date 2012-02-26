@@ -3,10 +3,13 @@ package org.bukkit.craftbukkit.entity;
 import net.minecraft.server.EntityFireball;
 import net.minecraft.server.EntityLiving;
 
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.ProjectileShooter;
 import org.bukkit.util.Vector;
 
 public class CraftFireball extends AbstractProjectile implements Fireball {
@@ -30,17 +33,25 @@ public class CraftFireball extends AbstractProjectile implements Fireball {
         getHandle().yield = yield;
     }
 
-    public LivingEntity getShooter() {
+    public ProjectileShooter getShooter() {
         if (getHandle().shooter != null) {
             return (LivingEntity) getHandle().shooter.getBukkitEntity();
+        } else {
+            BlockState block = getWorld().getBlockAt(getHandle().getSourceBlock()).getState();
+            if (block instanceof Dispenser) {
+                return (Dispenser) block;
+            }
         }
 
         return null;
     }
 
-    public void setShooter(LivingEntity shooter) {
+    public void setShooter(ProjectileShooter shooter) {
         if (shooter instanceof CraftLivingEntity) {
             getHandle().shooter = (EntityLiving) ((CraftLivingEntity) shooter).entity;
+        } else if (shooter instanceof Dispenser) {
+            getHandle().shooter = null;
+            getHandle().setSourceBlock(((Dispenser) shooter).getBlock().getLocation());
         }
     }
 

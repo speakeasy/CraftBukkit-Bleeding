@@ -11,7 +11,10 @@ import net.minecraft.server.EntityArrow;
 import net.minecraft.server.EntityEgg;
 import net.minecraft.server.EntityEnderPearl;
 import net.minecraft.server.EntityFireball;
+import net.minecraft.server.EntityFishingHook;
+import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityPotion;
 import net.minecraft.server.EntitySmallFireball;
 import net.minecraft.server.EntitySnowball;
 import net.minecraft.server.EntityPlayer;
@@ -25,6 +28,7 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fish;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Fireball;
@@ -33,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -273,6 +278,11 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             launch.setPositionRotation(getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch());
             Vector direction = getLocation().getDirection().multiply(10);
             ((EntityFireball) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
+        } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
+            launch = new EntityPotion(world, getHandle(), 0);
+        } else if (Fish.class.isAssignableFrom(projectile)) {
+            Validate.isTrue(this instanceof HumanEntity, "Entities other than players cannot throw fishing hooks.");
+            launch = new EntityFishingHook(world, (EntityHuman) getHandle());
         }
 
         Validate.notNull(launch, "Projectile not supported");

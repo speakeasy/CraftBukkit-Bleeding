@@ -23,6 +23,7 @@ public class EntityFishingHook extends Entity {
     private double o;
     private double p;
     private double q;
+    public int sourceX, sourceY, sourceZ; // CraftBukkit - new variables
 
     public EntityFishingHook(World world) {
         super(world);
@@ -383,4 +384,20 @@ public class EntityFishingHook extends Entity {
         this.owner.hookedFish = null;
         return b0;
     }
+
+    // CraftBukkit start
+    public void setSourceBlock(int x, int y, int z) {
+        this.sourceX = x;
+        this.sourceY = y;
+        this.sourceZ = z;
+    }
+
+    public void setSourceBlock(org.bukkit.Location loc) {
+        setSourceBlock(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    public org.bukkit.Location getSourceBlock() {
+        return new org.bukkit.Location(world.getWorld(), sourceX, sourceY, sourceZ);
+    }
+    // CraftBukkit end
 }

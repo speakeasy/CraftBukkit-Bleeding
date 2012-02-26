@@ -2,10 +2,13 @@ package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.server.EntityArrow;
 
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.ProjectileShooter;
 
 public class CraftArrow extends AbstractProjectile implements Arrow {
 
@@ -13,17 +16,25 @@ public class CraftArrow extends AbstractProjectile implements Arrow {
         super(server, entity);
     }
 
-    public LivingEntity getShooter() {
+    public ProjectileShooter getShooter() {
         if (getHandle().shooter != null) {
             return (LivingEntity) getHandle().shooter.getBukkitEntity();
+        } else {
+            BlockState block = getWorld().getBlockAt(getHandle().getSourceBlock()).getState();
+            if (block instanceof Dispenser) {
+                return (Dispenser) block;
+            }
         }
 
         return null;
     }
 
-    public void setShooter(LivingEntity shooter) {
+    public void setShooter(ProjectileShooter shooter) {
         if (shooter instanceof CraftLivingEntity) {
-            getHandle().shooter = ((CraftLivingEntity) shooter).getHandle();
+            getHandle().shooter = ((CraftLivingEntity) shooter).entity;
+        } else if (shooter instanceof Dispenser) {
+            getHandle().shooter = null;
+            getHandle().setSourceBlock(((Dispenser) shooter).getBlock().getLocation());
         }
     }
 
