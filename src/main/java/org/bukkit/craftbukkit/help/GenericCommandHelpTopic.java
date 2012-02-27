@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.help;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.apache.commons.lang.StringUtils;
@@ -38,12 +39,21 @@ public class GenericCommandHelpTopic implements HelpTopic {
 
     public String getFullText() {
         StringBuffer sb = new StringBuffer();
+        sb.append(ChatColor.GOLD);
+        sb.append("Usage: ");
+        sb.append(ChatColor.WHITE);
         sb.append(command.getUsage());
         sb.append("\n");
+        sb.append(ChatColor.GOLD);
+        sb.append("Description: ");
+        sb.append(ChatColor.WHITE);
         sb.append(command.getDescription());
-        sb.append("\n");
         if (command.getAliases().size() > 0) {
-            sb.append(command.getDescription() + "Aliases: " + StringUtils.join(command.getAliases(), ", "));
+            sb.append("\n");
+            sb.append(ChatColor.GOLD);
+            sb.append("Aliases: ");
+            sb.append(ChatColor.WHITE);
+            sb.append(ChatColor.WHITE + StringUtils.join(command.getAliases(), ", "));
         }
         return sb.toString();
     }

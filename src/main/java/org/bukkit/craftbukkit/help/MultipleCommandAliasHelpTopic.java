@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.help;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.MultipleCommandAlias;
@@ -35,7 +36,7 @@ public class MultipleCommandAliasHelpTopic implements HelpTopic {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < alias.getCommands().length; i++) {
             if (i != 0) {
-                sb.append(" > ");
+                sb.append(ChatColor.GOLD + " > " + ChatColor.WHITE);
             }
             sb.append("/");
             sb.append(alias.getCommands()[i].getLabel());
@@ -44,6 +45,6 @@ public class MultipleCommandAliasHelpTopic implements HelpTopic {
     }
 
     public String getFullText() {
-        return "Alias for: " + getShortText();
+        return ChatColor.GOLD + "Alias for: " + ChatColor.WHITE + getShortText();
     }
 }

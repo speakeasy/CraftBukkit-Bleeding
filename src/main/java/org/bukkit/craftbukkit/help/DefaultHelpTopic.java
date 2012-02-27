@@ -19,7 +19,7 @@ public class DefaultHelpTopic implements HelpTopic {
     }
 
     public String getName() {
-        return "";
+        return "Overall";
     }
 
     public String getShortText() {
@@ -30,7 +30,7 @@ public class DefaultHelpTopic implements HelpTopic {
         StringBuilder sb = new StringBuilder();
         for (HelpTopic topic : allTopics) {
             sb.append(ChatColor.GOLD);
-            sb.append(topic.getName());
+            sb.append(topic.getName().startsWith("/") ? topic.getName() : "/" + topic.getName());
             sb.append(": ");
             sb.append(ChatColor.WHITE);
             sb.append(topic.getShortText());

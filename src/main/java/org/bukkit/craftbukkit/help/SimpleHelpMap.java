@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.help;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.MultipleCommandAlias;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
@@ -32,7 +31,11 @@ public class SimpleHelpMap implements HelpMap {
     }
 
     public synchronized void addTopic(HelpTopic topic) {
-        helpTopics.put(topic.getName(), topic);
+        if (topic.getName().startsWith("/")) {
+            helpTopics.put(topic.getName(), topic);
+        } else {
+            helpTopics.put("/" + topic.getName(), topic);
+        }
     }
 
     public synchronized void clear() {
