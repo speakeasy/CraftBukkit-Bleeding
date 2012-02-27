@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.help.HelpTopic;
 
 public class GenericCommandHelpTopic implements HelpTopic {
@@ -17,8 +18,8 @@ public class GenericCommandHelpTopic implements HelpTopic {
     }
 
     public boolean canSee(CommandSender sender) {
-        if (!command.isRegistered()) {
-            // Unregistered commands should not show up in the help
+        if (!command.isRegistered() && !(command instanceof VanillaCommand)) {
+            // Unregistered commands should not show up in the help (ignore VanillaCommands)
             return false;
         }
 
@@ -37,17 +38,21 @@ public class GenericCommandHelpTopic implements HelpTopic {
         return command.getUsage();
     }
 
-    public String getFullText() {
+    public String getFullText(CommandSender sender) {
         StringBuffer sb = new StringBuffer();
-        sb.append(ChatColor.GOLD);
-        sb.append("Usage: ");
-        sb.append(ChatColor.WHITE);
-        sb.append(command.getUsage());
-        sb.append("\n");
+
         sb.append(ChatColor.GOLD);
         sb.append("Description: ");
         sb.append(ChatColor.WHITE);
         sb.append(command.getDescription());
+
+        sb.append("\n");
+
+        sb.append(ChatColor.GOLD);
+        sb.append("Usage: ");
+        sb.append(ChatColor.WHITE);
+        sb.append(command.getUsage());
+
         if (command.getAliases().size() > 0) {
             sb.append("\n");
             sb.append(ChatColor.GOLD);

@@ -44,7 +44,7 @@ public class MultipleCommandAliasHelpTopic implements HelpTopic {
         return sb.toString();
     }
 
-    public String getFullText() {
+    public String getFullText(CommandSender sender) {
         return ChatColor.GOLD + "Alias for: " + ChatColor.WHITE + getShortText();
     }
 }

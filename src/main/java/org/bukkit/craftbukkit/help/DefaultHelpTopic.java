@@ -14,7 +14,7 @@ public class DefaultHelpTopic implements HelpTopic {
         this.allTopics = allTopics;
     }
 
-    public boolean canSee(CommandSender player) {
+    public boolean canSee(CommandSender sender) {
         return true;
     }
 
@@ -26,15 +26,17 @@ public class DefaultHelpTopic implements HelpTopic {
         return "";
     }
 
-    public String getFullText() {
+    public String getFullText(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (HelpTopic topic : allTopics) {
-            sb.append(ChatColor.GOLD);
-            sb.append(topic.getName().startsWith("/") ? topic.getName() : "/" + topic.getName());
-            sb.append(": ");
-            sb.append(ChatColor.WHITE);
-            sb.append(topic.getShortText());
-            sb.append("\n");
+            if (topic.canSee(sender)) {
+                sb.append(ChatColor.GOLD);
+                sb.append(topic.getName().startsWith("/") ? topic.getName() : "/" + topic.getName());
+                sb.append(": ");
+                sb.append(ChatColor.WHITE);
+                sb.append(topic.getShortText());
+                sb.append("\n");
+            }
         }
         return sb.toString();
     }
