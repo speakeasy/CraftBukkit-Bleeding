@@ -32,11 +32,7 @@ public class SimpleHelpMap implements HelpMap {
     }
 
     public synchronized void addTopic(HelpTopic topic) {
-        if (topic.getName().startsWith("/")) {
-            helpTopics.put(topic.getName(), topic);
-        } else {
-            helpTopics.put("/" + topic.getName(), topic);
-        }
+        helpTopics.put(topic.getName(), topic);
     }
 
     public synchronized void clear() {

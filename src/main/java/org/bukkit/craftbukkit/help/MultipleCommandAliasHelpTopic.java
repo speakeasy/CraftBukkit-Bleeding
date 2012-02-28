@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.help;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.MultipleCommandAlias;
@@ -17,19 +18,21 @@ public class MultipleCommandAliasHelpTopic implements HelpTopic {
     }
 
     public boolean canSee(CommandSender sender) {
-        if (!alias.isRegistered()) {
-            return false;
-        }
-
         if (sender instanceof ConsoleCommandSender) {
             return true;
         }
 
-        return alias.testPermissionSilent(sender);
+        for (Command command : alias.getCommands()) {
+            if (!command.testPermissionSilent(sender)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public String getName() {
-        return alias.getLabel();
+        return "/" + alias.getLabel();
     }
 
     public String getShortText() {

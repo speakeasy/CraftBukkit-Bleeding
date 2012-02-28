@@ -2,7 +2,10 @@ package org.bukkit.craftbukkit.help;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
+import org.bukkit.util.ChatPaginator;
 
 import java.util.Collection;
 
@@ -30,11 +33,20 @@ public class DefaultHelpTopic implements HelpTopic {
         StringBuilder sb = new StringBuilder();
         for (HelpTopic topic : allTopics) {
             if (topic.canSee(sender)) {
-                sb.append(ChatColor.GOLD);
-                sb.append(topic.getName().startsWith("/") ? topic.getName() : "/" + topic.getName());
-                sb.append(": ");
-                sb.append(ChatColor.WHITE);
-                sb.append(topic.getShortText());
+                StringBuilder line = new StringBuilder();
+                line.append(ChatColor.GOLD);
+                line.append(topic.getName().startsWith("/") ? topic.getName() : "/" + topic.getName());
+                line.append(": ");
+                line.append(ChatColor.WHITE);
+                line.append(topic.getShortText());
+
+                String lineStr = line.toString().replace("\n", ". ");
+                if (sender instanceof Player && lineStr.length() > ChatPaginator.DEFAULT_CHAT_WIDTH) {
+                    sb.append(lineStr.substring(0, ChatPaginator.DEFAULT_CHAT_WIDTH - 3));
+                    sb.append("...");
+                } else {
+                    sb.append(lineStr);
+                }
                 sb.append("\n");
             }
         }

@@ -31,11 +31,21 @@ public class GenericCommandHelpTopic implements HelpTopic {
     }
 
     public String getName() {
-        return command.getLabel();
+        if (command.getLabel().startsWith("/")) {
+            return command.getLabel();
+        } else {
+            return "/" + command.getLabel();
+        }
     }
 
     public String getShortText() {
-        return command.getUsage();
+        // The short text is the first line of the description
+        int i = command.getDescription().indexOf("\n");
+        if (i > 1) {
+            return command.getDescription().substring(0, i - 1);
+        } else {
+            return command.getDescription();
+        }
     }
 
     public String getFullText(CommandSender sender) {
