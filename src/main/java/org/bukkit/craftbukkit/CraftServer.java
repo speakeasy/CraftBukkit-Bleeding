@@ -178,6 +178,11 @@ public final class CraftServer implements Server {
     }
 
     public void enablePlugins(PluginLoadOrder type) {
+        if (type == PluginLoadOrder.STARTUP) {
+            helpMap.clear();
+            helpMap.initializeHelpYaml(this);
+        }
+
         Plugin[] plugins = pluginManager.getPlugins();
 
         for (Plugin plugin : plugins) {
@@ -190,7 +195,7 @@ public final class CraftServer implements Server {
             commandMap.registerServerAliases();
             loadCustomPermissions();
             DefaultPermissions.registerCorePermissions();
-            helpMap.initialize(this);
+            helpMap.initializeCommands(this);
         }
     }
 

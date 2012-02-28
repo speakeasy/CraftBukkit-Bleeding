@@ -6,6 +6,7 @@ import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
+import org.bukkit.help.HelpTopicFactory;
 
 import java.util.*;
 
@@ -13,10 +14,14 @@ public class SimpleHelpMap implements HelpMap {
     
     private HelpTopic defaultTopic;
     private Map<String, HelpTopic> helpTopics;
+    private Map<Class, HelpTopicFactory> topicFactoryMap;
 
     public SimpleHelpMap() {
         helpTopics = new TreeMap<String, HelpTopic>(); // Using a TreeMap for its explicit sorting on key
         defaultTopic = new DefaultHelpTopic(helpTopics.values());
+        topicFactoryMap = new HashMap<Class, HelpTopicFactory>();
+
+        registerHelpTopicFactory(MultipleCommandAlias.class, new MultipleCommandAliasHelpTopicFactory());
     }
     
     public synchronized HelpTopic getHelpTopic(String topicName) {
@@ -42,18 +47,18 @@ public class SimpleHelpMap implements HelpMap {
         helpTopics.clear();
     }
 
-    public synchronized void initialize(CraftServer server) {
-        clear();
-        // ** Load topics from highest to lowest priority order **
-
+    // ** Load topics from highest to lowest priority order **
+    public synchronized void initializeHelpYaml(CraftServer server) {
         // Initialize general help topics from the help.yml file
 
         // Initialize command topic overrides from the help.yml file
+    }
 
+    public synchronized void initializeCommands(CraftServer server) {
         // Initialize help topics from the server's command map
         for (Command command : server.getCommandMap().getCommands()) {
-            if (command instanceof MultipleCommandAlias) {
-                addTopic(new MultipleCommandAliasHelpTopic((MultipleCommandAlias)command));
+            if (topicFactoryMap.containsKey(command.getClass())) {
+                addTopic(topicFactoryMap.get(command.getClass()).createTopic(command));
             } else {
                 addTopic(new GenericCommandHelpTopic(command));
             }
@@ -63,5 +68,12 @@ public class SimpleHelpMap implements HelpMap {
         for (VanillaCommand command : server.getCommandMap().getFallbackCommands()) {
             addTopic(new GenericCommandHelpTopic(command));
         }
+    }
+
+    public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {
+        if (!Command.class.isAssignableFrom(commandClass)) {
+            throw new IllegalArgumentException("commandClass must implement Command");
+        }
+        topicFactoryMap.put(commandClass, factory);
     }
 }
