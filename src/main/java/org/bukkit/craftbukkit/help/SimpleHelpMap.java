@@ -32,7 +32,10 @@ public class SimpleHelpMap implements HelpMap {
     }
 
     public synchronized void addTopic(HelpTopic topic) {
-        helpTopics.put(topic.getName(), topic);
+        // Existing topics take priority
+        if (!helpTopics.containsKey(topic.getName())) {
+            helpTopics.put(topic.getName(), topic);
+        }
     }
 
     public synchronized void clear() {
@@ -41,11 +44,11 @@ public class SimpleHelpMap implements HelpMap {
 
     public synchronized void initialize(CraftServer server) {
         clear();
+        // ** Load topics from highest to lowest priority order **
 
-        // Initialize help topics from the server's fallback commands
-        for (VanillaCommand command : server.getCommandMap().getFallbackCommands()) {
-            addTopic(new GenericCommandHelpTopic(command));
-        }
+        // Initialize general help topics from the help.yml file
+
+        // Initialize command topic overrides from the help.yml file
 
         // Initialize help topics from the server's command map
         for (Command command : server.getCommandMap().getCommands()) {
@@ -54,6 +57,11 @@ public class SimpleHelpMap implements HelpMap {
             } else {
                 addTopic(new GenericCommandHelpTopic(command));
             }
+        }
+
+        // Initialize help topics from the server's fallback commands
+        for (VanillaCommand command : server.getCommandMap().getFallbackCommands()) {
+            addTopic(new GenericCommandHelpTopic(command));
         }
     }
 }
