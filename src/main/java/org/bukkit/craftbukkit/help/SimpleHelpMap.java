@@ -49,7 +49,12 @@ public class SimpleHelpMap implements HelpMap {
 
     // ** Load topics from highest to lowest priority order **
     public synchronized void initializeHelpYaml(CraftServer server) {
+        HelpYamlReader reader = new HelpYamlReader(server);
+
         // Initialize general help topics from the help.yml file
+        for (HelpTopic topic : reader.getGeneralTopics()) {
+            addTopic(topic);
+        }
 
         // Initialize command topic overrides from the help.yml file
     }

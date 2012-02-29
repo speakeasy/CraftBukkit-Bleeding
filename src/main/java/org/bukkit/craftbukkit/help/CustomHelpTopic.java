@@ -11,7 +11,7 @@ public class CustomHelpTopic implements HelpTopic {
     private String shortText;
     private String fullText;
     
-    public CustomHelpTopic(String permissionNode, String name, String shortText, String fullText) {
+    public CustomHelpTopic(String name, String shortText, String fullText, String permissionNode) {
         this.permissionNode = permissionNode;
         this.name = name;
         this.shortText = shortText;
@@ -38,7 +38,7 @@ public class CustomHelpTopic implements HelpTopic {
         return shortText;
     }
 
-    public String getFullText() {
-        return fullText;
+    public String getFullText(CommandSender who) {
+        return shortText + "\n" + fullText;
     }
 }

@@ -35,14 +35,14 @@ public class DefaultHelpTopic implements HelpTopic {
             if (topic.canSee(sender)) {
                 StringBuilder line = new StringBuilder();
                 line.append(ChatColor.GOLD);
-                line.append(topic.getName().startsWith("/") ? topic.getName() : "/" + topic.getName());
+                line.append(topic.getName());
                 line.append(": ");
                 line.append(ChatColor.WHITE);
                 line.append(topic.getShortText());
 
                 String lineStr = line.toString().replace("\n", ". ");
-                if (sender instanceof Player && lineStr.length() > ChatPaginator.DEFAULT_CHAT_WIDTH) {
-                    sb.append(lineStr.substring(0, ChatPaginator.DEFAULT_CHAT_WIDTH - 3));
+                if (sender instanceof Player && lineStr.length() > ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH) {
+                    sb.append(lineStr.substring(0, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH - 3));
                     sb.append("...");
                 } else {
                     sb.append(lineStr);
