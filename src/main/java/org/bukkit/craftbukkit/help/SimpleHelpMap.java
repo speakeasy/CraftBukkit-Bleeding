@@ -17,7 +17,7 @@ public class SimpleHelpMap implements HelpMap {
     private Map<Class, HelpTopicFactory> topicFactoryMap;
 
     public SimpleHelpMap() {
-        helpTopics = new TreeMap<String, HelpTopic>(); // Using a TreeMap for its explicit sorting on key
+        helpTopics = new TreeMap<String, HelpTopic>(new HelpTopicComparator()); // Using a TreeMap for its explicit sorting on key
         defaultTopic = new DefaultHelpTopic(helpTopics.values());
         topicFactoryMap = new HashMap<Class, HelpTopicFactory>();
 
