@@ -61,7 +61,7 @@ public class GenericCommandHelpTopic implements HelpTopic {
         sb.append(ChatColor.GOLD);
         sb.append("Usage: ");
         sb.append(ChatColor.WHITE);
-        sb.append(command.getUsage());
+        sb.append(command.getUsage().replace("<command>", getName()));
 
         if (command.getAliases().size() > 0) {
             sb.append("\n");
