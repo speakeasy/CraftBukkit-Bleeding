@@ -35,7 +35,6 @@ import org.bukkit.Achievement;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.CraftEffect;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
@@ -52,7 +51,6 @@ import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
-import org.bukkit.potion.Potion;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -368,6 +366,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public void setSprinting(boolean sprinting) {
         getHandle().setSprinting(sprinting);
+    }
+    
+    public boolean isBlocking() {
+        return getHandle().L(); 
     }
 
     public void loadData() {
