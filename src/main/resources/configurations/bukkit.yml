@@ -25,8 +25,8 @@ ticks-per:
     animal-spawns: 400
     monster-spawns: 1
 aliases:
-    icanhasbukkit:
-    - version
+#    icanhasbukkit:
+#    - version
 database:
     username: bukkit
     isolation: SERIALIZABLE
