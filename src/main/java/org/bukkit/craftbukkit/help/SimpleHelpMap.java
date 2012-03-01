@@ -10,6 +10,9 @@ import org.bukkit.help.HelpTopicFactory;
 
 import java.util.*;
 
+/**
+ * Standard implementation of {@link HelpMap} for CraftBukkit servers.
+ */
 public class SimpleHelpMap implements HelpMap {
     
     private HelpTopic defaultTopic;
@@ -47,7 +50,10 @@ public class SimpleHelpMap implements HelpMap {
         helpTopics.clear();
     }
 
-    // ** Load topics from highest to lowest priority order **
+    /**
+     * Reads the general topics from help.yml and adds them to the help index.
+     * @param server A reference to the server.
+     */
     public synchronized void initializeGeneralTopics(CraftServer server) {
         HelpYamlReader reader = new HelpYamlReader(server);
 
@@ -57,7 +63,13 @@ public class SimpleHelpMap implements HelpMap {
         }
     }
 
+    /**
+     * Processes all the commands registered in the server and creates help topics for them.
+     * @param server A reference to the server.
+     */
     public synchronized void initializeCommands(CraftServer server) {
+        // ** Load topics from highest to lowest priority order **
+
         // Initialize help topics from the server's command map
         for (Command command : server.getCommandMap().getCommands()) {
             if (topicFactoryMap.containsKey(command.getClass())) {

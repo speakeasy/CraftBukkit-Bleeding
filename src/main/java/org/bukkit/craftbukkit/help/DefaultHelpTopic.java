@@ -8,6 +8,9 @@ import org.bukkit.util.ChatPaginator;
 
 import java.util.Collection;
 
+/**
+ * This help topic generates the list of all other help topics.
+ */
 public class DefaultHelpTopic extends HelpTopic {
 
     private Collection<HelpTopic> allTopics;

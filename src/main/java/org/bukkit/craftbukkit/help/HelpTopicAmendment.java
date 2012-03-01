@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.help;
 
 /**
+ * A HelpTopicAmendment represents the contents of a topic amendment from the help.yml
  */
 public class HelpTopicAmendment {
     private String topicName;
@@ -13,14 +14,26 @@ public class HelpTopicAmendment {
         this.topicName = topicName;
     }
 
+    /**
+     * Gets the amended full text
+     * @return the full text
+     */
     public String getFullText() {
         return fullText;
     }
 
+    /**
+     * Gets the amended short text
+     * @return the short text
+     */
     public String getShortText() {
         return shortText;
     }
 
+    /**
+     * Gets the name of the topic being amended
+     * @return the topic name
+     */
     public String getTopicName() {
         return topicName;
     }

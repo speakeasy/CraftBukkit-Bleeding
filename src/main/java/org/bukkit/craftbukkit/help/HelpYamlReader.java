@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.help;
 
 import org.bukkit.Server;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.help.HelpTopic;
 
@@ -11,10 +10,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * 
+ * HelpYamlReader is responsible for processing the contents of the help.yml file.
  */
 public class HelpYamlReader {
 
@@ -34,7 +32,11 @@ public class HelpYamlReader {
             server.getLogger().log(Level.SEVERE, "Could not save " + helpYamlFile, ex);
         }
     }
-    
+
+    /**
+     * Extracts a list of all general help topics from help.yml
+     * @return A list of general topics.
+     */
     public List<HelpTopic> getGeneralTopics() {
         List<HelpTopic> topics = new LinkedList<HelpTopic>();
         ConfigurationSection generalTopics = helpYaml.getConfigurationSection("general-topics");
@@ -49,7 +51,11 @@ public class HelpYamlReader {
         }
         return topics;
     }
-    
+
+    /**
+     * Extracts a list of topic amendments from help.yml
+     * @return A list of amendments
+     */
     public List<HelpTopicAmendment> getTopicAmendments() {
         List<HelpTopicAmendment> amendments = new LinkedList<HelpTopicAmendment>();
         ConfigurationSection commandTopics = helpYaml.getConfigurationSection("amended-topics");

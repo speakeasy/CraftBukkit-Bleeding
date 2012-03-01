@@ -4,6 +4,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.help.HelpTopic;
 
+/**
+ * This is a help topic implementation for general topics registered in the help.yml file.
+ */
 public class CustomHelpTopic extends HelpTopic {
     
     private String permissionNode;
