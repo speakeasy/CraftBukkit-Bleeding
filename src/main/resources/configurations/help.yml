@@ -16,7 +16,7 @@
 #             3. No swearing.
 #         permission: topics.rules
 # --
-# command-topics:
+# amended-topics:
 #     /stop:
 #         shortText: Stops the server cold....in its tracks!
 #         fullText: <text> - This kills the server.

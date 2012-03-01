@@ -52,7 +52,7 @@ public class HelpYamlReader {
     
     public List<HelpTopicAmendment> getTopicAmendments() {
         List<HelpTopicAmendment> amendments = new LinkedList<HelpTopicAmendment>();
-        ConfigurationSection commandTopics = helpYaml.getConfigurationSection("command-topics");
+        ConfigurationSection commandTopics = helpYaml.getConfigurationSection("amended-topics");
         if (commandTopics != null) {
             for (String topicName : commandTopics.getKeys(false)) {
                 ConfigurationSection section = commandTopics.getConfigurationSection(topicName);
