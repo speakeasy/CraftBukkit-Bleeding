@@ -4,18 +4,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.help.HelpTopic;
 
-public class CustomHelpTopic implements HelpTopic {
+public class CustomHelpTopic extends HelpTopic {
     
     private String permissionNode;
-    private String name;
-    private String shortText;
-    private String fullText;
     
     public CustomHelpTopic(String name, String shortText, String fullText, String permissionNode) {
         this.permissionNode = permissionNode;
         this.name = name;
         this.shortText = shortText;
-        this.fullText = fullText;
+        this.fullText = shortText + "\n" + fullText;
     }
     
     public boolean canSee(CommandSender sender) {
@@ -28,17 +25,5 @@ public class CustomHelpTopic implements HelpTopic {
         } else {
             return true;
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getShortText() {
-        return shortText;
-    }
-
-    public String getFullText(CommandSender who) {
-        return shortText + "\n" + fullText;
     }
 }

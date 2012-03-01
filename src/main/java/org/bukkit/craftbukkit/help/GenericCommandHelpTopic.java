@@ -9,46 +9,28 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.help.HelpTopic;
 
-public class GenericCommandHelpTopic implements HelpTopic {
+public class GenericCommandHelpTopic extends HelpTopic {
 
     private Command command;
 
     public GenericCommandHelpTopic(Command command) {
         this.command = command;
-    }
 
-    public boolean canSee(CommandSender sender) {
-        if (!command.isRegistered() && !(command instanceof VanillaCommand)) {
-            // Unregistered commands should not show up in the help (ignore VanillaCommands)
-            return false;
-        }
-
-        if (sender instanceof ConsoleCommandSender) {
-            return true;
-        }
-
-        return command.testPermissionSilent(sender);
-    }
-
-    public String getName() {
         if (command.getLabel().startsWith("/")) {
-            return command.getLabel();
+            name = command.getLabel();
         } else {
-            return "/" + command.getLabel();
+            name = "/" + command.getLabel();
         }
-    }
 
-    public String getShortText() {
         // The short text is the first line of the description
         int i = command.getDescription().indexOf("\n");
         if (i > 1) {
-            return command.getDescription().substring(0, i - 1);
+            shortText = command.getDescription().substring(0, i - 1);
         } else {
-            return command.getDescription();
+            shortText = command.getDescription();
         }
-    }
 
-    public String getFullText(CommandSender sender) {
+        // Build full text
         StringBuffer sb = new StringBuffer();
 
         sb.append(ChatColor.GOLD);
@@ -70,6 +52,19 @@ public class GenericCommandHelpTopic implements HelpTopic {
             sb.append(ChatColor.WHITE);
             sb.append(ChatColor.WHITE + StringUtils.join(command.getAliases(), ", "));
         }
-        return sb.toString();
+        fullText = sb.toString();
+    }
+
+    public boolean canSee(CommandSender sender) {
+        if (!command.isRegistered() && !(command instanceof VanillaCommand)) {
+            // Unregistered commands should not show up in the help (ignore VanillaCommands)
+            return false;
+        }
+
+        if (sender instanceof ConsoleCommandSender) {
+            return true;
+        }
+
+        return command.testPermissionSilent(sender);
     }
 }

@@ -180,7 +180,7 @@ public final class CraftServer implements Server {
     public void enablePlugins(PluginLoadOrder type) {
         if (type == PluginLoadOrder.STARTUP) {
             helpMap.clear();
-            helpMap.initializeHelpYaml(this);
+            helpMap.initializeGeneralTopics(this);
         }
 
         Plugin[] plugins = pluginManager.getPlugins();

@@ -38,17 +38,29 @@ public class HelpYamlReader {
     public List<HelpTopic> getGeneralTopics() {
         List<HelpTopic> topics = new LinkedList<HelpTopic>();
         ConfigurationSection generalTopics = helpYaml.getConfigurationSection("general-topics");
-        for (String topicName : generalTopics.getKeys(false)) {
-            ConfigurationSection section = generalTopics.getConfigurationSection(topicName);
-            String shortText = section.getString("shortText");
-            String fullText = section.getString("fullText");
-            String permission = section.getString("permission");
-            topics.add(new CustomHelpTopic(topicName, shortText, fullText, permission));
+        if (generalTopics != null) {
+            for (String topicName : generalTopics.getKeys(false)) {
+                ConfigurationSection section = generalTopics.getConfigurationSection(topicName);
+                String shortText = section.getString("shortText");
+                String fullText = section.getString("fullText");
+                String permission = section.getString("permission");
+                topics.add(new CustomHelpTopic(topicName, shortText, fullText, permission));
+            }
         }
         return topics;
     }
     
-    public List<HelpTopic> getCommandTopics() {
-        return null;
+    public List<HelpTopicAmendment> getTopicAmendments() {
+        List<HelpTopicAmendment> amendments = new LinkedList<HelpTopicAmendment>();
+        ConfigurationSection commandTopics = helpYaml.getConfigurationSection("command-topics");
+        if (commandTopics != null) {
+            for (String topicName : commandTopics.getKeys(false)) {
+                ConfigurationSection section = commandTopics.getConfigurationSection(topicName);
+                String description = section.getString("shortText");
+                String usage = section.getString("fullText");
+                amendments.add(new HelpTopicAmendment(topicName, description, usage));
+            }
+        }
+        return amendments;
     }
 }

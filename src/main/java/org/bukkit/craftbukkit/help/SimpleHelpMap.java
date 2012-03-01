@@ -48,15 +48,13 @@ public class SimpleHelpMap implements HelpMap {
     }
 
     // ** Load topics from highest to lowest priority order **
-    public synchronized void initializeHelpYaml(CraftServer server) {
+    public synchronized void initializeGeneralTopics(CraftServer server) {
         HelpYamlReader reader = new HelpYamlReader(server);
 
         // Initialize general help topics from the help.yml file
         for (HelpTopic topic : reader.getGeneralTopics()) {
             addTopic(topic);
         }
-
-        // Initialize command topic overrides from the help.yml file
     }
 
     public synchronized void initializeCommands(CraftServer server) {
@@ -72,6 +70,14 @@ public class SimpleHelpMap implements HelpMap {
         // Initialize help topics from the server's fallback commands
         for (VanillaCommand command : server.getCommandMap().getFallbackCommands()) {
             addTopic(new GenericCommandHelpTopic(command));
+        }
+
+        // Amend help topics from the help.yml file
+        HelpYamlReader reader = new HelpYamlReader(server);
+        for (HelpTopicAmendment amendment : reader.getTopicAmendments()) {
+            if (helpTopics.containsKey(amendment.getTopicName())) {
+                helpTopics.get(amendment.getTopicName()).amendTopic(amendment.getShortText(), amendment.getFullText());
+            }
         }
     }
 

@@ -9,12 +9,28 @@ import org.bukkit.help.HelpTopic;
 
 /**
  */
-public class MultipleCommandAliasHelpTopic implements HelpTopic {
+public class MultipleCommandAliasHelpTopic extends HelpTopic {
 
     private MultipleCommandAlias alias;
 
     public MultipleCommandAliasHelpTopic(MultipleCommandAlias alias) {
         this.alias = alias;
+
+        name = "/" + alias.getLabel();
+
+        // Build short text
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < alias.getCommands().length; i++) {
+            if (i != 0) {
+                sb.append(ChatColor.GOLD + " > " + ChatColor.WHITE);
+            }
+            sb.append("/");
+            sb.append(alias.getCommands()[i].getLabel());
+        }
+        shortText = sb.toString();
+
+        // Build full text
+        fullText = ChatColor.GOLD + "Alias for: " + ChatColor.WHITE + getShortText();
     }
 
     public boolean canSee(CommandSender sender) {
@@ -29,25 +45,5 @@ public class MultipleCommandAliasHelpTopic implements HelpTopic {
         }
 
         return true;
-    }
-
-    public String getName() {
-        return "/" + alias.getLabel();
-    }
-
-    public String getShortText() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < alias.getCommands().length; i++) {
-            if (i != 0) {
-                sb.append(ChatColor.GOLD + " > " + ChatColor.WHITE);
-            }
-            sb.append("/");
-            sb.append(alias.getCommands()[i].getLabel());
-        }
-        return sb.toString();
-    }
-
-    public String getFullText(CommandSender sender) {
-        return ChatColor.GOLD + "Alias for: " + ChatColor.WHITE + getShortText();
     }
 }

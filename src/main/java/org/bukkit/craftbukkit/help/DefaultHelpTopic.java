@@ -2,14 +2,13 @@ package org.bukkit.craftbukkit.help;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.util.ChatPaginator;
 
 import java.util.Collection;
 
-public class DefaultHelpTopic implements HelpTopic {
+public class DefaultHelpTopic extends HelpTopic {
 
     private Collection<HelpTopic> allTopics;
 
