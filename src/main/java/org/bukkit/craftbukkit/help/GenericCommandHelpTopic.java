@@ -43,7 +43,7 @@ public class GenericCommandHelpTopic extends HelpTopic {
         sb.append(ChatColor.GOLD);
         sb.append("Usage: ");
         sb.append(ChatColor.WHITE);
-        sb.append(command.getUsage().replace("<command>", getName()));
+        sb.append(command.getUsage().replace("<command>", name.substring(1)));
 
         if (command.getAliases().size() > 0) {
             sb.append("\n");
