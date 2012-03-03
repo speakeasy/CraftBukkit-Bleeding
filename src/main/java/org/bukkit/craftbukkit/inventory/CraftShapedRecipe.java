@@ -11,11 +11,11 @@ import org.bukkit.inventory.ShapedRecipe;
 public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
     private ShapedRecipes recipe;
-    
+
     public CraftShapedRecipe(ItemStack result) {
         super(result);
     }
-    
+
     public CraftShapedRecipe(ItemStack result, ShapedRecipes recipe) {
         this(result);
         this.recipe = recipe;
@@ -54,9 +54,7 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
             if (mdata == null) continue;
             data[i] = c;
             i++;
-            int id = mdata.getTypeId();
-            short dmg = mdata.getDurability();
-            data[i] = new net.minecraft.server.ItemStack(id, 1, dmg);
+            data[i] = CraftItemStack.createNMSItemStack(mdata);
             i++;
         }
         CraftingManager.getInstance().registerShapedRecipe(CraftItemStack.createNMSItemStack(this.getResult()), data);
