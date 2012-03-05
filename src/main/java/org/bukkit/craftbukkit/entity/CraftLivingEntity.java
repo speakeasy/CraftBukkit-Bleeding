@@ -274,9 +274,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             } else {
                 launch = new EntityFireball(world);
             }
+            // We want the fireball to appear in front of the entity, not literally in it
+            Vector vec = getLocation().getDirection().normalize();
+            Location loc = getLocation().clone().add(vec);
 
-            launch.setPositionRotation(getLocation().getX(), getLocation().getY(), getLocation().getZ(), getLocation().getYaw(), getLocation().getPitch());
-            Vector direction = getLocation().getDirection().multiply(10);
+            launch.setPositionRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+            Vector direction = loc.getDirection().multiply(10);
             ((EntityFireball) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             launch = new EntityPotion(world, getHandle(), 0);
