@@ -420,7 +420,7 @@ public class CraftBlock implements Block {
             if ((BiomeBase.biomes[i] != null) && (BIOME_MAPPING[i] == null)) {
                 throw new IllegalArgumentException("Missing Biome mapping for BiomeBase[" + i + "]");
             }
-            if(BIOME_MAPPING[i] != null) {  /* Build reverse mapping for setBiome */
+            if (BIOME_MAPPING[i] != null) {  /* Build reverse mapping for setBiome */
                 BIOMEBASE_MAPPING[BIOME_MAPPING[i].ordinal()] = BiomeBase.biomes[i];
             }
         }

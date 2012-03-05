@@ -216,7 +216,7 @@ public class CraftChunk implements Chunk {
 
             if (includeBiome) {
                 biome = new BiomeBase[256];
-                for(int i = 0; i < 256; i++) {
+                for (int i = 0; i < 256; i++) {
                     biome[i] = chunk.a(i & 0xF, i >> 4, wcm);
                 }
             }
@@ -252,7 +252,7 @@ public class CraftChunk implements Chunk {
 
             if (includeBiome) {
                 biome = new BiomeBase[256];
-                for(int i = 0; i < 256; i++) {
+                for (int i = 0; i < 256; i++) {
                     biome[i] = world.getHandle().getBiome((x << 4) + (i & 0xF), (z << 4) + (i >> 4));
                 }
             }
