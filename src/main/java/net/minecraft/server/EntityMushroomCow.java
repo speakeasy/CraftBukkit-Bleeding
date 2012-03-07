@@ -4,7 +4,10 @@ package net.minecraft.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 // CraftBukkit end
 
 public class EntityMushroomCow extends EntityCow {
@@ -19,7 +22,16 @@ public class EntityMushroomCow extends EntityCow {
         ItemStack itemstack = entityhuman.inventory.getItemInHand();
 
         if (itemstack != null && itemstack.id == Item.BOWL.id && this.getAge() >= 0) {
-            entityhuman.inventory.setItem(entityhuman.inventory.itemInHandIndex, new ItemStack(Item.MUSHROOM_SOUP));
+            // CraftBukkit start - got milk?
+            Location loc = this.getBukkitEntity().getLocation();
+            PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(entityhuman, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), -1, itemstack, Item.MUSHROOM_SOUP);
+
+            if (event.isCancelled()) {
+                return false;
+            }
+
+            entityhuman.inventory.setItem(entityhuman.inventory.itemInHandIndex, CraftItemStack.createNMSItemStack(event.getItemStack()));
+            // CraftBukkit end
             return true;
         } else if (itemstack != null && itemstack.id == Item.SHEARS.id && this.getAge() >= 0) {
             // CraftBukkit start
