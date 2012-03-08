@@ -12,6 +12,7 @@ public class PlayerManager {
     private int e;
     private int f;
     private final int[][] g = new int[][] { { 1, 0}, { 0, 1}, { -1, 0}, { 0, -1}};
+    private boolean wasNotEmpty; // CraftBukkit
 
     public PlayerManager(MinecraftServer minecraftserver, int i, int j) {
         if (j > 15) {
@@ -39,10 +40,16 @@ public class PlayerManager {
             WorldServer worldserver = this.server.getWorldServer(this.e);
             WorldProvider worldprovider = worldserver.worldProvider;
 
-            if (!worldprovider.c()) {
+            if (!worldprovider.c() && wasNotEmpty) { // CraftBukkit - only do unload when we go from non-empty to empty
                 worldserver.chunkProviderServer.c();
             }
+            wasNotEmpty = false; // CraftBukkit
         }
+        // CraftBukkit start
+        else {  
+            wasNotEmpty = true;
+        }
+        // CraftBukkit end
     }
 
     private PlayerInstance a(int i, int j, boolean flag) {
