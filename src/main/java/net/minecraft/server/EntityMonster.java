@@ -2,10 +2,8 @@ package net.minecraft.server;
 
 // CraftBukkit start
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 // CraftBukkit end
 
 public abstract class EntityMonster extends EntityCreature implements IMonster {
@@ -46,22 +44,7 @@ public abstract class EntityMonster extends EntityCreature implements IMonster {
 
             if (this.passenger != entity && this.vehicle != entity) {
                 if (entity != this) {
-                    // CraftBukkit start
-                    org.bukkit.entity.Entity bukkitTarget = entity == null ? null : entity.getBukkitEntity();
-
-                    EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), bukkitTarget, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
-                    Bukkit.getPluginManager().callEvent(event);
-
-                    if (!event.isCancelled()) {
-                        if (event.getTarget() == null) {
-                            this.target = null;
-                            this.lastDamager = null;
-                        } else {
-                            this.target = ((CraftEntity) event.getTarget()).getHandle();
-                            this.lastDamager = this.target instanceof EntityLiving ? (EntityLiving) this.target : null;
-                        }
-                    }
-                    // CraftBukkit end
+                    this.target = entity;
                 }
 
                 return true;
