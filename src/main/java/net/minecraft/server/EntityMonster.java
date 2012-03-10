@@ -46,7 +46,7 @@ public abstract class EntityMonster extends EntityCreature implements IMonster {
             if (this.passenger != entity && this.vehicle != entity) {
                 if (entity != this) {
                     // CraftBukkit start - We still need to call events for entities without goals
-                    if (entity == null || entity instanceof EntityBlaze || entity instanceof EntityEnderman || entity instanceof EntitySpider || entity instanceof EntityGiantZombie || entity instanceof EntitySilverfish || entity instanceof EntitySlime) {
+                    if (this instanceof EntityBlaze || this instanceof EntityEnderman || this instanceof EntitySpider || this instanceof EntityGiantZombie || this instanceof EntitySilverfish) {
                         EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, entity, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
 
                         if (!event.isCancelled()) {
@@ -55,7 +55,6 @@ public abstract class EntityMonster extends EntityCreature implements IMonster {
                             } else {
                                 this.target = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
                             }
-
                         }
                     } else {
                         this.target = entity;
