@@ -4,6 +4,7 @@ package net.minecraft.server;
 import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 // CraftBukkit end
 
 public abstract class EntityMonster extends EntityCreature implements IMonster {
@@ -44,7 +45,22 @@ public abstract class EntityMonster extends EntityCreature implements IMonster {
 
             if (this.passenger != entity && this.vehicle != entity) {
                 if (entity != this) {
-                    this.target = entity;
+                    // CraftBukkit start - We still need to call events for entities without goals
+                    if (entity == null || entity instanceof EntityBlaze || entity instanceof EntityEnderman || entity instanceof EntitySpider || entity instanceof EntityGiantZombie || entity instanceof EntitySilverfish || entity instanceof EntitySlime) {
+                        EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, entity, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
+
+                        if (!event.isCancelled()) {
+                            if (event.getTarget() == null) {
+                                this.target = null;
+                            } else {
+                                this.target = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
+                            }
+
+                        }
+                    } else {
+                        this.target = entity;
+                    }
+                    // CraftBukkit end
                 }
 
                 return true;
