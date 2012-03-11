@@ -9,6 +9,7 @@ import net.minecraft.server.EntityFireball;
 import net.minecraft.server.EntityFishingHook;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityPotion;
+import net.minecraft.server.EntityProjectile;
 import net.minecraft.server.EntitySmallFireball;
 import net.minecraft.server.EntitySnowball;
 import net.minecraft.server.TileEntityDispenser;
@@ -19,6 +20,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftArrow;
+import org.bukkit.craftbukkit.entity.CraftFireball;
+import org.bukkit.craftbukkit.entity.CraftFish;
+import org.bukkit.craftbukkit.entity.CraftProjectile;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
@@ -87,25 +92,32 @@ public class CraftDispenser extends CraftBlockState implements Dispenser {
 
         if (Snowball.class.isAssignableFrom(projectile)) {
             launch = new EntitySnowball(world, x, y, z);
+            CraftProjectile.setSourceBlock((EntityProjectile) launch, getLocation());
         } else if (Egg.class.isAssignableFrom(projectile)) {
             launch = new EntityEgg(world, x, y, z);
+            CraftProjectile.setSourceBlock((EntityProjectile) launch, getLocation());
         } else if (EnderPearl.class.isAssignableFrom(projectile)) {
             launch = new EntityEnderPearl(world, x, y, z);
+            CraftProjectile.setSourceBlock((EntityProjectile) launch, getLocation());
         } else if (Arrow.class.isAssignableFrom(projectile)) {
             launch = new EntityArrow(world, x, y, z);
+            CraftArrow.setSourceBlock((EntityArrow) launch, getLocation());
         } else if (Fireball.class.isAssignableFrom(projectile)) {
             if (SmallFireball.class.isAssignableFrom(projectile)) {
                 launch = new EntitySmallFireball(world);
             } else {
                 launch = new EntityFireball(world);
             }
+            CraftFireball.setSourceBlock((EntityFireball) launch, getLocation());
 
             launch.setPosition(x, y, z);
             Vector direction = getLocation().getDirection().multiply(10);
             ((EntityFireball) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             launch = new EntityPotion(world, x, y, z, 0);
+            CraftProjectile.setSourceBlock((EntityProjectile) launch, getLocation());
         } else if (Fish.class.isAssignableFrom(projectile)) {
+            CraftFish.setSourceBlock((EntityFishingHook) launch, getLocation());
             launch = new EntityFishingHook(world);
             launch.setPosition(x, y, z);
         }

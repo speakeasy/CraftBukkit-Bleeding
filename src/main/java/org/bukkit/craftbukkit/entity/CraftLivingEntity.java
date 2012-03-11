@@ -274,6 +274,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             } else {
                 launch = new EntityFireball(world);
             }
+            ((EntityFireball)launch).shooter = getHandle();
             // We want the fireball to appear in front of the entity, not literally in it
             Vector vec = getLocation().getDirection().normalize();
             Location loc = getLocation().clone().add(vec);
