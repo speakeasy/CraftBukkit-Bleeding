@@ -113,7 +113,7 @@ public class CraftDispenser extends CraftBlockState implements Dispenser {
             CraftFireball.setSourceBlock((EntityFireball) launch, getLocation());
 
             launch.setPosition(x, y, z);
-            Vector direction = getLocation().getDirection().multiply(10);
+            Vector direction = new Vector(facing.getModX(), facing.getModY(), facing.getModZ()).multiply(10);
             ((EntityFireball) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             launch = new EntityPotion(world, x, y, z, 0);
