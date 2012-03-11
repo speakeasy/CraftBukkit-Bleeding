@@ -23,7 +23,6 @@ public class EntityFishingHook extends Entity {
     private double o;
     private double p;
     private double q;
-    public int sourceX, sourceY, sourceZ; // CraftBukkit - new variables
 
     public EntityFishingHook(World world) {
         super(world);
