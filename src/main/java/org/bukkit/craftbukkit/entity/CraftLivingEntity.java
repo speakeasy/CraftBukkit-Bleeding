@@ -18,6 +18,7 @@ import net.minecraft.server.EntityPotion;
 import net.minecraft.server.EntitySmallFireball;
 import net.minecraft.server.EntitySnowball;
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.EntityThrownExpBottle;
 import net.minecraft.server.MobEffect;
 import net.minecraft.server.MobEffectList;
 
@@ -37,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.potion.PotionEffect;
@@ -284,6 +286,8 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             ((EntityFireball) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             launch = new EntityPotion(world, getHandle(), 0);
+        } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
+            launch = new EntityThrownExpBottle(world, getHandle());
         } else if (Fish.class.isAssignableFrom(projectile)) {
             Validate.isTrue(this instanceof HumanEntity, "Entities other than players cannot throw fishing hooks.");
             launch = new EntityFishingHook(world, (EntityHuman) getHandle());

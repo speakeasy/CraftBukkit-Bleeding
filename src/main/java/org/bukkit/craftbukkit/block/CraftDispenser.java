@@ -12,6 +12,7 @@ import net.minecraft.server.EntityPotion;
 import net.minecraft.server.EntityProjectile;
 import net.minecraft.server.EntitySmallFireball;
 import net.minecraft.server.EntitySnowball;
+import net.minecraft.server.EntityThrownExpBottle;
 import net.minecraft.server.TileEntityDispenser;
 
 import org.apache.commons.lang.Validate;
@@ -34,6 +35,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.util.Vector;
@@ -115,6 +117,9 @@ public class CraftDispenser extends CraftBlockState implements Dispenser {
             ((EntityFireball) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             launch = new EntityPotion(world, x, y, z, 0);
+            CraftProjectile.setSourceBlock((EntityProjectile) launch, getLocation());
+        } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
+            launch = new EntityThrownExpBottle(world, x, y, z);
             CraftProjectile.setSourceBlock((EntityProjectile) launch, getLocation());
         } else if (Fish.class.isAssignableFrom(projectile)) {
             CraftFish.setSourceBlock((EntityFishingHook) launch, getLocation());
