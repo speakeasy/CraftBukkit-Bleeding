@@ -1,5 +1,10 @@
 package net.minecraft.server;
 
+// CraftBukkit start
+import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+// CraftBukkit end
+
 public class EntityFallingBlock extends Entity {
 
     public int id;
@@ -65,10 +70,16 @@ public class EntityFallingBlock extends Entity {
                 this.motZ *= 0.699999988079071D;
                 this.motY *= -0.5D;
                 if (this.world.getTypeId(i, j, k) != Block.PISTON_MOVING.id) {
+                    BlockState state = this.world.getWorld().getBlockAt(i, j, k).getState(); // CraftBukkit - save state
                     this.die();
                     // CraftBukkit - setTypeId => setTypeIdAndData
                     if ((!this.world.mayPlace(this.id, i, j, k, true, 1) || BlockSand.canFall(this.world, i, j - 1, k) || !this.world.setTypeIdAndData(i, j, k, this.id, this.data)) && !this.world.isStatic) {
-                        this.b(this.id, 1);
+                        // CraftBukkit start
+                        EntityItem item = this.b(this.id, 1); // save the item
+                        CraftEventFactory.callBlockFallEvent(this, item, state);
+                    } else {
+                        CraftEventFactory.callBlockFallEvent(this, null, state);
+                        // CraftBukkit end
                     }
                 }
             } else if (this.b > 100 && !this.world.isStatic && (j < 1 || j > 256) || this.b > 600) {

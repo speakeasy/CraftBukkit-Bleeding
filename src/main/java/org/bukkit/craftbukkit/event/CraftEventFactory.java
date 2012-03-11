@@ -11,6 +11,7 @@ import net.minecraft.server.Entity;
 import net.minecraft.server.EntityArrow;
 import net.minecraft.server.EntityComplexPart;
 import net.minecraft.server.EntityEnderCrystal;
+import net.minecraft.server.EntityFallingBlock;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityItem;
 import net.minecraft.server.EntityLiving;
@@ -40,6 +41,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Pig;
@@ -470,5 +472,18 @@ public class CraftEventFactory {
         org.bukkit.inventory.ItemStack bitem = event.getInventory().getResult();
 
         return CraftItemStack.createNMSItemStack(bitem);
+    }
+
+    public static void callBlockFallEvent(EntityFallingBlock block, EntityItem item, BlockState before) {
+        org.bukkit.entity.Item bukkitItem = item == null ? null : (org.bukkit.entity.Item) item.getBukkitEntity();
+        FallingBlock bukkitBlock = (FallingBlock) block.getBukkitEntity();
+        BlockFallEvent event = new BlockFallEvent(bukkitBlock, bukkitItem, before);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            if (item != null) {
+                item.die();
+            }
+            before.update(true);
+        }
     }
 }
