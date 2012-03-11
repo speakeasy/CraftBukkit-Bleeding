@@ -7,6 +7,7 @@ import net.minecraft.server.EntityFallingBlock;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingSand;
 
 public class CraftFallingBlock extends CraftEntity implements FallingSand {
