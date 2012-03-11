@@ -425,7 +425,7 @@ public class MinecraftServer implements Runnable, ICommandListener, IMinecraftSe
             if (this.init()) {
                 long i = System.currentTimeMillis();
 
-                for (long j = 0L; this.isRunning; Thread.sleep(1L)) {
+                for (long j = 0L; this.isRunning;) { // CraftBukkit - remove Thread.Sleep(1L)
                     long k = System.currentTimeMillis();
                     long l = k - i;
 
