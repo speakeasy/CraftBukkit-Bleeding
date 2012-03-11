@@ -8,7 +8,6 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.entity.*;
 import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
 import org.bukkit.entity.*;
-import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,8 +16,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-
-import net.minecraft.server.*;
 
 import org.bukkit.entity.Arrow;
 import org.bukkit.Effect;
@@ -39,6 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -47,6 +45,64 @@ import org.bukkit.Difficulty;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.plugin.messaging.StandardMessenger;
+
+import net.minecraft.server.BiomeBase;
+import net.minecraft.server.ChunkCoordinates;
+import net.minecraft.server.EntityArrow;
+import net.minecraft.server.EntityBlaze;
+import net.minecraft.server.EntityBoat;
+import net.minecraft.server.EntityCaveSpider;
+import net.minecraft.server.EntityChicken;
+import net.minecraft.server.EntityCow;
+import net.minecraft.server.EntityCreeper;
+import net.minecraft.server.EntityEgg;
+import net.minecraft.server.EntityEnderCrystal;
+import net.minecraft.server.EntityEnderDragon;
+import net.minecraft.server.EntityEnderPearl;
+import net.minecraft.server.EntityEnderSignal;
+import net.minecraft.server.EntityEnderman;
+import net.minecraft.server.EntityExperienceOrb;
+import net.minecraft.server.EntityFallingBlock;
+import net.minecraft.server.EntityFireball;
+import net.minecraft.server.EntityFishingHook;
+import net.minecraft.server.EntityGhast;
+import net.minecraft.server.EntityGiantZombie;
+import net.minecraft.server.EntityIronGolem;
+import net.minecraft.server.EntityItem;
+import net.minecraft.server.EntityMagmaCube;
+import net.minecraft.server.EntityMinecart;
+import net.minecraft.server.EntityMushroomCow;
+import net.minecraft.server.EntityOcelot;
+import net.minecraft.server.EntityPainting;
+import net.minecraft.server.EntityPig;
+import net.minecraft.server.EntityPigZombie;
+import net.minecraft.server.EntitySheep;
+import net.minecraft.server.EntitySilverfish;
+import net.minecraft.server.EntitySkeleton;
+import net.minecraft.server.EntitySlime;
+import net.minecraft.server.EntitySmallFireball;
+import net.minecraft.server.EntitySnowball;
+import net.minecraft.server.EntitySnowman;
+import net.minecraft.server.EntitySpider;
+import net.minecraft.server.EntitySquid;
+import net.minecraft.server.EntityTNTPrimed;
+import net.minecraft.server.EntityThrownExpBottle;
+import net.minecraft.server.EntityVillager;
+import net.minecraft.server.EntityWeatherLighting;
+import net.minecraft.server.EntityWolf;
+import net.minecraft.server.EntityZombie;
+import net.minecraft.server.Packet4UpdateTime;
+import net.minecraft.server.Packet61WorldEvent;
+import net.minecraft.server.TileEntity;
+import net.minecraft.server.WorldGenBigTree;
+import net.minecraft.server.WorldGenForest;
+import net.minecraft.server.WorldGenTaiga1;
+import net.minecraft.server.WorldGenTaiga2;
+import net.minecraft.server.WorldGenTrees;
+import net.minecraft.server.WorldNBTStorage;
+import net.minecraft.server.WorldProvider;
+import net.minecraft.server.WorldServer;
+import net.minecraft.server.EmptyChunk;
 
 public class CraftWorld implements World {
     private final WorldServer world;
@@ -761,9 +817,16 @@ public class CraftWorld implements World {
     }
 
     public FallingBlock spawnFallingBlock(Location location, Material material) {
-        FallingBlock block = spawn(location, FallingBlock.class);
-        block.setBlockType(material);
-        return block;
+        Validate.isTrue(material.canFall(), "That material cannot fall.");
+
+        double x = 0.5f + location.getBlockX();
+        double y = 0.5f + location.getBlockY();
+        double z = 0.5f + location.getBlockZ();
+
+        EntityFallingBlock entity = new EntityFallingBlock(world, x, y, z, material.getId(), 0);
+        entity.b = 1; // Bypass the auto-kill mechanism
+        world.addEntity(entity);
+        return (FallingBlock) entity.getBukkitEntity();
     }
 
     @SuppressWarnings("unchecked")
@@ -784,7 +847,7 @@ public class CraftWorld implements World {
         if (Boat.class.isAssignableFrom(clazz)) {
             entity = new EntityBoat(world, x, y, z);
         } else if (FallingSand.class.isAssignableFrom(clazz)) {
-            entity = new EntityFallingBlock(world, x, y, z, 0, 0);
+            // Needs additional info (the type of block)
         } else if (Projectile.class.isAssignableFrom(clazz)) {
             if (Snowball.class.isAssignableFrom(clazz)) {
                 entity = new EntitySnowball(world, x, y, z);
