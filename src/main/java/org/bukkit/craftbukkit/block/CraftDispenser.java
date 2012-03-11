@@ -122,8 +122,8 @@ public class CraftDispenser extends CraftBlockState implements Dispenser {
             launch = new EntityThrownExpBottle(world, x, y, z);
             CraftProjectile.setSourceBlock((EntityProjectile) launch, getLocation());
         } else if (Fish.class.isAssignableFrom(projectile)) {
-            CraftFish.setSourceBlock((EntityFishingHook) launch, getLocation());
             launch = new EntityFishingHook(world);
+            CraftFish.setSourceBlock((EntityFishingHook) launch, getLocation());
             launch.setPosition(x, y, z);
         }
 
