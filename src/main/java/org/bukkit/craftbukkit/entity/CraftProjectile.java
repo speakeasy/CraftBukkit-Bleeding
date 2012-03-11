@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.entity;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityProjectile;
 
+import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftServer;
@@ -18,7 +19,7 @@ public abstract class CraftProjectile extends AbstractProjectile {
         if (getHandle().shooter != null) {
             return (LivingEntity) getHandle().shooter.getBukkitEntity();
         } else {
-            BlockState block = getWorld().getBlockAt(getHandle().getSourceBlock()).getState();
+            BlockState block = getWorld().getBlockAt(getSourceBlock(getHandle())).getState();
             if (block instanceof Dispenser) {
                 return (Dispenser) block;
             }
@@ -32,7 +33,7 @@ public abstract class CraftProjectile extends AbstractProjectile {
             getHandle().shooter = (EntityLiving) ((CraftLivingEntity) shooter).entity;
         } else if (shooter instanceof Dispenser) {
             getHandle().shooter = null;
-            getHandle().setSourceBlock(((Dispenser) shooter).getBlock().getLocation());
+            setSourceBlock(getHandle(), ((Dispenser) shooter).getBlock().getLocation());
         }
     }
 
@@ -44,5 +45,19 @@ public abstract class CraftProjectile extends AbstractProjectile {
     @Override
     public String toString() {
         return "CraftProjectile";
+    }
+
+    public static void setSourceBlock(EntityProjectile proj, int x, int y, int z) {
+        proj.sourceX = x;
+        proj.sourceY = y;
+        proj.sourceZ = z;
+    }
+
+    public static void setSourceBlock(EntityProjectile proj, Location loc) {
+        setSourceBlock(proj, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    public static Location getSourceBlock(EntityProjectile proj) {
+        return new Location(proj.world.getWorld(), proj.sourceX, proj.sourceY, proj.sourceZ);
     }
 }

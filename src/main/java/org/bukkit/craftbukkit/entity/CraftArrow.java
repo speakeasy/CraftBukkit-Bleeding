@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.server.EntityArrow;
 
+import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftServer;
@@ -20,7 +21,7 @@ public class CraftArrow extends AbstractProjectile implements Arrow {
         if (getHandle().shooter != null) {
             return (LivingEntity) getHandle().shooter.getBukkitEntity();
         } else {
-            BlockState block = getWorld().getBlockAt(getHandle().getSourceBlock()).getState();
+            BlockState block = getWorld().getBlockAt(getSourceBlock(getHandle())).getState();
             if (block instanceof Dispenser) {
                 return (Dispenser) block;
             }
@@ -34,7 +35,7 @@ public class CraftArrow extends AbstractProjectile implements Arrow {
             getHandle().shooter = ((CraftLivingEntity) shooter).entity;
         } else if (shooter instanceof Dispenser) {
             getHandle().shooter = null;
-            getHandle().setSourceBlock(((Dispenser) shooter).getBlock().getLocation());
+            setSourceBlock(getHandle(), ((Dispenser) shooter).getBlock().getLocation());
         }
     }
 
@@ -50,5 +51,19 @@ public class CraftArrow extends AbstractProjectile implements Arrow {
 
     public EntityType getType() {
         return EntityType.ARROW;
+    }
+
+    public static void setSourceBlock(EntityArrow proj, int x, int y, int z) {
+        proj.sourceX = x;
+        proj.sourceY = y;
+        proj.sourceZ = z;
+    }
+
+    public static void setSourceBlock(EntityArrow proj, Location loc) {
+        setSourceBlock(proj, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    public static Location getSourceBlock(EntityArrow proj) {
+        return new Location(proj.world.getWorld(), proj.sourceX, proj.sourceY, proj.sourceZ);
     }
 }

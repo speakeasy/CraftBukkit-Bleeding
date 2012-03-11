@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.entity;
 import net.minecraft.server.EntityFireball;
 import net.minecraft.server.EntityLiving;
 
+import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftServer;
@@ -37,7 +38,7 @@ public class CraftFireball extends AbstractProjectile implements Fireball {
         if (getHandle().shooter != null) {
             return (LivingEntity) getHandle().shooter.getBukkitEntity();
         } else {
-            BlockState block = getWorld().getBlockAt(getHandle().getSourceBlock()).getState();
+            BlockState block = getWorld().getBlockAt(getSourceBlock(getHandle())).getState();
             if (block instanceof Dispenser) {
                 return (Dispenser) block;
             }
@@ -51,7 +52,7 @@ public class CraftFireball extends AbstractProjectile implements Fireball {
             getHandle().shooter = (EntityLiving) ((CraftLivingEntity) shooter).entity;
         } else if (shooter instanceof Dispenser) {
             getHandle().shooter = null;
-            getHandle().setSourceBlock(((Dispenser) shooter).getBlock().getLocation());
+            setSourceBlock(getHandle(), ((Dispenser) shooter).getBlock().getLocation());
         }
     }
 
@@ -75,5 +76,19 @@ public class CraftFireball extends AbstractProjectile implements Fireball {
 
     public EntityType getType() {
         return EntityType.FIREBALL;
+    }
+
+    public static void setSourceBlock(EntityFireball proj, int x, int y, int z) {
+        proj.sourceX = x;
+        proj.sourceY = y;
+        proj.sourceZ = z;
+    }
+
+    public static void setSourceBlock(EntityFireball proj, Location loc) {
+        setSourceBlock(proj, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    public static Location getSourceBlock(EntityFireball proj) {
+        return new Location(proj.world.getWorld(), proj.sourceX, proj.sourceY, proj.sourceZ);
     }
 }

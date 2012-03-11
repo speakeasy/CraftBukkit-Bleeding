@@ -4,6 +4,7 @@ import net.minecraft.server.EntityFishingHook;
 import net.minecraft.server.EntityHuman;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Location;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftServer;
@@ -22,7 +23,7 @@ public class CraftFish extends AbstractProjectile implements Fish {
         if (getHandle().owner != null) {
             return (LivingEntity) getHandle().owner.getBukkitEntity();
         } else {
-            BlockState block = getWorld().getBlockAt(getHandle().getSourceBlock()).getState();
+            BlockState block = getWorld().getBlockAt(getSourceBlock(getHandle())).getState();
             if (block instanceof Dispenser) {
                 return (Dispenser) block;
             }
@@ -37,7 +38,7 @@ public class CraftFish extends AbstractProjectile implements Fish {
             getHandle().owner = (EntityHuman) ((CraftLivingEntity) shooter).entity;
         } else if (shooter instanceof Dispenser) {
             getHandle().owner = null;
-            getHandle().setSourceBlock(((Dispenser) shooter).getBlock().getLocation());
+            setSourceBlock(getHandle(), ((Dispenser) shooter).getBlock().getLocation());
         }
     }
 
@@ -53,5 +54,19 @@ public class CraftFish extends AbstractProjectile implements Fish {
 
     public EntityType getType() {
         return EntityType.FISHING_HOOK;
+    }
+
+    public static void setSourceBlock(EntityFishingHook proj, int x, int y, int z) {
+        proj.sourceX = x;
+        proj.sourceY = y;
+        proj.sourceZ = z;
+    }
+
+    public static void setSourceBlock(EntityFishingHook proj, Location loc) {
+        setSourceBlock(proj, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+    }
+
+    public static Location getSourceBlock(EntityFishingHook proj) {
+        return new Location(proj.world.getWorld(), proj.sourceX, proj.sourceY, proj.sourceZ);
     }
 }
