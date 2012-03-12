@@ -20,12 +20,14 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.block.BlockState;
@@ -894,6 +896,12 @@ public class World implements IBlockAccess {
             }
         } else if (entity instanceof EntityItem) {
             ItemSpawnEvent event = CraftEventFactory.callItemSpawnEvent((EntityItem) entity);
+            if (event.isCancelled()) {
+                return false;
+            }
+        } else if (entity.getBukkitEntity() instanceof Projectile) {
+            // Not all projectiles extend EntityProjectile, so check for Bukkit interface instead
+            ProjectileLaunchEvent event = CraftEventFactory.callProjectileLaunchEvent(entity);
             if (event.isCancelled()) {
                 return false;
             }
