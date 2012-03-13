@@ -17,6 +17,7 @@ public class ItemWorldMap extends ItemWorldMapBase {
         WorldMap worldmap = (WorldMap) world.a(WorldMap.class, "map_" + itemstack.getData());
 
         if (worldmap == null) {
+            if (itemstack.getData() == -1) // CraftBukkit - use provided map ID instead of a new one, unless that ID is -1
             itemstack.setData(world.b("map"));
             String s = "map_" + itemstack.getData();
 
@@ -226,21 +227,22 @@ public class ItemWorldMap extends ItemWorldMapBase {
     }
 
     public void d(ItemStack itemstack, World world, EntityHuman entityhuman) {
-        itemstack.setData(world.b("map"));
-        String s = "map_" + itemstack.getData();
-        WorldMap worldmap = new WorldMap(s);
+        if (itemstack.getData() == 0) { // CraftBukkit - wrap method in conditional statement
+            itemstack.setData(world.b("map"));
+            String s = "map_" + itemstack.getData();
+            WorldMap worldmap = new WorldMap(s);
 
-        world.a(s, (WorldMapBase) worldmap);
-        worldmap.centerX = MathHelper.floor(entityhuman.locX);
-        worldmap.centerZ = MathHelper.floor(entityhuman.locZ);
-        worldmap.scale = 3;
-        worldmap.map = (byte) ((WorldServer) world).dimension; // CraftBukkit - fixes Bukkit multiworld maps.
-        worldmap.a();
+            world.a(s, (WorldMapBase) worldmap);
+            worldmap.centerX = MathHelper.floor(entityhuman.locX);
+            worldmap.centerZ = MathHelper.floor(entityhuman.locZ);
+            worldmap.scale = 3;
+            worldmap.map = (byte) ((WorldServer) world).dimension; // CraftBukkit - fixes Bukkit multiworld maps.
+            worldmap.a();
 
-        // CraftBukkit start
-        MapInitializeEvent event = new MapInitializeEvent(worldmap.mapView);
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        // CraftBukkit end
+            // CraftBukkit start
+            MapInitializeEvent event = new MapInitializeEvent(worldmap.mapView);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+        }   // CraftBukkit end
     }
 
     public Packet c(ItemStack itemstack, World world, EntityHuman entityhuman) {

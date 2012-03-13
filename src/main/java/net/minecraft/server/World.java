@@ -2889,7 +2889,17 @@ public class World implements IBlockAccess {
     }
 
     public int b(String s) {
-        return this.worldMaps.a(s);
+        // CraftBukkit start - whole method
+        int next_id = this.worldMaps.a(s);
+        String name = s + "_" + next_id;
+        if (this.worldMaps.get(WorldMap.class, name) != null) {
+            // The map already exists, so skip this ID and get the next one.
+            if (next_id < Short.MAX_VALUE) { // Just a safeguard in case this is actually the last possible map
+                return this.b(s);
+            }
+        }
+        return next_id;
+        // CraftBukkit end
     }
 
     public void triggerEffect(int i, int j, int k, int l, int i1) {
