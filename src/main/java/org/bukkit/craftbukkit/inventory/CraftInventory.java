@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,6 +16,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryTransaction;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 
@@ -426,5 +426,9 @@ public class CraftInventory implements Inventory {
 
     public void setMaxStackSize(int size) {
         inventory.setMaxStackSize(size);
+    }
+
+    public InventoryTransaction transaction() {
+        return new CraftInventoryTransaction(this);
     }
 }
