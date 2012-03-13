@@ -47,6 +47,7 @@ public class VillageCollection {
 
             if (village.isAbandoned()) {
                 iterator.remove();
+                world.getWorld().getVillageManager().removeVillage(village); // CraftBukkit - remove from manager
             }
         }
     }
@@ -109,6 +110,7 @@ public class VillageCollection {
 
                     village1.addDoor(villagedoor);
                     this.villages.add(village1);
+                    world.getWorld().getVillageManager().addVillage(village1); // CraftBukkit - add new village
                 }
 
                 ++i;

@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack; // CraftBukkit
 public class EntityIronGolem extends EntityGolem {
 
     private int b = 0;
-    Village a = null;
+    public Village a = null; // CraftBukkit - public
     private int c;
     private int g;
 

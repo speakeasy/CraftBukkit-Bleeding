@@ -6,11 +6,11 @@ import java.util.List;
 public class VillageSiege {
 
     private World world;
-    private boolean b = false;
+    public boolean b = false; // CraftBukkit - private -> public
     private int c = -1;
     private int d;
     private int e;
-    private Village f;
+    public Village f; // CraftBukkit - private -> public
     private int g;
     private int h;
     private int i;

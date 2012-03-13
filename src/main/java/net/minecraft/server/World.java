@@ -68,7 +68,7 @@ public class World implements IBlockAccess {
     private boolean N;
     public WorldMapCollection worldMaps;
     public final VillageCollection villages = new VillageCollection(this);
-    private final VillageSiege O = new VillageSiege(this);
+    public final VillageSiege O = new VillageSiege(this); // CraftBukkit - private -> public
     private ArrayList P = new ArrayList();
     private boolean Q;
     public boolean allowMonsters = true; // CraftBukkit - private -> public

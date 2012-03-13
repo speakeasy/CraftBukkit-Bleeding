@@ -5,6 +5,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
+import org.bukkit.village.Village;
 
 public class CraftVillager extends CraftAgeable implements Villager {
     public CraftVillager(CraftServer server, EntityVillager entity) {
@@ -32,5 +33,9 @@ public class CraftVillager extends CraftAgeable implements Villager {
     public void setProfession(Profession profession) {
         Validate.notNull(profession);
         getHandle().setProfession(profession.getId());
+    }
+
+    public Village getVillage() {
+        return getHandle().village.world.getWorld().getVillageManager().getVillage(getHandle().village);
     }
 }

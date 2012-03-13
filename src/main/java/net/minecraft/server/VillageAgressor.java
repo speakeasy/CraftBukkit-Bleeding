@@ -1,11 +1,11 @@
 package net.minecraft.server;
 
-class VillageAgressor {
+public class VillageAgressor { // Craftbukkit - public
 
     public EntityLiving a;
     public int b;
 
-    final Village c;
+    public final Village c; // CraftBukkit - public
 
     VillageAgressor(Village village, EntityLiving entityliving, int i) {
         this.c = village;

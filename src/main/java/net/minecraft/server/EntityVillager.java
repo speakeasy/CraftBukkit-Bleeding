@@ -5,7 +5,7 @@ public class EntityVillager extends EntityAgeable implements NPC {
     private int profession;
     private boolean c;
     private boolean g;
-    Village village;
+    public Village village; // CraftBukkit - public
 
     public EntityVillager(World world) {
         this(world, 0);

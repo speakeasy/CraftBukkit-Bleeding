@@ -46,6 +46,7 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.Difficulty;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.village.CraftVillageManager;
 import org.bukkit.plugin.messaging.StandardMessenger;
 
 public class CraftWorld implements World {
@@ -56,6 +57,7 @@ public class CraftWorld implements World {
     private final ChunkGenerator generator;
     private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
+    private final CraftVillageManager villageManager;
 
     private static final Random rand = new Random();
 
@@ -64,6 +66,8 @@ public class CraftWorld implements World {
         this.generator = gen;
 
         environment = env;
+
+        villageManager = new CraftVillageManager(world);
     }
 
     public void preserveChunk(CraftChunk chunk) {
@@ -1118,5 +1122,9 @@ public class CraftWorld implements World {
 
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
         server.getWorldMetadata().removeMetadata(this, metadataKey, owningPlugin);
+    }
+
+    public CraftVillageManager getVillageManager() {
+        return villageManager;
     }
 }

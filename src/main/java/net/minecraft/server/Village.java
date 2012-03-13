@@ -6,15 +6,15 @@ import java.util.List;
 
 public class Village {
 
-    private final World world;
+    public final World world; // CraftBukkit - private -> public
     private final List doors = new ArrayList();
     private final ChunkCoordinates c = new ChunkCoordinates(0, 0, 0);
     private final ChunkCoordinates center = new ChunkCoordinates(0, 0, 0);
-    private int size = 0;
+    public int size = 0; // CraftBukkit - private -> public
     private int f = 0;
-    private int time = 0;
+    public int time = 0; // CraftBukkit - private -> public
     private int population = 0;
-    private List i = new ArrayList();
+    public List i = new ArrayList(); // CraftBukkit - private -> public
     private int j = 0;
 
     public Village(World world) {
