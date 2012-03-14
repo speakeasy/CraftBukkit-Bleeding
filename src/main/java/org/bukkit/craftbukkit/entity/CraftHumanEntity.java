@@ -67,7 +67,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     public ItemStack getItemOnCursor() {
-        return new CraftItemStack(getHandle().inventory.getCarried());
+        return CraftItemStack.fromNMSItemStack(getHandle().inventory.getCarried());
     }
 
     public void setItemOnCursor(ItemStack item) {

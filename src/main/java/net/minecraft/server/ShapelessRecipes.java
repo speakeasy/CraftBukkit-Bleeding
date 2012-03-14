@@ -23,7 +23,7 @@ public class ShapelessRecipes implements CraftingRecipe {
     // CraftBukkit start
     @SuppressWarnings("unchecked")
     public ShapelessRecipe toBukkitRecipe() {
-        CraftItemStack result = new CraftItemStack(this.result);
+        CraftItemStack result = CraftItemStack.fromNMSItemStack(this.result);
         CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
         for (ItemStack stack : (List<ItemStack>) this.ingredients) {
             if (stack != null) {

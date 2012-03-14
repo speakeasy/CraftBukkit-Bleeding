@@ -116,7 +116,7 @@ public class CraftEventFactory {
 
     private static PlayerEvent getPlayerBucketEvent(boolean isFilling, EntityHuman who, int clickedX, int clickedY, int clickedZ, int clickedFace, ItemStack itemstack, net.minecraft.server.Item item) {
         Player player = (who == null) ? null : (Player) who.getBukkitEntity();
-        CraftItemStack itemInHand = new CraftItemStack(new ItemStack(item));
+        CraftItemStack itemInHand = CraftItemStack.fromNMSItemStack(new ItemStack(item));
         Material bucket = Material.getMaterial(itemstack.id);
 
         CraftWorld craftWorld = (CraftWorld) player.getWorld();
@@ -151,7 +151,7 @@ public class CraftEventFactory {
 
     public static PlayerInteractEvent callPlayerInteractEvent(EntityHuman who, Action action, int clickedX, int clickedY, int clickedZ, int clickedFace, ItemStack itemstack) {
         Player player = (who == null) ? null : (Player) who.getBukkitEntity();
-        CraftItemStack itemInHand = new CraftItemStack(itemstack);
+        CraftItemStack itemInHand = CraftItemStack.fromNMSItemStack(itemstack);
 
         CraftWorld craftWorld = (CraftWorld) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
@@ -171,7 +171,7 @@ public class CraftEventFactory {
             }
         }
 
-        if (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0) {
+        if (itemInHand == null || itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0) {
             itemInHand = null;
         }
 
@@ -186,7 +186,7 @@ public class CraftEventFactory {
      */
     public static EntityShootBowEvent callEntityShootBowEvent(EntityLiving who, ItemStack itemstack, EntityArrow entityArrow, float force) {
         LivingEntity shooter = (LivingEntity) who.getBukkitEntity();
-        CraftItemStack itemInHand = new CraftItemStack(itemstack);
+        CraftItemStack itemInHand = CraftItemStack.fromNMSItemStack(itemstack);
         Arrow arrow = (Arrow) entityArrow.getBukkitEntity();
 
         if (itemInHand != null && (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0)) {
@@ -204,7 +204,7 @@ public class CraftEventFactory {
      */
     public static BlockDamageEvent callBlockDamageEvent(EntityHuman who, int x, int y, int z, ItemStack itemstack, boolean instaBreak) {
         Player player = (who == null) ? null : (Player) who.getBukkitEntity();
-        CraftItemStack itemInHand = new CraftItemStack(itemstack);
+        CraftItemStack itemInHand = CraftItemStack.fromNMSItemStack(itemstack);
 
         CraftWorld craftWorld = (CraftWorld) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
@@ -488,8 +488,7 @@ public class CraftEventFactory {
 
     public static ItemStack callPreCraftEvent(InventoryCrafting matrix, ItemStack result, InventoryView lastCraftView, boolean isRepair) {
         CraftInventoryCrafting inventory = new CraftInventoryCrafting(matrix, matrix.resultInventory);
-        inventory.setResult(new CraftItemStack(result));
-
+        inventory.setResult(CraftItemStack.fromNMSItemStack(result));
         PrepareItemCraftEvent event = new PrepareItemCraftEvent(inventory, lastCraftView, isRepair);
         Bukkit.getPluginManager().callEvent(event);
 

@@ -14,16 +14,12 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 public class CraftItemStack extends ItemStack {
     protected net.minecraft.server.ItemStack item;
 
-    public CraftItemStack(net.minecraft.server.ItemStack item) {
-        super(
-            item != null ? item.id: 0,
-            item != null ? item.count : 0,
-            (short)(item != null ? item.getData() : 0)
-        );
+    private CraftItemStack(net.minecraft.server.ItemStack item) {
+        super(item.id, item.count, (short) item.getData());
         this.item = item;
     }
 
-    public CraftItemStack(ItemStack item) {
+    private CraftItemStack(ItemStack item) {
         this(item.getTypeId(), item.getAmount(), item.getDurability());
         addUnsafeEnchantments(item.getEnchantments());
     }
@@ -230,5 +226,19 @@ public class CraftItemStack extends ItemStack {
             return null;
         }
         return new CraftItemStack(original).getHandle();
+    }
+
+    public static CraftItemStack fromBukkitItemStack(ItemStack original) {
+        if (original == null || original.getTypeId() <= 0) {
+            return null;
+        }
+        return new CraftItemStack(original);
+    }
+
+    public static CraftItemStack fromNMSItemStack(net.minecraft.server.ItemStack original) {
+        if (original == null || original.id <= 0) {
+            return null;
+        }
+        return new CraftItemStack(original);
     }
 }

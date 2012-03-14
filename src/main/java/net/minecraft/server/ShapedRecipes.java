@@ -24,7 +24,7 @@ public class ShapedRecipes implements CraftingRecipe {
 
     // CraftBukkit start
     public ShapedRecipe toBukkitRecipe() {
-        CraftItemStack result = new CraftItemStack(this.result);
+        CraftItemStack result = CraftItemStack.fromNMSItemStack(this.result);
         CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
         switch (this.width) {
         case 1:

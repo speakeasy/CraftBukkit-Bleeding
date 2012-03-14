@@ -160,13 +160,13 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
 
         for (int i = 0; i < this.inventory.items.length; ++i) {
             if (this.inventory.items[i] != null) {
-                loot.add(new CraftItemStack(this.inventory.items[i]));
+                loot.add(CraftItemStack.fromNMSItemStack(this.inventory.items[i]));
             }
         }
 
         for (int i = 0; i < this.inventory.armor.length; ++i) {
             if (this.inventory.armor[i] != null) {
-                loot.add(new CraftItemStack(this.inventory.armor[i]));
+                loot.add(CraftItemStack.fromNMSItemStack(this.inventory.armor[i]));
             }
         }
 

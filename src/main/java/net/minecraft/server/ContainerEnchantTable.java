@@ -124,7 +124,7 @@ public class ContainerEnchantTable extends Container {
                     }
 
                     // CraftBukkit start
-                    CraftItemStack item = new CraftItemStack(itemstack);
+                    CraftItemStack item = CraftItemStack.fromNMSItemStack(itemstack);
                     PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(player, this.getBukkitView(), this.world.getWorld().getBlockAt(this.x, this.y, this.z), item, this.costs, i);
                     this.world.getServer().getPluginManager().callEvent(event);
 
@@ -159,7 +159,7 @@ public class ContainerEnchantTable extends Container {
                         EnchantmentInstance instance = (EnchantmentInstance) obj;
                         enchants.put(org.bukkit.enchantments.Enchantment.getById(instance.enchantment.id), instance.level);
                     }
-                    CraftItemStack item = new CraftItemStack(itemstack);
+                    CraftItemStack item = CraftItemStack.fromNMSItemStack(itemstack);
 
                     EnchantItemEvent event = new EnchantItemEvent((Player) entityhuman.bukkitEntity, this.getBukkitView(), this.world.getWorld().getBlockAt(this.x, this.y, this.z), item, this.costs[i], enchants, i);
                     this.world.getServer().getPluginManager().callEvent(event);

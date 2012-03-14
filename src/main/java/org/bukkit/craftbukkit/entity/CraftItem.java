@@ -17,7 +17,7 @@ public class CraftItem extends CraftEntity implements Item {
     }
 
     public ItemStack getItemStack() {
-        return new CraftItemStack(item.itemStack);
+        return CraftItemStack.fromNMSItemStack(item.itemStack);
     }
 
     public void setItemStack(ItemStack stack) {

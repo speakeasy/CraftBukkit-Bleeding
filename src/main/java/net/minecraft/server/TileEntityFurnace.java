@@ -175,7 +175,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory {
         if (!this.world.isStatic) {
             // CraftBukkit start - handle multiple elapsed ticks
             if (this.burnTime <= 0 && this.canBurn() && this.items[1] != null) { // CraftBukkit - == to <=
-                CraftItemStack fuel = new CraftItemStack(this.items[1]);
+                CraftItemStack fuel = CraftItemStack.fromNMSItemStack(this.items[1]);
 
                 FurnaceBurnEvent furnaceBurnEvent = new FurnaceBurnEvent(this.world.getWorld().getBlockAt(this.x, this.y, this.z), fuel, this.fuelTime(this.items[1]));
                 this.world.getServer().getPluginManager().callEvent(furnaceBurnEvent);
@@ -238,13 +238,13 @@ public class TileEntityFurnace extends TileEntity implements IInventory {
             ItemStack itemstack = FurnaceRecipes.getInstance().getResult(this.items[0].getItem().id);
 
             // CraftBukkit start
-            CraftItemStack source = new CraftItemStack(this.items[0]);
-            CraftItemStack result = new CraftItemStack(itemstack.cloneItemStack());
+            CraftItemStack source = CraftItemStack.fromNMSItemStack(this.items[0]);
+            CraftItemStack result = CraftItemStack.fromNMSItemStack(itemstack.cloneItemStack());
 
             FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(this.world.getWorld().getBlockAt(this.x, this.y, this.z), source, result);
             this.world.getServer().getPluginManager().callEvent(furnaceSmeltEvent);
 
-            if (furnaceSmeltEvent.isCancelled()) {
+            if (furnaceSmeltEvent.isCancelled() || furnaceSmeltEvent.getResult() == null) {
                 return;
             }
 

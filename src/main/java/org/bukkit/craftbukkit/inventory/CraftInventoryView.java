@@ -62,7 +62,7 @@ public class CraftInventoryView extends InventoryView {
         if (slot == -999) {
             return null;
         }
-        return new CraftItemStack(container.getSlot(slot).getItem());
+        return CraftItemStack.fromNMSItemStack(container.getSlot(slot).getItem());
     }
 
     public boolean isInTop(int rawSlot) {

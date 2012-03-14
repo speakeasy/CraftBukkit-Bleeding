@@ -41,7 +41,7 @@ public class CraftInventory implements Inventory {
 
     public ItemStack getItem(int index) {
         net.minecraft.server.ItemStack item = getInventory().getItem(index);
-        return item == null ? null : new CraftItemStack(item);
+        return item == null ? null : CraftItemStack.fromNMSItemStack(item);
     }
 
     public ItemStack[] getContents() {
@@ -49,7 +49,7 @@ public class CraftInventory implements Inventory {
         net.minecraft.server.ItemStack[] mcItems = getInventory().getContents();
 
         for (int i = 0; i < mcItems.length; i++) {
-            items[i] = mcItems[i] == null ? null : new CraftItemStack(mcItems[i]);
+            items[i] = mcItems[i] == null ? null : CraftItemStack.fromNMSItemStack(mcItems[i]);
         }
 
         return items;
@@ -226,10 +226,10 @@ public class CraftInventory implements Inventory {
 
     public int firstPartial(ItemStack item) {
         ItemStack[] inventory = getContents();
-        ItemStack filteredItem = new CraftItemStack(item);
         if (item == null) {
             return -1;
         }
+        ItemStack filteredItem = CraftItemStack.fromBukkitItemStack(item);
         for (int i = 0; i < inventory.length; i++) {
             ItemStack cItem = inventory[i];
             if (cItem != null && cItem.getTypeId() == filteredItem.getTypeId() && cItem.getAmount() < cItem.getMaxStackSize() && cItem.getDurability() == filteredItem.getDurability() && cItem.getEnchantments().equals(filteredItem.getEnchantments())) {

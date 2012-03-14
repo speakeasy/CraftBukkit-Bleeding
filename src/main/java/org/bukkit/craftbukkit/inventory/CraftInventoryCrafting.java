@@ -47,13 +47,13 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
         int i = 0;
         for (i = 0; i < mcResultItems.length; i++ ) {
-            items[i] = new CraftItemStack(mcResultItems[i]);
+            items[i] = CraftItemStack.fromNMSItemStack(mcResultItems[i]);
         }
 
         net.minecraft.server.ItemStack[] mcItems = getMatrixInventory().getContents();
 
         for (int j = 0; j < mcItems.length; j++) {
-            items[i + j] = new CraftItemStack(mcItems[j]);
+            items[i + j] = CraftItemStack.fromNMSItemStack(mcItems[j]);
         }
 
         return items;
@@ -68,10 +68,10 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     public CraftItemStack getItem(int index) {
         if (index < getResultInventory().getSize()) {
             net.minecraft.server.ItemStack item = getResultInventory().getItem(index);
-            return item == null ? null : new CraftItemStack(item);
+            return CraftItemStack.fromNMSItemStack(item);
         } else {
             net.minecraft.server.ItemStack item = getMatrixInventory().getItem(index - getResultInventory().getSize());
-            return item == null ? null : new CraftItemStack(item);
+            return CraftItemStack.fromNMSItemStack(item);
         }
     }
 
@@ -89,7 +89,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
         net.minecraft.server.ItemStack[] matrix = getMatrixInventory().getContents();
 
         for (int i = 0; i < matrix.length; i++ ) {
-            items[i] = new CraftItemStack(matrix[i]);
+            items[i] = CraftItemStack.fromNMSItemStack(matrix[i]);
         }
 
         return items;
@@ -97,8 +97,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     public ItemStack getResult() {
         net.minecraft.server.ItemStack item = getResultInventory().getItem(0);
-        if(item != null) return new CraftItemStack(item);
-        return null;
+        return CraftItemStack.fromNMSItemStack(item);
     }
 
     public void setMatrix(ItemStack[] contents) {

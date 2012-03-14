@@ -123,7 +123,7 @@ public class BlockDispenser extends BlockContainer {
                 motZ += random.nextGaussian() * 0.007499999832361937D * 6.0D;
 
                 org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
-                org.bukkit.inventory.ItemStack bukkitItem = new CraftItemStack(itemstack).clone();
+                org.bukkit.inventory.ItemStack bukkitItem = CraftItemStack.fromNMSItemStack(itemstack).clone();
 
                 BlockDispenseEvent event = new BlockDispenseEvent(block, bukkitItem, new Vector(motX, motY, motZ));
                 world.getServer().getPluginManager().callEvent(event);
