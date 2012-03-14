@@ -34,7 +34,7 @@ public class CraftMapRenderer extends MapRenderer {
         }
         for (int i = 0; i < worldMap.decorations.size(); ++i) {
             WorldMapDecoration decoration = (WorldMapDecoration) worldMap.decorations.get(i);
-            cursors.addCursor(decoration.locX, decoration.locY, (byte) (decoration.rotation & 15), (byte) (decoration.type));
+            cursors.addCursor(decoration.locX, decoration.locY, (byte) (decoration.rotation & 15), decoration.type);
         }
     }
 

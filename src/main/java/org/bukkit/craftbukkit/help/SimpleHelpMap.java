@@ -15,16 +15,16 @@ import java.util.*;
 /**
  * Standard implementation of {@link HelpMap} for CraftBukkit servers.
  */
-public class SimpleHelpMap implements HelpMap {
+public final class SimpleHelpMap implements HelpMap {
     
     private HelpTopic defaultTopic;
     private Map<String, HelpTopic> helpTopics;
-    private Map<Class, HelpTopicFactory> topicFactoryMap;
+    private Map<Class<?>, HelpTopicFactory> topicFactoryMap;
 
     public SimpleHelpMap() {
         helpTopics = new TreeMap<String, HelpTopic>(new HelpTopicComparator()); // Using a TreeMap for its explicit sorting on key
         defaultTopic = new IndexHelpTopic("Index", null, null, Collections2.filter(helpTopics.values(), Predicates.not(Predicates.instanceOf(CommandAliasHelpTopic.class))));
-        topicFactoryMap = new HashMap<Class, HelpTopicFactory>();
+        topicFactoryMap = new HashMap<Class<?>, HelpTopicFactory>();
 
         registerHelpTopicFactory(MultipleCommandAlias.class, new MultipleCommandAliasHelpTopicFactory());
     }
@@ -75,7 +75,7 @@ public class SimpleHelpMap implements HelpMap {
 
         // Initialize help topics from the server's command map
         outer: for (Command command : server.getCommandMap().getCommands()) {
-            for (Class c : topicFactoryMap.keySet()) {
+            for (Class<?> c : topicFactoryMap.keySet()) {
                 if (c.isAssignableFrom(command.getClass())) {
                     addTopic(topicFactoryMap.get(c).createTopic(command));
                     continue outer;
@@ -115,7 +115,7 @@ public class SimpleHelpMap implements HelpMap {
         }
     }
 
-    public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {
+    public void registerHelpTopicFactory(Class<?> commandClass, HelpTopicFactory<?> factory) {
         if (!Command.class.isAssignableFrom(commandClass) && !CommandExecutor.class.isAssignableFrom(commandClass)) {
             throw new IllegalArgumentException("commandClass must implement either Command or CommandExecutor!");
         }
