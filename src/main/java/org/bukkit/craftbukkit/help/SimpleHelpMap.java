@@ -10,7 +10,6 @@ import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.help.*;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -18,11 +17,11 @@ import java.util.*;
  */
 public class SimpleHelpMap implements HelpMap {
     
-    private HelpTopic defaultTopic;
-    private Map<String, HelpTopic> helpTopics;
-    private Set<HelpTopic> pluginIndexes; 
-    private Map<Class, HelpTopicFactory<Command>> topicFactoryMap;
-    private CraftServer server;
+    private final HelpTopic defaultTopic;
+    private final Map<String, HelpTopic> helpTopics;
+    private final Set<HelpTopic> pluginIndexes; 
+    private final Map<Class, HelpTopicFactory<Command>> topicFactoryMap;
+    private final CraftServer server;
     private HelpYamlReader yaml;
 
     public SimpleHelpMap(CraftServer server) {
@@ -198,7 +197,7 @@ public class SimpleHelpMap implements HelpMap {
 
     private class IsCommandTopicPredicate implements Predicate<HelpTopic> {
 
-        public boolean apply(@Nullable HelpTopic topic) {
+        public boolean apply(HelpTopic topic) {
             return topic.getName().charAt(0) == '/';
         }
     }

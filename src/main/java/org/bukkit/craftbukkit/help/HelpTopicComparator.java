@@ -11,12 +11,12 @@ import java.util.Comparator;
 public class HelpTopicComparator implements Comparator<HelpTopic> {
     
     // Singleton implementations
-    private static TopicNameComparator tnc = new TopicNameComparator();
+    private static final TopicNameComparator tnc = new TopicNameComparator();
     public static TopicNameComparator topicNameComparatorInstance() {
         return tnc;
     }
     
-    private static HelpTopicComparator htc = new HelpTopicComparator();
+    private static final HelpTopicComparator htc = new HelpTopicComparator();
     public static HelpTopicComparator helpTopicComparatorInstance() {
         return htc;
     }

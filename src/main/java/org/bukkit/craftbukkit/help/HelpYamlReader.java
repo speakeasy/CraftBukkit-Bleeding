@@ -17,7 +17,7 @@ import java.util.logging.Level;
  */
 public class HelpYamlReader {
 
-    private YamlConfiguration helpYaml;
+    private final YamlConfiguration helpYaml;
     private final char ALT_COLOR_CODE = '&';
 
     public HelpYamlReader(Server server) {
