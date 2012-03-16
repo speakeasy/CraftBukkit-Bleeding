@@ -226,9 +226,13 @@ public class CraftInventoryTransaction implements InventoryTransaction, Inventor
     }
 
     public boolean contains(ItemStack item) {
+        item = item.clone();
         for (ItemStack check : inventory) {
             if (check != null && itemMatcher.match(check, item)) {
-                return true;
+                item.setAmount(item.getAmount() - check.getAmount());
+                if (item.getAmount() <= 0) {
+                    return true;
+                }
             }
         }
         return false;
