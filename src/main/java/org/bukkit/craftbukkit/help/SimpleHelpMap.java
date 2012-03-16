@@ -26,8 +26,8 @@ public class SimpleHelpMap implements HelpMap {
     private HelpYamlReader yaml;
 
     public SimpleHelpMap(CraftServer server) {
-        this.helpTopics = new TreeMap<String, HelpTopic>(new HelpTopicComparator.TopicNameComparator()); // Using a TreeMap for its explicit sorting on key
-        this.pluginIndexes = new TreeSet<HelpTopic>(new HelpTopicComparator());
+        this.helpTopics = new TreeMap<String, HelpTopic>(HelpTopicComparator.topicNameComparatorInstance()); // Using a TreeMap for its explicit sorting on key
+        this.pluginIndexes = new TreeSet<HelpTopic>(HelpTopicComparator.helpTopicComparatorInstance());
         this.topicFactoryMap = new HashMap<Class, HelpTopicFactory<Command>>();
         this.server = server;
         this.yaml = new HelpYamlReader(server);
@@ -90,7 +90,7 @@ public class SimpleHelpMap implements HelpMap {
      */
     public synchronized void initializeCommands() {
         // ** Load topics from highest to lowest priority order **
-        List<String> ignoredPlugins = yaml.getIgnoredPlugins();
+        Set<String> ignoredPlugins = new HashSet<String>(yaml.getIgnoredPlugins());
 
         // Initialize help topics from the server's command map
         outer: for (Command command : server.getCommandMap().getCommands()) {
@@ -161,7 +161,7 @@ public class SimpleHelpMap implements HelpMap {
                 HelpTopic topic = getHelpTopic("/" + command.getLabel());
                 if (topic != null) {
                     if (!pluginIndexes.containsKey(pluginName)) {
-                        pluginIndexes.put(pluginName, new TreeSet<HelpTopic>(new HelpTopicComparator())); //keep things in topic order
+                        pluginIndexes.put(pluginName, new TreeSet<HelpTopic>(HelpTopicComparator.helpTopicComparatorInstance())); //keep things in topic order
                     }
                     pluginIndexes.get(pluginName).add(topic);
                 }
@@ -179,7 +179,7 @@ public class SimpleHelpMap implements HelpMap {
         return null;
     }
     
-    private boolean commandInIgnoredPlugin(Command command, List<String> ignoredPlugins) {
+    private boolean commandInIgnoredPlugin(Command command, Set<String> ignoredPlugins) {
         if ((command instanceof BukkitCommand || command instanceof VanillaCommand) && ignoredPlugins.contains("Bukkit")) {
             return true;
         }
