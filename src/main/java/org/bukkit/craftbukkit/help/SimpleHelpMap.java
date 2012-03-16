@@ -77,6 +77,8 @@ public class SimpleHelpMap implements HelpMap {
      * Reads the general topics from help.yml and adds them to the help index.
      */
     public synchronized void initializeGeneralTopics() {
+        yaml = new HelpYamlReader(server);
+
         // Initialize general help topics from the help.yml file
         for (HelpTopic topic : yaml.getGeneralTopics()) {
             addTopic(topic);
