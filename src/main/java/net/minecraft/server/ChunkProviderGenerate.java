@@ -47,7 +47,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
     public void a(int i, int j, byte[] abyte) {
         byte b0 = 4;
         byte b1 = 16;
-        int waterLine = 63; // CraftBukkit ABSOLUTE SEALEVEL
+        byte waterline = 63; // Absolute sea level
         int k = b0 + 1;
         byte b3 = 17;
         int l = b0 + 1;
@@ -87,7 +87,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                             for (int k2 = 0; k2 < 4; ++k2) {
                                 if ((d16 += d15) > 0.0D) {
                                     abyte[j2 += short1] = (byte) Block.STONE.id;
-                                } else if (k1 * 8 + l1 < waterLine) { // CraftBukkit
+                                } else if (k1 * 8 + l1 < waterline) {
                                     abyte[j2 += short1] = (byte) Block.STATIONARY_WATER.id;
                                 } else {
                                     abyte[j2 += short1] = 0;
@@ -109,7 +109,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
     }
 
     public void a(int i, int j, byte[] abyte, BiomeBase[] abiomebase) {
-        int grassBeginHeight = 192;  // CraftBukkit SEALEVEL - above here, grass/sandstone/ice form
+        byte grassBeginHeight = 63; // Above here, grass is grown
         double d0 = 0.03125D;
 
         this.s = this.o.a(this.s, i * 16, j * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
@@ -123,7 +123,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                 byte b1 = biomebase.A;
                 byte b2 = biomebase.B;
 
-                for (int k1 = 255; k1 >= 0; --k1) { // CraftBukkit SEALEVEL - 127 -> 255, Work down from here applying biome cover over stone
+                for (int k1 = 127; k1 >= 0; --k1) {
                     int l1 = (l * 16 + k) * 128 + k1;
 
                     if (k1 <= 0 + this.k.nextInt(5)) {
@@ -138,12 +138,12 @@ public class ChunkProviderGenerate implements IChunkProvider {
                                 if (i1 <= 0) {
                                     b1 = 0;
                                     b2 = (byte) Block.STONE.id;
-                                } else if (k1 >= grassBeginHeight - 4 && k1 <= grassBeginHeight + 1) { // CraftBukkit
+                                } else if (k1 >= grassBeginHeight - 4 && k1 <= grassBeginHeight + 1) {
                                     b1 = biomebase.A;
                                     b2 = biomebase.B;
                                 }
 
-                                if (k1 < grassBeginHeight && b1 == 0) { // CraftBukkit
+                                if (k1 < grassBeginHeight && b1 == 0) {
                                     if (f < 0.15F) {
                                         b1 = (byte) Block.ICE.id;
                                     } else {
@@ -152,7 +152,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                                 }
 
                                 j1 = i1;
-                                if (k1 >= grassBeginHeight - 1) { // CraftBukkit
+                                if (k1 >= grassBeginHeight - 1) {
                                     abyte[l1] = b1;
                                 } else {
                                     abyte[l1] = b2;
