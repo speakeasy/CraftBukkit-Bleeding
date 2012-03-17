@@ -44,7 +44,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.c = new NoiseGeneratorOctaves(this.random, 8);
     }
 
-    private void a(int xx, int zz, byte[] rawChunk) {
+    private void makeWorldStoneAndWater(int xx, int zz, byte[] rawChunk) {
         byte b0 = 4;
         byte b1 = 16;
         byte waterline = 63; // Absolute sea level
@@ -55,7 +55,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.biomeBases = this.world.getWorldChunkManager().getBiomes(this.biomeBases, xx * 4 - 2, zz * 4 - 2, k + 5, l + 5);
         this.r = this.a(this.r, xx * b0, 0, zz * b0, k, b3, l);
 
-        for (int i1 = 0; i1 < b0; ++i1) {
+        for (int i1 = 0; i1 < b0; ++i1) { // This loop makes the world's stone
             for (int j1 = 0; j1 < b0; ++j1) {
                 for (int k1 = 0; k1 < b1; ++k1) {
                     double d0 = 0.125D;
@@ -108,7 +108,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         }
     }
 
-    private void applyBiomeTopCover(int xx, int j, byte[] rawChunk, BiomeBase[] biomeBases) {
+    private void applyBiomeTopCoverAndBedrock(int xx, int j, byte[] rawChunk, BiomeBase[] biomeBases) {
         int grassBeginHeight = 63;  // CraftBukkit SEALEVEL - above here, grass/sandstone/ice form
         double d0 = 0.03125D;
 
@@ -180,9 +180,9 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.random.setSeed((long) xx * 341873128712L + (long) zz * 132897987541L);
         byte[] rawChunk = new byte['\u8000'];
 
-        this.a(xx, zz, rawChunk);
+        this.makeWorldStoneAndWater(xx, zz, rawChunk);
         this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
-        this.applyBiomeTopCover(xx, zz, rawChunk, this.biomeBases);
+        this.applyBiomeTopCoverAndBedrock(xx, zz, rawChunk, this.biomeBases);
         this.caveGen.a(this, this.world, xx, zz, rawChunk);
         this.canyonGen.a(this, this.world, xx, zz, rawChunk);
         if (this.aFlag) {
