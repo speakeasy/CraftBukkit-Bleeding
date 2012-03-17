@@ -43,6 +43,10 @@ public class NBTTagCompound extends NBTBase {
         map.remove(name);
     }
 
+    public Collection keys() {
+        return this.map.keySet();
+    }
+
     // CraftBukkit end
 
     void load(DataInput datainput) {

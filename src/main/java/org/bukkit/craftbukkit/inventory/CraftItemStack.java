@@ -3,12 +3,15 @@ package org.bukkit.craftbukkit.inventory;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.server.EnchantmentManager;
+import net.minecraft.server.NBTBase;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.craftbukkit.configuration.NBTConfiguration;
 
 @DelegateDeserialization(ItemStack.class)
 public class CraftItemStack extends ItemStack {
@@ -210,6 +213,29 @@ public class CraftItemStack extends ItemStack {
         } else {
             tag.set("ench", list);
         }
+    }
+
+    @Override
+    public boolean hasAttributes() {
+        if (super.hasAttributes()) {
+            return true;
+        }
+
+        NBTTagCompound tag = item.tag;
+
+        if (tag == null) {
+            return false;
+        }
+
+        NBTBase test = tag.get("bukkit");
+        if (test == null) {
+            return false;
+        } else if(!(test instanceof NBTTagCompound)) {
+            return false;
+        }
+
+        super.attributes = new NBTConfiguration((NBTTagCompound) test);
+        return true;
     }
 
     public net.minecraft.server.ItemStack getHandle() {
