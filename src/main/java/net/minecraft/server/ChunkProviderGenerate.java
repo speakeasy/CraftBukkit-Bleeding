@@ -14,7 +14,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
     public NoiseGeneratorOctaves b;
     public NoiseGeneratorOctaves c;
     private World world;
-    private final boolean aFlag;
+    private final boolean generateStructures;
     private double[] r;
     private double[] s = new double[256];
     private WorldGenBase caveGen = new WorldGenCaves();
@@ -33,7 +33,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
     public ChunkProviderGenerate(World world, long i, boolean flag) {
         this.world = world;
-        this.aFlag = flag;
+        this.generateStructures = flag;
         this.random = new Random(i);
         this.noise1 = new NoiseGeneratorOctaves(this.random, 16);
         this.noise2 = new NoiseGeneratorOctaves(this.random, 16);
@@ -47,7 +47,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
     private void makeWorldStoneAndWater(int xx, int zz, byte[] rawChunk) {
         byte b0 = 4;
         byte b1 = 16;
-        byte waterline = 63; // Absolute sea level
+        int waterline = 63; // Absolute sea level
         int k = b0 + 1;
         byte b3 = 17;
         int l = b0 + 1;
@@ -185,7 +185,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.applyBiomeTopCoverAndBedrock(xx, zz, rawChunk, this.biomeBases);
         this.caveGen.a(this, this.world, xx, zz, rawChunk);
         this.canyonGen.a(this, this.world, xx, zz, rawChunk);
-        if (this.aFlag) {
+        if (this.generateStructures) {
             this.mineshaftGen.a(this, this.world, xx, zz, rawChunk);
             this.villageGen.a(this, this.world, xx, zz, rawChunk);
             this.strongholdGen.a(this, this.world, xx, zz, rawChunk);
@@ -338,7 +338,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.random.setSeed((long) i * i1 + (long) j * j1 ^ this.world.getSeed());
         boolean flag = false;
 
-        if (this.aFlag) {
+        if (this.generateStructures) {
             this.mineshaftGen.a(this.world, this.random, i, j);
             flag = this.villageGen.a(this.world, this.random, i, j);
             this.strongholdGen.a(this.world, this.random, i, j);
