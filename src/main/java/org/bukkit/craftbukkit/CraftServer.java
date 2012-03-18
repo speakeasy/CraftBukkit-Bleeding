@@ -1140,8 +1140,21 @@ public final class CraftServer implements Server {
     }
 
     public Inventory createInventory(InventoryHolder owner, InventoryType type) {
-        // TODO: Create the appropriate type, rather than Custom?
-        return new CraftInventoryCustom(owner, type);
+        switch(type) {
+            case BREWING:
+                return new CraftInventoryCustom.Brewing(owner);
+            case ENCHANTING:
+                return new CraftInventoryCustom.Enchanting(owner);
+            case FURNACE:
+                return new CraftInventoryCustom.Furnace(owner);
+            case WORKBENCH:
+                return new CraftInventoryCustom.Workbench(owner);
+            case CREATIVE:
+            case CRAFTING:
+                throw new IllegalArgumentException("Can't create inventories of type " + type);
+            default:
+                return new CraftInventoryCustom(owner, type);
+        }
     }
 
     public Inventory createInventory(InventoryHolder owner, int size) throws IllegalArgumentException {

@@ -6,7 +6,12 @@ import java.util.List;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.BrewerInventory;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.EnchantingInventory;
+import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.Recipe;
 
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.IInventory;
@@ -138,6 +143,102 @@ public class CraftInventoryCustom extends CraftInventory {
 
         public InventoryHolder getOwner() {
             return owner;
+        }
+    }
+
+    public static class Brewing extends CraftInventoryCustom implements BrewerInventory {
+        public Brewing(InventoryHolder owner) {
+            super(owner, InventoryType.BREWING);
+        }
+
+        public org.bukkit.inventory.ItemStack getIngredient() {
+            return getItem(3);
+        }
+
+        public void setIngredient(org.bukkit.inventory.ItemStack ingredient) {
+            setItem(3, ingredient);
+        }
+    }
+
+    public static class Enchanting extends CraftInventoryCustom implements EnchantingInventory {
+        public Enchanting(InventoryHolder owner) {
+            super(owner, InventoryType.ENCHANTING);
+        }
+
+        public void setItem(org.bukkit.inventory.ItemStack item) {
+            setItem(0,item);
+        }
+
+        public org.bukkit.inventory.ItemStack getItem() {
+            return getItem(0);
+        }
+    }
+
+    public static class Workbench extends CraftInventoryCustom implements CraftingInventory {
+        public Workbench(InventoryHolder owner) {
+            super(owner, InventoryType.WORKBENCH);
+        }
+
+        public org.bukkit.inventory.ItemStack getResult() {
+            return getItem(0);
+        }
+
+        public org.bukkit.inventory.ItemStack[] getMatrix() {
+            org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[getSize() - 1];
+
+            for (int i = 1; i < getSize(); i++ ) {
+                items[i] = getItem(i);
+            }
+
+            return items;
+        }
+
+        public void setResult(org.bukkit.inventory.ItemStack newResult) {
+            setItem(0, newResult);
+        }
+
+        public void setMatrix(org.bukkit.inventory.ItemStack[] contents) {
+            if (getSize() - 1 < contents.length) {
+                throw new IllegalArgumentException("Invalid inventory size; expected " + (getSize() - 1) + " or less");
+            }
+            for (int i = 1; i < getSize(); i++ ) {
+                setItem(i, contents[i]);
+            }
+        }
+
+        public Recipe getRecipe() {
+            // TODO: Figure out what, if any, recipe is on the matrix?
+            return null;
+        }
+    }
+
+    public static class Furnace extends CraftInventoryCustom implements FurnaceInventory {
+        public Furnace(InventoryHolder owner) {
+            super(owner, InventoryType.FURNACE);
+        }
+
+        public org.bukkit.inventory.ItemStack getResult() {
+            return getItem(2);
+        }
+
+        public org.bukkit.inventory.ItemStack getFuel() {
+            return getItem(1);
+        }
+
+        public org.bukkit.inventory.ItemStack getSmelting() {
+            return getItem(0);
+        }
+
+        public void setFuel(org.bukkit.inventory.ItemStack stack) {
+            setItem(1,stack);
+        }
+
+        public void setResult(org.bukkit.inventory.ItemStack stack) {
+            setItem(2,stack);
+        }
+
+        public void setSmelting(org.bukkit.inventory.ItemStack stack) {
+            setItem(0,stack);
         }
     }
 }

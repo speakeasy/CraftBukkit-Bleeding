@@ -101,7 +101,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     }
 
     public void setMatrix(ItemStack[] contents) {
-        if (getMatrixInventory().getContents().length > contents.length) {
+        if (getMatrixInventory().getContents().length < contents.length) {
             throw new IllegalArgumentException("Invalid inventory size; expected " + getMatrixInventory().getContents().length + " or less");
         }
 
