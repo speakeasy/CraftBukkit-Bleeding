@@ -128,4 +128,14 @@ public class CraftEnchantment extends Enchantment {
         CraftEnchantment ench = (CraftEnchantment) other;
         return !target.a(ench.target);
     }
+
+    @Override
+    public int getMinPower(int level) {
+        return target.a(level);
+    }
+
+    @Override
+    public int getMaxPower(int level) {
+        return target.b(level);
+    }
 }
