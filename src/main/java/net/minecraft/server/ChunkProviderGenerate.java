@@ -55,20 +55,20 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.biomeBases = this.world.getWorldChunkManager().getBiomes(this.biomeBases, xx * 4 - 2, zz * 4 - 2, k + 5, l + 5);
         this.r = this.a(this.r, xx * b0, 0, zz * b0, k, b3, l);
 
-        for (int i1 = 0; i1 < b0; ++i1) { // This loop makes the world's stone
-            for (int j1 = 0; j1 < b0; ++j1) {
-                for (int k1 = 0; k1 < b1; ++k1) {
+        for (int xxx = 0; xxx < b0; ++xxx) { // This loop makes the world's stone
+            for (int zzz = 0; zzz < b0; ++zzz) {
+                for (int yyy = 0; yyy < b1; ++yyy) {
                     double d0 = 0.125D;
-                    double d1 = this.r[((i1 + 0) * l + j1 + 0) * b3 + k1 + 0];
-                    double d2 = this.r[((i1 + 0) * l + j1 + 1) * b3 + k1 + 0];
-                    double d3 = this.r[((i1 + 1) * l + j1 + 0) * b3 + k1 + 0];
-                    double d4 = this.r[((i1 + 1) * l + j1 + 1) * b3 + k1 + 0];
-                    double d5 = (this.r[((i1 + 0) * l + j1 + 0) * b3 + k1 + 1] - d1) * d0;
-                    double d6 = (this.r[((i1 + 0) * l + j1 + 1) * b3 + k1 + 1] - d2) * d0;
-                    double d7 = (this.r[((i1 + 1) * l + j1 + 0) * b3 + k1 + 1] - d3) * d0;
-                    double d8 = (this.r[((i1 + 1) * l + j1 + 1) * b3 + k1 + 1] - d4) * d0;
+                    double d1 = this.r[((xxx + 0) * l + zzz + 0) * b3 + yyy + 0];
+                    double d2 = this.r[((xxx + 0) * l + zzz + 1) * b3 + yyy + 0];
+                    double d3 = this.r[((xxx + 1) * l + zzz + 0) * b3 + yyy + 0];
+                    double d4 = this.r[((xxx + 1) * l + zzz + 1) * b3 + yyy + 0];
+                    double d5 = (this.r[((xxx + 0) * l + zzz + 0) * b3 + yyy + 1] - d1) * d0;
+                    double d6 = (this.r[((xxx + 0) * l + zzz + 1) * b3 + yyy + 1] - d2) * d0;
+                    double d7 = (this.r[((xxx + 1) * l + zzz + 0) * b3 + yyy + 1] - d3) * d0;
+                    double d8 = (this.r[((xxx + 1) * l + zzz + 1) * b3 + yyy + 1] - d4) * d0;
 
-                    for (int l1 = 0; l1 < 8; ++l1) {
+                    for (int l1 = 0; l1 < 8; ++l1) { //8
                         double d9 = 0.25D;
                         double d10 = d1;
                         double d11 = d2;
@@ -76,7 +76,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                         double d13 = (d4 - d2) * d9;
 
                         for (int i2 = 0; i2 < 4; ++i2) {
-                            int j2 = i2 + i1 * 4 << 11 | 0 + j1 * 4 << 7 | k1 * 8 + l1;
+                            int j2 = i2 + xxx * 4 << 11 | 0 + zzz * 4 << 7 | yyy * 8 + l1;
                             short short1 = 128;
 
                             j2 -= short1;
@@ -87,7 +87,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                             for (int k2 = 0; k2 < 4; ++k2) {
                                 if ((d16 += d15) > 0.0D) {
                                     rawChunk[j2 += short1] = (byte) Block.STONE.id;
-                                } else if (k1 * 8 + l1 < waterline) { // CraftBukkit
+                                } else if (yyy * 8 + l1 < waterline) { // CraftBukkit
                                     rawChunk[j2 += short1] = (byte) Block.STATIONARY_WATER.id;
                                 } else {
                                     rawChunk[j2 += short1] = 0;
@@ -178,7 +178,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
     public Chunk getOrCreateChunk(int xx, int zz) {
         this.random.setSeed((long) xx * 341873128712L + (long) zz * 132897987541L);
-        byte[] rawChunk = new byte['\u8000'];
+        byte[] rawChunk = new byte[16*16*256];//byte['\u8000'];
 
         this.makeWorldStoneAndWater(xx, zz, rawChunk);
         this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
