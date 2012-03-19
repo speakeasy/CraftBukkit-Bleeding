@@ -47,7 +47,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
     private void makeWorldStoneAndWater(int xx, int zz, byte[] rawChunk) {
         byte b0 = 4;
         byte b1 = 16;
-        int waterline = 63; // Absolute sea level
+        int waterline = 63 + 128; // Absolute sea level
         int k = b0 + 1;
         byte b3 = 17;
         int l = b0 + 1;
@@ -76,21 +76,22 @@ public class ChunkProviderGenerate implements IChunkProvider {
                         double d13 = (d4 - d2) * d9;
 
                         for (int i2 = 0; i2 < 4; ++i2) {
-                            int j2 = i2 + xxx * 4 << 11 | 0 + zzz * 4 << 7 | yyy * 8 + l1;
+                            int chunkOffset = i2 + xxx * 4 << 11 | 0 + zzz * 4 << 7 | yyy * 8 + l1;
                             short short1 = 128;
 
-                            j2 -= short1;
+                            chunkOffset -= short1;
                             double d14 = 0.25D;
                             double d15 = (d11 - d10) * d14;
                             double d16 = d10 - d15;
 
                             for (int k2 = 0; k2 < 4; ++k2) {
+                                chunkOffset += short1;
                                 if ((d16 += d15) > 0.0D) {
-                                    rawChunk[j2 += short1] = (byte) Block.STONE.id;
+                                    rawChunk[chunkOffset] = (byte) Block.STONE.id;
                                 } else if (yyy * 8 + l1 < waterline) { // CraftBukkit
-                                    rawChunk[j2 += short1] = (byte) Block.STATIONARY_WATER.id;
+                                    rawChunk[chunkOffset] = (byte) 0;//Block.STATIONARY_WATER.id;
                                 } else {
-                                    rawChunk[j2 += short1] = 0;
+                                    rawChunk[chunkOffset] = 0;
                                 }
                             }
 
@@ -181,15 +182,15 @@ public class ChunkProviderGenerate implements IChunkProvider {
         byte[] rawChunk = new byte[16*16*256];//byte['\u8000'];
 
         this.makeWorldStoneAndWater(xx, zz, rawChunk);
-        this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
-        this.applyBiomeTopCoverAndBedrock(xx, zz, rawChunk, this.biomeBases);
-        this.caveGen.a(this, this.world, xx, zz, rawChunk);
-        this.canyonGen.a(this, this.world, xx, zz, rawChunk);
-        if (this.generateStructures) {
-            this.mineshaftGen.a(this, this.world, xx, zz, rawChunk);
-            this.villageGen.a(this, this.world, xx, zz, rawChunk);
-            this.strongholdGen.a(this, this.world, xx, zz, rawChunk);
-        }
+//        this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
+//        this.applyBiomeTopCoverAndBedrock(xx, zz, rawChunk, this.biomeBases);
+//        this.caveGen.a(this, this.world, xx, zz, rawChunk);
+//        this.canyonGen.a(this, this.world, xx, zz, rawChunk);
+//        if (this.generateStructures) {
+//            this.mineshaftGen.a(this, this.world, xx, zz, rawChunk);
+//            this.villageGen.a(this, this.world, xx, zz, rawChunk);
+//            this.strongholdGen.a(this, this.world, xx, zz, rawChunk);
+//        }
 
         Chunk chunk = new Chunk(this.world, rawChunk, xx, zz);
 
