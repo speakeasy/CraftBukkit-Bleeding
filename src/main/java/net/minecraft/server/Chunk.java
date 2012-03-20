@@ -80,7 +80,7 @@ public class Chunk {
         for (int l = 0; l < 16; ++l) {
             for (int i1 = 0; i1 < 16; ++i1) {
                 for (int j1 = 0; j1 < k; ++j1) {
-                    byte b0 = abyte[l << 11 | i1 << 7 | j1];
+                    byte b0 = abyte[l << 12 | i1 << 8 | j1];
 
                     if (b0 != 0) {
                         int k1 = j1 >> 4;

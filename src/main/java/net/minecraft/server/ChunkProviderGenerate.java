@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -47,7 +48,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
     private void makeWorldStoneAndWater(int xx, int zz, byte[] rawChunk) {
         byte b0 = 4;
         byte b1 = 16;
-        int waterline = 63 + 128; // Absolute sea level
+        int waterline = 63; // Absolute sea level
         int k = b0 + 1;
         byte b3 = 17;
         int l = b0 + 1;
@@ -89,7 +90,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                                 if ((d16 += d15) > 0.0D) {
                                     rawChunk[chunkOffset] = (byte) Block.STONE.id;
                                 } else if (yyy * 8 + l1 < waterline) { // CraftBukkit
-                                    rawChunk[chunkOffset] = (byte) 0;//Block.STATIONARY_WATER.id;
+                                    rawChunk[chunkOffset] = (byte) Block.STATIONARY_WATER.id;
                                 } else {
                                     rawChunk[chunkOffset] = 0;
                                 }
@@ -179,9 +180,29 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
     public Chunk getOrCreateChunk(int xx, int zz) {
         this.random.setSeed((long) xx * 341873128712L + (long) zz * 132897987541L);
-        byte[] rawChunk = new byte[16*16*256];//byte['\u8000'];
-
-        this.makeWorldStoneAndWater(xx, zz, rawChunk);
+        
+        byte[] chunk128 = new byte[16*16*128];//byte['\u8000'];
+        this.makeWorldStoneAndWater(xx, zz, chunk128);
+        
+        byte[] stone2048 = new byte[2048];
+        Arrays.fill(stone2048, (byte)57);
+        byte[] chunk256 = new byte[16*16*256];
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int y = 0; y < 128; y++) {
+                    int offset = x << 12 | z << 8 | y;
+                    chunk256[offset] = (byte) Block.STONE.id;
+                }
+                for (int y = 128; y < 256; y++) {
+                    int offsetL = x << 11 | z << 7 | y & 128;
+                    int offsetH = x << 12 | z << 8 | y;
+                    chunk256[offsetH] = chunk128[offsetL];
+                }
+            }
+        }
+//            System.arraycopy(chunk128, 0, chunk256, 2048*i, 2048);
+//            System.arraycopy(chunk128, 2048*i, chunk256, 2048*i+2048, 2048);
+//        }
 //        this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
 //        this.applyBiomeTopCoverAndBedrock(xx, zz, rawChunk, this.biomeBases);
 //        this.caveGen.a(this, this.world, xx, zz, rawChunk);
@@ -192,7 +213,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
 //            this.strongholdGen.a(this, this.world, xx, zz, rawChunk);
 //        }
 
-        Chunk chunk = new Chunk(this.world, rawChunk, xx, zz);
+        Chunk chunk = new Chunk(this.world, chunk256, xx, zz);
 
         chunk.initLighting();
         return chunk;
