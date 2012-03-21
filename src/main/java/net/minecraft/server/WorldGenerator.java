@@ -22,7 +22,7 @@ public abstract class WorldGenerator {
 
     // CraftBukkit - change signature
     protected void setTypeAndData(BlockChangeDelegate world, int i, int j, int k, int l, int i1) {
-        if (this.a) {
+        if (this.a || ((World) world).getChunkAt(i >> 4, k >> 4).sentToClient) { // CraftBukkit - if seen, need to report update
             world.setTypeIdAndData(i, j, k, l, i1);
         } else {
             world.setRawTypeIdAndData(i, j, k, l, i1);
