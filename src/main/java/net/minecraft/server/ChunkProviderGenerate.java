@@ -185,7 +185,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.makeWorldStoneAndWater(xx, zz, chunk128);
         
         byte[] stone128 = new byte[2048];
-        Arrays.fill(stone128, (byte)57);
+        Arrays.fill(stone128, (byte)1);
         byte[] chunk256 = new byte[16*16*256];
         for (int i = 0; i < 16*16; i++) {
                 System.arraycopy(stone128, 0, chunk256, 256*i, 128);
@@ -193,7 +193,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         }
         this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
         this.applyBiomeTopCoverAndBedrock(xx, zz, chunk256, this.biomeBases);
-//        this.caveGen.a(this, this.world, xx, zz, rawChunk);
+        this.caveGen.a(this, this.world, xx, zz, chunk256);
 //        this.canyonGen.a(this, this.world, xx, zz, rawChunk);
 //        if (this.generateStructures) {
 //            this.mineshaftGen.a(this, this.world, xx, zz, rawChunk);
