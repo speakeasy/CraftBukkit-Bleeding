@@ -184,27 +184,13 @@ public class ChunkProviderGenerate implements IChunkProvider {
         byte[] chunk128 = new byte[16*16*128];//byte['\u8000'];
         this.makeWorldStoneAndWater(xx, zz, chunk128);
         
-        byte[] stone2048 = new byte[2048];
-        Arrays.fill(stone2048, (byte)57);
+        byte[] stone128 = new byte[2048];
+        Arrays.fill(stone128, (byte)57);
         byte[] chunk256 = new byte[16*16*256];
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < 128; y++) {
-                    int offset = x << 12 | z << 8 | y;
-                    chunk256[offset] = (byte) Block.STONE.id;
-                }
-                for (int y = 128; y < 256; y++) {
-                    int offsetL = x << 11 | z << 7 | y & 128;
-                    int offsetH = x << 12 | z << 8 | y;
-                    chunk256[offsetH] = chunk128[offsetL];
-                }
-            }
+        for (int i = 0; i < 16*16; i++) {
+                System.arraycopy(stone128, 0, chunk256, 256*i, 128);
+                System.arraycopy(chunk128, 128*i, chunk256, 256*i+128, 128);
         }
-//            System.arraycopy(chunk128, 0, chunk256, 2048*i, 2048);
-//            System.arraycopy(chunk128, 2048*i, chunk256, 2048*i+2048, 2048);
-//        }
-//        this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
-//        this.applyBiomeTopCoverAndBedrock(xx, zz, rawChunk, this.biomeBases);
 //        this.caveGen.a(this, this.world, xx, zz, rawChunk);
 //        this.canyonGen.a(this, this.world, xx, zz, rawChunk);
 //        if (this.generateStructures) {
