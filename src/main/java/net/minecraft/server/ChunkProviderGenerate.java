@@ -125,8 +125,8 @@ public class ChunkProviderGenerate implements IChunkProvider {
                 byte b1 = biomebase.A;
                 byte b2 = biomebase.B;
 
-                for (int k1 = 127; k1 >= 0; --k1) {
-                    int l1 = (l * 16 + k) * 128 + k1;
+                for (int k1 = 255; k1 >= 0; --k1) { //255=127
+                    int l1 = (l * 16 + k) * 256 + k1; //256=128
 
                     if (k1 <= 0 + this.random.nextInt(5)) {
                         rawChunk[l1] = (byte) Block.BEDROCK.id;
@@ -191,6 +191,8 @@ public class ChunkProviderGenerate implements IChunkProvider {
                 System.arraycopy(stone128, 0, chunk256, 256*i, 128);
                 System.arraycopy(chunk128, 128*i, chunk256, 256*i+128, 128);
         }
+        this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
+        this.applyBiomeTopCoverAndBedrock(xx, zz, chunk256, this.biomeBases);
 //        this.caveGen.a(this, this.world, xx, zz, rawChunk);
 //        this.canyonGen.a(this, this.world, xx, zz, rawChunk);
 //        if (this.generateStructures) {
