@@ -26,9 +26,9 @@ public class ShapedRecipes implements CraftingRecipe {
     public ShapedRecipe toBukkitRecipe() {
         CraftItemStack result = new CraftItemStack(this.result);
         CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
-        switch (this.width) {
+        switch (this.height) {
         case 1:
-            switch (this.height) {
+            switch (this.width) {
             case 1:
                 recipe.shape("a");
                 break;
@@ -41,7 +41,7 @@ public class ShapedRecipes implements CraftingRecipe {
             }
             break;
         case 2:
-            switch (this.height) {
+            switch (this.width) {
             case 1:
                 recipe.shape("a","b");
                 break;
@@ -54,7 +54,7 @@ public class ShapedRecipes implements CraftingRecipe {
             }
             break;
         case 3:
-            switch (this.height) {
+            switch (this.width) {
             case 1:
                 recipe.shape("a","b","c");
                 break;
