@@ -15,6 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.server.MapInitializeEvent;
+
 public class WorldMapCollection {
 
     private IDataManager a;
@@ -58,6 +61,14 @@ public class WorldMapCollection {
             if (worldmapbase != null) {
                 this.b.put(s, worldmapbase);
                 this.c.add(worldmapbase);
+
+                // CraftBukkit start
+                if (worldmapbase instanceof WorldMap) {
+                    WorldMap worldmap = (WorldMap) worldmapbase;
+                    MapInitializeEvent event = new MapInitializeEvent(worldmap.mapView, false);
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+                }
+                // CraftBukkit end
             }
 
             return worldmapbase;
