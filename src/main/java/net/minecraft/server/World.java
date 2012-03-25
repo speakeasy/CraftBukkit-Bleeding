@@ -2892,11 +2892,9 @@ public class World implements IBlockAccess {
         // CraftBukkit start - whole method
         int next_id = this.worldMaps.a(s);
         String name = s + "_" + next_id;
-        if (this.worldMaps.get(WorldMap.class, name) != null) {
+        while (this.worldMaps.get(WorldMap.class, name) != null && next_id < Short.MAX_VALUE) {
             // The map already exists, so skip this ID and get the next one.
-            if (next_id < Short.MAX_VALUE) { // Just a safeguard in case this is actually the last possible map
-                return this.b(s);
-            }
+            next_id = this.worldMaps.a(s);
         }
         return next_id;
         // CraftBukkit end
