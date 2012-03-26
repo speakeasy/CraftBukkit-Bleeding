@@ -8,6 +8,7 @@ import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.Container;
 import net.minecraft.server.DamageSource;
 import net.minecraft.server.Entity;
+import net.minecraft.server.EntityAnimal;
 import net.minecraft.server.EntityArrow;
 import net.minecraft.server.EntityDamageSource;
 import net.minecraft.server.EntityDamageSourceIndirect;
@@ -39,6 +40,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.LightningStrike;
@@ -223,6 +225,12 @@ public class CraftEventFactory {
 
         CreatureSpawnEvent event = new CreatureSpawnEvent(entity, spawnReason);
         craftServer.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static AnimalBreedEvent callAnimalBreedEvent(EntityAnimal parent, EntityAnimal parent2, EntityAnimal child) {
+        AnimalBreedEvent event = new AnimalBreedEvent((Animals) parent.getBukkitEntity(), (Animals) parent2.getBukkitEntity(), (Animals) child.getBukkitEntity());
+        parent.world.getServer().getPluginManager().callEvent(event);
         return event;
     }
 

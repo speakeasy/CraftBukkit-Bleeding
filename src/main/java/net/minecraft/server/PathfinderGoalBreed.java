@@ -68,7 +68,11 @@ public class PathfinderGoalBreed extends PathfinderGoal {
 
     private void i() {
         EntityAnimal entityanimal = this.d.createChild(this.e);
-
+        // CraftBukkit start
+        if (org.bukkit.craftbukkit.event.CraftEventFactory.callAnimalBreedEvent(d, e, entityanimal).isCancelled()) {
+            return;
+        }
+        // CraftBukkit end
         if (entityanimal != null) {
             this.d.setAge(6000);
             this.e.setAge(6000);
