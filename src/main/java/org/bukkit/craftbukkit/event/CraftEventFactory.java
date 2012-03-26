@@ -8,6 +8,7 @@ import java.util.Map;
 
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.Container;
+import net.minecraft.server.CraftingManager;
 import net.minecraft.server.DamageSource;
 import net.minecraft.server.Entity;
 import net.minecraft.server.EntityArrow;
@@ -487,6 +488,10 @@ public class CraftEventFactory {
     }
 
     public static ItemStack callPreCraftEvent(InventoryCrafting matrix, ItemStack result, InventoryView lastCraftView, boolean isRepair) {
+        if (CraftingManager.getInstance().crafting) {
+            return result; // Don't fire while getting the craft result from the result slot
+        }
+
         CraftInventoryCrafting inventory = new CraftInventoryCrafting(matrix, matrix.resultInventory);
         inventory.setResult(new CraftItemStack(result));
 

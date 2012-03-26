@@ -1066,9 +1066,14 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
                 Recipe recipe = ((CraftingInventory) top).getRecipe();
                 if (recipe != null) {
                     event = new CraftItemEvent(recipe, inventory, type, packet102windowclick.slot, packet102windowclick.button != 0, packet102windowclick.shift);
+                    CraftingManager.getInstance().crafting = true;
                 }
             }
             server.getPluginManager().callEvent(event);
+            if (CraftingManager.getInstance().crafting) {
+                CraftingManager.getInstance().crafting = false;
+                top.setItem(0, top.getItem(0)); // Force update so that a PreCraft event is fired if necessary
+            }
 
             ItemStack itemstack = null;
             boolean defaultBehaviour = false;

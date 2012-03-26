@@ -16,6 +16,7 @@ public class CraftingManager {
     // CraftBukkit start
     public CraftingRecipe lastRecipe;
     public InventoryView lastCraftView;
+    public boolean crafting;
     // CraftBukkit end
 
     public static final CraftingManager getInstance() {
