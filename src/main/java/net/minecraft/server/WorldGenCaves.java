@@ -33,7 +33,7 @@ public class WorldGenCaves extends WorldGenBase {
         int k1 = random.nextInt(i1 / 2) + i1 / 4;
 
         for (boolean flag1 = random.nextInt(6) == 0; l < i1; ++l) {
-            double d6 = 1.5D + (double) (MathHelper.sin((float) l * 3.1415927F / (float) i1) * f * 1.0F);
+            double d6 = 1.5D + (double) (MathHelper.sin((float) l * 3.1415927F / (float) i1) * f * 2.5F); // 2.5F = 1.0F
             double d7 = d6 * d3;
             float f5 = MathHelper.cos(f2);
             float f6 = MathHelper.sin(f2);
@@ -144,7 +144,7 @@ public class WorldGenCaves extends WorldGenBase {
                                             }
 
                                             if (b0 == Block.STONE.id || b0 == Block.DIRT.id || b0 == Block.GRASS.id) {
-                                                if (k4 < 30) { //30=10
+                                                if (k4 < 20) { //20=10
                                                     abyte[j4] = (byte) Block.LAVA.id;
                                                 } else {
                                                     abyte[j4] = 0;
