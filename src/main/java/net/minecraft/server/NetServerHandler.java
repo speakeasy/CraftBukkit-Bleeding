@@ -16,6 +16,7 @@ import org.bukkit.craftbukkit.ChunkCompressionThread;
 import org.bukkit.Location;
 import org.bukkit.command.CommandException;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -1065,7 +1066,8 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
             if (packet102windowclick.slot == 0 && top instanceof CraftingInventory) {
                 Recipe recipe = ((CraftingInventory) top).getRecipe();
                 if (recipe != null) {
-                    event = new CraftItemEvent(recipe, inventory, type, packet102windowclick.slot, packet102windowclick.button != 0, packet102windowclick.shift);
+                    int mult = packet102windowclick.shift ? ((CraftInventoryCrafting) top).getMultiplicity(this.player.inventory) : 1;
+                    event = new CraftItemEvent(recipe, inventory, type, packet102windowclick.slot, packet102windowclick.button != 0, packet102windowclick.shift, mult);
                     CraftingManager.getInstance().crafting = true;
                 }
             }

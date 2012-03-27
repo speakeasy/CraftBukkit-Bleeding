@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
 import net.minecraft.server.CraftingRecipe;
 import net.minecraft.server.IInventory;
 import net.minecraft.server.InventoryCrafting;
+import net.minecraft.server.PlayerInventory;
 
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
@@ -134,5 +135,17 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     public Recipe getRecipe() {
         CraftingRecipe recipe = ((InventoryCrafting)getInventory()).currentRecipe;
         return recipe == null ? null : recipe.toBukkitRecipe();
+    }
+
+    public int getMultiplicity(PlayerInventory player) {
+        int max = 100;
+        for (int i = 1; i < getSize(); i++) {
+            if (getItem(i) != null) {
+                max = Math.min(max, getItem(i).getAmount());
+            }
+        }
+        net.minecraft.server.ItemStack test = CraftItemStack.createNMSItemStack(getResult());
+        test.count = max;
+        return player.canHold(test) / getResult().getAmount();
     }
 }
