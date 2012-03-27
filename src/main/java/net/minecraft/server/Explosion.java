@@ -245,8 +245,8 @@ public class Explosion {
 
             // CraftBukkit start - stop explosions from putting out fire
             if (i1 > 0 && i1 != Block.FIRE.id) {
+                Block.byId[i1].player = false;
                 Block.byId[i1].dropNaturally(this.world, j, k, l, this.world.getData(j, k, l), event.getYield(), 0);
-                Block.byId[i1].doActualDrop(this.world, j, k, l);
                 // CraftBukkit end
                 this.world.setTypeId(j, k, l, 0);
                 Block.byId[i1].wasExploded(this.world, j, k, l);

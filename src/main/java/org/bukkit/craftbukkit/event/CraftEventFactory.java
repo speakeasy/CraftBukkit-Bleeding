@@ -526,6 +526,7 @@ public class CraftEventFactory {
             ((EntityPlayer) player).netServerHandler.sendPacket(packet);
         }
 
+        blockType.player = true;
         Block block = world.getWorld().getBlockAt(x, y, z);
         List<ItemStack> toDrop = blockType.calculateDrops(world, player, x, y, z, data);
         drops.clear();
@@ -538,15 +539,14 @@ public class CraftEventFactory {
 
         BlockBreakEvent event = new BlockBreakEvent(block, (org.bukkit.entity.Player) player.getBukkitEntity(), drops);
         world.getServer().getPluginManager().callEvent(event);
+        toDrop.clear();
 
         if (event.isCancelled()) {
-            toDrop.clear();
             // Let the client know the block still exists
             ((EntityPlayer) player).netServerHandler.sendPacket(new Packet53BlockChange(x, y, z, world));
             return true;
         }
 
-        toDrop.clear();
         for (org.bukkit.inventory.ItemStack stack : drops) {
             toDrop.add(CraftItemStack.createNMSItemStack(stack));
         }
