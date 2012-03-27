@@ -360,14 +360,14 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
         if (!flag && this.random.nextInt(4) == 0) {
             k1 = k + this.random.nextInt(16) + 8;
-            l1 = this.random.nextInt(128);
+            l1 = this.random.nextInt(256); //256=128
             i2 = l + this.random.nextInt(16) + 8;
             (new WorldGenLakes(Block.STATIONARY_WATER.id)).a(this.world, this.random, k1, l1, i2);
         }
 
         if (!flag && this.random.nextInt(8) == 0) {
             k1 = k + this.random.nextInt(16) + 8;
-            l1 = this.random.nextInt(this.random.nextInt(120) + 8);
+            l1 = this.random.nextInt(this.random.nextInt(120) + 8 + 128); //added +128
             i2 = l + this.random.nextInt(16) + 8;
             if (l1 < 63 || this.random.nextInt(10) == 0) {
                 (new WorldGenLakes(Block.STATIONARY_LAVA.id)).a(this.world, this.random, k1, l1, i2);
