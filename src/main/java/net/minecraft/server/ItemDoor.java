@@ -1,11 +1,5 @@
 package net.minecraft.server;
 
-// CraftBukkit start
-import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.block.BlockPlaceEvent;
-// CraftBukkit end
-
 public class ItemDoor extends Item {
 
     private Material a;
@@ -88,20 +82,17 @@ public class ItemDoor extends Item {
             flag2 = true;
         }
 
-        CraftBlockState blockState = CraftBlockState.getBlockState(world, i, j, k); // CraftBukkit
         world.suppressPhysics = true;
-        world.setTypeIdAndData(i, j, k, block.id, l);
-        // CraftBukkit start
-        if (entityhuman != null) {
-            BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, i, j, k);
-
-            if (event.isCancelled() || !event.canBuild()) {
-                event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
-                return false;
+        // CraftBukkit start - Delegate to EventFactory
+        // applyPhysics may need a bit of work as well, since it doesn't check if block id is actually there.
+        //world.setTypeIdAndData(i, j, k, block.id, l);
+        //world.setTypeIdAndData(i, j + 1, k, block.id, 8 | (flag2 ? 1 : 0));
+        if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockPlace(world, entityhuman, i, j, k, block.id, l)) {
+            if (world.getTypeId(i, j, k) == block.id) {
+                world.setTypeIdAndData(i, j + 1, k, block.id, 8 | (flag2 ? 1 : 0));
             }
         }
         // CraftBukkit end
-        world.setTypeIdAndData(i, j + 1, k, block.id, 8 | (flag2 ? 1 : 0));
         world.suppressPhysics = false;
         world.applyPhysics(i, j, k, block.id);
         world.applyPhysics(i, j + 1, k, block.id);

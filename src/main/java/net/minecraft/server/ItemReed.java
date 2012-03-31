@@ -1,11 +1,5 @@
 package net.minecraft.server;
 
-// CraftBukkit start
-import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.block.BlockPlaceEvent;
-// CraftBukkit end
-
 public class ItemReed extends Item {
 
     private int id;
@@ -16,7 +10,6 @@ public class ItemReed extends Item {
     }
 
     public boolean interactWith(ItemStack itemstack, EntityHuman entityhuman, World world, int i, int j, int k, int l) {
-        int clickedX = i, clickedY = j, clickedZ = k; // CraftBukkit
         int i1 = world.getTypeId(i, j, k);
 
         if (i1 == Block.SNOW.id) {
@@ -55,29 +48,9 @@ public class ItemReed extends Item {
             if (world.mayPlace(this.id, i, j, k, false, l)) {
                 Block block = Block.byId[this.id];
 
-                // CraftBukkit start - This executes the placement of the block
-                CraftBlockState replacedBlockState = CraftBlockState.getBlockState(world, i, j, k); // CraftBukkit
-                /**
-                 * @see net.minecraft.server.World#setTypeId(int i, int j, int k, int l)
-                 *
-                 * This replaces world.setTypeId(IIII), we're doing this because we need to
-                 * hook between the 'placement' and the informing to 'world' so we can
-                 * sanely undo this.
-                 *
-                 * Whenever the call to 'world.setTypeId' changes we need to figure out again what to
-                 * replace this with.
-                 */
-                if (world.setRawTypeId(i, j, k, this.id)) { // <-- world.e does this to place the block
-                    BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, replacedBlockState, clickedX, clickedY, clickedZ);
-
-                    if (event.isCancelled() || !event.canBuild()) {
-                        // CraftBukkit - undo; this only has reed, repeater and pie blocks
-                        world.setTypeIdAndData(i, j, k, replacedBlockState.getTypeId(), replacedBlockState.getRawData());
-
-                        return true;
-                    }
-
-                    world.update(i, j, k, this.id); // <-- world.setTypeId does this on success (tell the world)
+                // CraftBukkit start - Delegate to Event Factory
+                //if (world.setTypeId(i, j, k, this.id)) {
+                if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockPlace(world, entityhuman, i, j, k, this.id, 0)) {
                     // CraftBukkit end
 
                     if (world.getTypeId(i, j, k) == this.id) {

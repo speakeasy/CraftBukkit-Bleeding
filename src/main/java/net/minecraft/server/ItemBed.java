@@ -1,11 +1,5 @@
 package net.minecraft.server;
 
-// CraftBukkit start
-import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.block.BlockPlaceEvent;
-// CraftBukkit end
-
 public class ItemBed extends Item {
 
     public ItemBed(int i) {
@@ -16,8 +10,6 @@ public class ItemBed extends Item {
         if (l != 1) {
             return false;
         } else {
-            int clickedX = i, clickedY = j, clickedZ = k; // CraftBukkit
-
             ++j;
             BlockBed blockbed = (BlockBed) Block.BED;
             int i1 = MathHelper.floor((double) (entityhuman.yaw * 4.0F / 360.0F) + 0.5D) & 3;
@@ -42,17 +34,9 @@ public class ItemBed extends Item {
 
             if (entityhuman.d(i, j, k) && entityhuman.d(i + b0, j, k + b1)) {
                 if (world.isEmpty(i, j, k) && world.isEmpty(i + b0, j, k + b1) && world.e(i, j - 1, k) && world.e(i + b0, j - 1, k + b1)) {
-                    CraftBlockState blockState = CraftBlockState.getBlockState(world, i, j, k); // CraftBukkit
-
-                    world.setTypeIdAndData(i, j, k, blockbed.id, i1);
-
-                    // CraftBukkit start - bed
-                    BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, clickedX, clickedY, clickedZ);
-
-                    if (event != null && (event.isCancelled() || !event.canBuild())) {
-                        event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
-                        return false;
-                    }
+                    // CraftBukkit start - Delegate to Event Factory
+                    //world.setTypeIdAndData(i, j, k, blockbed.id, i1);
+                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockPlace(world, entityhuman, i, j, k, blockbed.id, i1);
                     // CraftBukkit end
 
                     if (world.getTypeId(i, j, k) == blockbed.id) {

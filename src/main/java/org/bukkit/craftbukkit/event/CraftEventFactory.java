@@ -52,28 +52,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import org.bukkit.event.*;
 import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
+import org.bukkit.event.inventory.*;
+import org.bukkit.event.painting.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
 
 public class CraftEventFactory {
     // helper methods
-    private static boolean canBuild(CraftWorld world, Player player, int x, int z) {
-        WorldServer worldServer = world.getHandle();
-        int spawnSize = Bukkit.getServer().getSpawnRadius();
+    private static boolean canBuild(WorldServer worldServer, EntityHuman player, int x, int z) {
+        if (worldServer.dimension != 0) return true;
 
-        if (world.getHandle().dimension != 0) return true;
+        int spawnSize = worldServer.getServer().getSpawnRadius();
         if (spawnSize <= 0) return true;
-        if (player.isOp()) return true;
+
+        if (worldServer.getServer().getHandle().isOp(player.name)) return true;
 
         ChunkCoordinates chunkcoordinates = worldServer.getSpawn();
 
@@ -86,29 +85,64 @@ public class CraftEventFactory {
         return event;
     }
 
-    public static boolean callEvent(HandlerList handlers) {
-        return handlers.getRegisteredListeners().length != 0;
+    // TODO: Check if the exact event class is being listened to?
+    public static boolean callEvent(Class<? extends Event> clazz, HandlerList list) {
+        return list.getRegisteredListeners().length != 0;
     }
 
     /**
      * Block place methods
      */
-    public static BlockPlaceEvent callBlockPlaceEvent(World world, EntityHuman who, BlockState replacedBlockState, int clickedX, int clickedY, int clickedZ) {
-        if (!callEvent(BlockPlaceEvent.getHandlerList())) {
-            return null;
-        }
-        CraftWorld craftWorld = ((WorldServer) world).getWorld();
+    public static BlockPlaceEvent callBlockPlaceEvent(World world, EntityHuman who, BlockState newBlockState, int clickedX, int clickedY, int clickedZ) {
+        Player player = (Player) who.getBukkitEntity();
+        Block block = world.getWorld().getBlockAt(clickedX, clickedY, clickedZ);
+        boolean canBuild = canBuild(world.getWorld().getHandle(), who, block.getX(), block.getZ());
 
-        Player player = (who == null) ? null : (Player) who.getBukkitEntity();
-
-        Block blockClicked = craftWorld.getBlockAt(clickedX, clickedY, clickedZ);
-        Block placedBlock = replacedBlockState.getBlock();
-
-        boolean canBuild = canBuild(craftWorld, player, placedBlock.getX(), placedBlock.getZ());
-
-        BlockPlaceEvent event = new BlockPlaceEvent(placedBlock, replacedBlockState, blockClicked, player.getItemInHand(), player, canBuild);
+        BlockPlaceEvent event = new BlockPlaceEvent(block, newBlockState, player, player.getItemInHand(), canBuild);
 
         return callEvent(event);
+    }
+
+    /*
+     * We use Integer id in order to get the new ID without having to look it up
+     *
+     * eg: cheat by changing the reference and let java unbox it to the new value! /hax
+     */
+    public static boolean handleBlockPlace(World world, EntityHuman who, int x, int y, int z, Integer id, int data) {
+        if (who == null || !callEvent(BlockPlaceEvent.class, BlockPlaceEvent.getHandlerList())) {
+            if (!canBuild(world.getWorld().getHandle(), who, x << 16, z << 16)) {
+                return false;
+            }
+            return world.setTypeIdAndData(x, y, z, id, data);
+        }
+
+        CraftBlockState blockState = CraftBlockState.getBlockState(world, x, y, z);
+        blockState.setTypeId(id);
+        blockState.setRawData((byte) data);
+
+        BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, who, blockState, x, y, z);
+
+        if (event.isCancelled() || !event.canBuild()) {
+            return false;
+        }
+
+        id = blockState.getTypeId();
+
+        return blockState.update(true);
+    }
+
+    public static boolean handleBlockIgniteEvent(World world, EntityHuman who, IgniteCause cause, int x, int y, int z) {
+        if (!callEvent(BlockIgniteEvent.class, BlockIgniteEvent.getHandlerList())) {
+            return false;
+        }
+
+        Block blockClicked = world.getWorld().getBlockAt(x, y, z);
+        Player player = (Player) who.getBukkitEntity();
+
+        BlockIgniteEvent event = new BlockIgniteEvent(blockClicked, cause, player);
+        callEvent(event);
+
+        return event.isCancelled();
     }
 
     /**
@@ -136,10 +170,10 @@ public class CraftEventFactory {
         PlayerEvent event = null;
         if (isFilling) {
             event = new PlayerBucketFillEvent(player, blockClicked, blockFace, bucket, itemInHand);
-            ((PlayerBucketFillEvent) event).setCancelled(!canBuild(craftWorld, player, clickedX, clickedZ));
+            ((PlayerBucketFillEvent) event).setCancelled(!canBuild(craftWorld.getHandle(), who, clickedX, clickedZ));
         } else {
             event = new PlayerBucketEmptyEvent(player, blockClicked, blockFace, bucket, itemInHand);
-            ((PlayerBucketEmptyEvent) event).setCancelled(!canBuild(craftWorld, player, clickedX, clickedZ));
+            ((PlayerBucketEmptyEvent) event).setCancelled(!canBuild(craftWorld.getHandle(), who, clickedX, clickedZ));
         }
 
         craftServer.getPluginManager().callEvent(event);
@@ -544,7 +578,7 @@ public class CraftEventFactory {
     }
 
     public static void handleLightningStrike(Entity entity, EntityWeatherLighting lightning) {
-        if (entity instanceof EntityPainting && PaintingBreakByEntityEvent.getHandlerList().getRegisteredListeners().length != 0) {
+        if (entity instanceof EntityPainting && callEvent(PaintingBreakByEntityEvent.class, PaintingBreakByEntityEvent.getHandlerList())) {
             if (callPaintingBreakByEntityEvent(entity, lightning).isCancelled()) {
                 return;
             }
@@ -552,7 +586,7 @@ public class CraftEventFactory {
 
         int value = 5;
 
-        if (EntityDamageEvent.getHandlerList().getRegisteredListeners().length != 0) {
+        if (callEvent(EntityDamageEvent.class, EntityDamageEvent.getHandlerList())) {
             EntityDamageEvent event = callEntityDamageEvent(lightning, entity, EntityDamageEvent.DamageCause.LIGHTNING, value);
 
             if (event.isCancelled()) {
@@ -567,7 +601,7 @@ public class CraftEventFactory {
         if (++entity.fireTicks == 0) {
             value = 8;
 
-            if (EntityCombustByEntityEvent.getHandlerList().getRegisteredListeners().length != 0) {
+            if (callEvent(EntityCombustByEntityEvent.class, EntityCombustByEntityEvent.getHandlerList())) {
                 EntityCombustByEntityEvent event = callEntityCombustByEntityEvent(lightning, entity, value);
 
                 if (event.isCancelled()) {

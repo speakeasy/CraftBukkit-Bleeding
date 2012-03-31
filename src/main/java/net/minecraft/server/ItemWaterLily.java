@@ -1,11 +1,5 @@
 package net.minecraft.server;
 
-// CraftBukkit start
-import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.block.BlockPlaceEvent;
-// CraftBukkit end
-
 public class ItemWaterLily extends ItemColoredBlock {
 
     public ItemWaterLily(int i) {
@@ -32,15 +26,9 @@ public class ItemWaterLily extends ItemColoredBlock {
                 }
 
                 if (world.getMaterial(i, j, k) == Material.WATER && world.getData(i, j, k) == 0 && world.isEmpty(i, j + 1, k)) {
-                    CraftBlockState blockState = CraftBlockState.getBlockState(world, i, j + 1, k); // CraftBukkit
-
-                    world.setTypeId(i, j + 1, k, Block.WATER_LILY.id);
-
-                    // CraftBukkit start - waterlily
-                    BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, i, j, k);
-
-                    if (event.isCancelled() || !event.canBuild()) {
-                        event.getBlockPlaced().setTypeId(0);
+                    // CraftBukkit start - Delegate to Event Factory
+                    //world.setTypeId(i, j + 1, k, Block.WATER_LILY.id);
+                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockPlace(world, entityhuman, i, j + 1, k, Block.WATER_LILY.id, 0)) {
                         return itemstack;
                     }
                     // CraftBukkit end

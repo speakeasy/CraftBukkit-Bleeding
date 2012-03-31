@@ -1359,18 +1359,16 @@ public abstract class Entity {
     }
 
     public void a(EntityWeatherLighting entityweatherlighting) {
-        // CraftBukkit start
-        if (true) {
-            CraftEventFactory.handleLightningStrike(this, entityweatherlighting);
-            return;
-        }
-        // CraftBukkit end
-
+        /* CraftBukkit start
         this.burn(5);
         ++this.fireTicks;
         if (this.fireTicks == 0) {
             this.setOnFire(8);
         }
+        // */
+
+        CraftEventFactory.handleLightningStrike(this, entityweatherlighting);
+        // CraftBukkit end
     }
 
     public void c(EntityLiving entityliving) {}
