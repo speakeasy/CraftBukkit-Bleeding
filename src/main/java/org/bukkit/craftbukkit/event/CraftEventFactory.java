@@ -418,6 +418,12 @@ public class CraftEventFactory {
         entity.getBukkitEntity().getServer().getPluginManager().callEvent(event);
         return event;
     }
+    
+    public static EntityAvoidEntityEvent callEntityAvoidEntityEvent(Entity entity, Entity avoid) {
+        EntityAvoidEntityEvent event = new EntityAvoidEntityEvent(entity.getBukkitEntity(), avoid.getBukkitEntity());
+        entity.getBukkitEntity().getServer().getPluginManager().callEvent(event);
+        return event;
+    }
 
     public static EntityChangeBlockEvent callEntityChangeBlockEvent(org.bukkit.entity.Entity entity, Block block, Material material) {
         EntityChangeBlockEvent event = new EntityChangeBlockEvent((LivingEntity) entity, block, material);

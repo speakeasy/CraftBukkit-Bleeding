@@ -53,6 +53,12 @@ public class PathfinderGoalAvoidPlayer extends PathfinderGoal {
             } else if (this.d.e(vec3d.a, vec3d.b, vec3d.c) < this.d.j(this.a)) {
                 return false;
             } else {
+                // CraftBukkit start - EntityAvoidEntityEvent. If cancelled, return false and don't start any movement.
+                org.bukkit.event.entity.EntityAvoidEntityEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityAvoidEntityEvent(this.a, this.d);
+                if(event.isCancelled()) {
+                    return false;
+                }
+                // CraftBukkit end
                 this.f = this.g.a(vec3d.a, vec3d.b, vec3d.c);
                 return this.f == null ? false : this.f.a(vec3d);
             }
