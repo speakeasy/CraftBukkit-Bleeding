@@ -1131,9 +1131,9 @@ public final class CraftServer implements Server {
 
     public void onPlayerJoin(Player player) {
         if ((updater.isEnabled()) && (updater.getCurrent() != null) && (player.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE))) {
-            if ((updater.getCurrent().isBroken()) && (updater.getOnBroken().contains(updater.WARN_OPERATORS))) {
+            if ((updater.getCurrent().isBroken()) && (updater.getOnBroken().contains(AutoUpdater.WARN_OPERATORS))) {
                 player.sendMessage(ChatColor.DARK_RED + "The version of CraftBukkit that this server is running is known to be broken. Please consider updating to the latest version at dl.bukkit.org.");
-            } else if ((updater.isUpdateAvailable()) && (updater.getOnUpdate().contains(updater.WARN_OPERATORS))) {
+            } else if ((updater.isUpdateAvailable()) && (updater.getOnUpdate().contains(AutoUpdater.WARN_OPERATORS))) {
                 player.sendMessage(ChatColor.DARK_PURPLE + "The version of CraftBukkit that this server is running is out of date. Please consider updating to the latest version at dl.bukkit.org.");
             }
         }

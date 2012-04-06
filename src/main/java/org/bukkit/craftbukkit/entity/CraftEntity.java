@@ -9,7 +9,6 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;

@@ -11,8 +11,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -21,12 +23,21 @@ import org.bukkit.plugin.Plugin;
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
     private final String name;
     private final CraftServer server;
+    private CraftWorld world;
+    private Location location;
     private final WorldNBTStorage storage;
 
     protected CraftOfflinePlayer(CraftServer server, String name) {
         this.server = server;
         this.name = name;
         this.storage = (WorldNBTStorage) (server.console.worlds.get(0).getDataManager());
+        
+        NBTTagCompound data = getData();
+        int[] pos = data.getIntArray("Pos");
+        
+        String worldName = data.getString("World");
+        this.world = (CraftWorld) server.getWorld(worldName);
+        this.location = new Location(world, pos[0], pos[1], pos[2]);
     }
 
     public boolean isOnline() {
@@ -216,5 +227,24 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     public void removeMetadata(String metadataKey, Plugin plugin) {
         server.getPlayerMetadata().removeMetadata(this, metadataKey, plugin);
+    }
+    
+    public World getWorld() {
+        return world;
+    }
+    
+    public Location getLocation() {
+        return location;
+    }
+    
+    public void teleport(Location location) {
+        getData().setIntArray("Pos", new int[] {location.getBlockX(), location.getBlockY(), location.getBlockZ()});
+        getData().setString("World", location.getWorld().getName());
+        this.location = location;
+        this.world = (CraftWorld) location.getWorld();
+    }
+    
+    public void teleport(Entity entity) {
+        teleport(entity.getLocation());
     }
 }

@@ -8,7 +8,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionEffect;
 
 public class CraftThrownPotion extends CraftProjectile implements ThrownPotion {

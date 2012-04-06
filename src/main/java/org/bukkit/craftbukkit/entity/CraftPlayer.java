@@ -24,7 +24,6 @@ import net.minecraft.server.Packet131ItemData;
 import net.minecraft.server.Packet200Statistic;
 import net.minecraft.server.Packet201PlayerInfo;
 import net.minecraft.server.Packet3Chat;
-import net.minecraft.server.Packet51MapChunk;
 import net.minecraft.server.Packet53BlockChange;
 import net.minecraft.server.Packet54PlayNoteBlock;
 import net.minecraft.server.Packet61WorldEvent;
@@ -36,7 +35,6 @@ import org.bukkit.Achievement;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -57,7 +55,6 @@ import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
-import org.bukkit.potion.Potion;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
