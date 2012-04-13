@@ -37,6 +37,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
@@ -1291,7 +1292,13 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
     }
 
     public void a(Packet202Abilities packet202abilities) {
-        this.player.abilities.isFlying = packet202abilities.b && this.player.abilities.canFly;
+        // CraftBukkit start - PlayerToggleFlightEvent
+        boolean value = packet202abilities.b && this.player.abilities.canFly;
+        if (value == player.abilities.isFlying) return; // No change, don't call the event
+        if (!CraftEventFactory.callEvent(new PlayerToggleFlightEvent(getPlayer(), value)).isCancelled()) {
+            player.abilities.isFlying = value;
+        }
+        // CraftBukkit end
     }
 
     // CraftBukkit start
