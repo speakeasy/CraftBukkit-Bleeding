@@ -15,8 +15,10 @@ import net.minecraft.server.EntityDamageSourceIndirect;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.EntityItem;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityPainting;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.EntityPotion;
+import net.minecraft.server.EntityWeatherLighting;
 import net.minecraft.server.InventoryCrafting;
 import net.minecraft.server.Item;
 import net.minecraft.server.ItemStack;
@@ -43,12 +45,14 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
@@ -56,6 +60,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.painting.PaintingBreakByEntityEvent;
+import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
@@ -519,5 +525,55 @@ public class CraftEventFactory {
         BlockRedstoneEvent event = new BlockRedstoneEvent(world.getWorld().getBlockAt(x, y, z), oldCurrent, newCurrent);
         world.getServer().getPluginManager().callEvent(event);
         return event;
+    }
+
+    public static PaintingBreakByEntityEvent callPaintingBreakByEntityEvent(Entity painting, Entity entity) {
+        PaintingBreakByEntityEvent event = new PaintingBreakByEntityEvent((Painting) painting.getBukkitEntity(), entity.getBukkitEntity());
+        entity.world.getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static EntityCombustByEntityEvent callEntityCombustByEntityEvent(Entity combuster, Entity combustee, int duration) {
+        EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(combuster.getBukkitEntity(), combustee.getBukkitEntity(), duration);
+        combuster.world.getServer().getPluginManager().callEvent(null);
+        return event;
+    }
+
+    public static void handleLightningStrike(Entity entity, EntityWeatherLighting lightning) {
+        if (entity instanceof EntityPainting && PaintingBreakByEntityEvent.getHandlerList().getRegisteredListeners().length != 0) {
+            if (callPaintingBreakByEntityEvent(entity, lightning).isCancelled()) {
+                return;
+            }
+        }
+
+        int value = 5;
+
+        if (EntityDamageEvent.getHandlerList().getRegisteredListeners().length != 0) {
+            EntityDamageEvent event = callEntityDamageEvent(lightning, entity, EntityDamageEvent.DamageCause.LIGHTNING, value);
+
+            if (event.isCancelled()) {
+                return;
+            }
+
+            value = event.getDamage();
+        }
+
+        entity.burnEntity(value);
+
+        if (++entity.fireTicks == 0) {
+            value = 8;
+
+            if (EntityCombustByEntityEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                EntityCombustByEntityEvent event = callEntityCombustByEntityEvent(lightning, entity, value);
+
+                if (event.isCancelled()) {
+                    return;
+                }
+
+                value = event.getDuration();
+            }
+
+            entity.setOnFire(value);
+        }
     }
 }

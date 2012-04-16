@@ -17,6 +17,7 @@ import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -716,6 +717,12 @@ public abstract class Entity {
         return null;
     }
 
+    // CraftBukkit start
+    public void burnEntity(int damage) {
+        this.burn(damage);
+    }
+    // CraftBukkit end
+
     protected void burn(int i) {
         if (!this.fireProof) {
             // CraftBukkit start
@@ -1353,38 +1360,16 @@ public abstract class Entity {
 
     public void a(EntityWeatherLighting entityweatherlighting) {
         // CraftBukkit start
-        final org.bukkit.entity.Entity thisBukkitEntity = this.getBukkitEntity();
-        final org.bukkit.entity.Entity stormBukkitEntity = entityweatherlighting.getBukkitEntity();
-        final PluginManager pluginManager = Bukkit.getPluginManager();
-
-        if (thisBukkitEntity instanceof Painting) {
-            PaintingBreakByEntityEvent event = new PaintingBreakByEntityEvent((Painting) thisBukkitEntity, stormBukkitEntity);
-            pluginManager.callEvent(event);
-
-            if (event.isCancelled()) {
-                return;
-            }
-        }
-
-        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(stormBukkitEntity, thisBukkitEntity, EntityDamageEvent.DamageCause.LIGHTNING, 5);
-        pluginManager.callEvent(event);
-
-        if (event.isCancelled()) {
+        if (true) {
+            CraftEventFactory.handleLightningStrike(this, entityweatherlighting);
             return;
         }
-
-        this.burn(event.getDamage());
         // CraftBukkit end
 
+        this.burn(5);
         ++this.fireTicks;
         if (this.fireTicks == 0) {
-            // CraftBukkit start - raise a combust event when lightning strikes
-            EntityCombustByEntityEvent entityCombustEvent = new EntityCombustByEntityEvent(stormBukkitEntity, thisBukkitEntity, 8);
-            pluginManager.callEvent(entityCombustEvent);
-            if (!entityCombustEvent.isCancelled()) {
-                this.setOnFire(entityCombustEvent.getDuration());
-            }
-            // CraftBukkit end
+            this.setOnFire(8);
         }
     }
 
