@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentMap;
 import java.util.List;
@@ -56,6 +57,7 @@ public class CraftWorld implements World {
     private final ChunkGenerator generator;
     private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
+    private final Set<SpawnReason> spawnReasonFilter = EnumSet.noneOf(SpawnReason.class);
 
     private static final Random rand = new Random();
 
@@ -64,6 +66,12 @@ public class CraftWorld implements World {
         this.generator = gen;
 
         environment = env;
+
+        for (SpawnReason reason : SpawnReason.values()) {
+            if (reason.isFilteringSpawn()) {
+                spawnReasonFilter.add(reason);
+            }
+        }
     }
 
     public void preserveChunk(CraftChunk chunk) {
@@ -1118,5 +1126,9 @@ public class CraftWorld implements World {
 
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
         server.getWorldMetadata().removeMetadata(this, metadataKey, owningPlugin);
+    }
+
+    public Set<SpawnReason> getSpawnReasonFilter() {
+        return spawnReasonFilter;
     }
 }

@@ -879,10 +879,10 @@ public class World implements IBlockAccess {
         // CraftBukkit start
         org.bukkit.event.Cancellable event = null;
         if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
-            boolean isAnimal = entity instanceof EntityAnimal || entity instanceof EntityWaterAnimal || entity instanceof EntityGolem;
-            boolean isMonster = entity instanceof EntityMonster || entity instanceof EntityGhast || entity instanceof EntitySlime;
+            if (getWorld().getSpawnReasonFilter().contains(spawnReason)) {
+                boolean isAnimal = entity instanceof EntityAnimal || entity instanceof EntityWaterAnimal || entity instanceof EntityGolem;
+                boolean isMonster = entity instanceof EntityMonster || entity instanceof EntityGhast || entity instanceof EntitySlime;
 
-            if (spawnReason != SpawnReason.CUSTOM) {
                 if (isAnimal && !allowAnimals || isMonster && !allowMonsters)  {
                     entity.dead = true;
                     return false;
