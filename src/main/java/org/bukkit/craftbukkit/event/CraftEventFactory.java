@@ -52,8 +52,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -61,7 +61,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
-import org.bukkit.event.painting.PaintingBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
@@ -87,12 +86,18 @@ public class CraftEventFactory {
         return event;
     }
 
+    public static boolean callEvent(HandlerList handlers) {
+        return handlers.getRegisteredListeners().length != 0;
+    }
+
     /**
      * Block place methods
      */
     public static BlockPlaceEvent callBlockPlaceEvent(World world, EntityHuman who, BlockState replacedBlockState, int clickedX, int clickedY, int clickedZ) {
+        if (!callEvent(BlockPlaceEvent.getHandlerList())) {
+            return null;
+        }
         CraftWorld craftWorld = ((WorldServer) world).getWorld();
-        CraftServer craftServer = ((WorldServer) world).getServer();
 
         Player player = (who == null) ? null : (Player) who.getBukkitEntity();
 
@@ -102,9 +107,8 @@ public class CraftEventFactory {
         boolean canBuild = canBuild(craftWorld, player, placedBlock.getX(), placedBlock.getZ());
 
         BlockPlaceEvent event = new BlockPlaceEvent(placedBlock, replacedBlockState, blockClicked, player.getItemInHand(), player, canBuild);
-        craftServer.getPluginManager().callEvent(event);
 
-        return event;
+        return callEvent(event);
     }
 
     /**

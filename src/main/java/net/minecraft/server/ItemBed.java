@@ -49,7 +49,7 @@ public class ItemBed extends Item {
                     // CraftBukkit start - bed
                     BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, clickedX, clickedY, clickedZ);
 
-                    if (event.isCancelled() || !event.canBuild()) {
+                    if (event != null && (event.isCancelled() || !event.canBuild())) {
                         event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);
                         return false;
                     }
