@@ -40,7 +40,7 @@ public class ItemFlintAndSteel extends Item {
 
             if (i1 == 0) {
                 // CraftBukkit start - Delegate to EventFactory
-                if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockIgniteEvent(world, entityhuman, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, i, j, k)) {
+                if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockIgnite(world, entityhuman, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, i, j, k)) {
                     return false;
                 }
                 // CraftBukkit end

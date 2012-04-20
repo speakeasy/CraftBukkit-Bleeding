@@ -91,9 +91,9 @@ public class CraftEventFactory {
     }
 
     /**
-     * Block place methods
+     * Block methods
      */
-    public static BlockPlaceEvent callBlockPlaceEvent(World world, EntityHuman who, BlockState newBlockState, int clickedX, int clickedY, int clickedZ) {
+    private static BlockPlaceEvent callBlockPlaceEvent(World world, EntityHuman who, BlockState newBlockState, int clickedX, int clickedY, int clickedZ) {
         Player player = (Player) who.getBukkitEntity();
         Block block = world.getWorld().getBlockAt(clickedX, clickedY, clickedZ);
         boolean canBuild = canBuild(world.getWorld().getHandle(), who, block.getX(), block.getZ());
@@ -108,9 +108,10 @@ public class CraftEventFactory {
      *
      * eg: cheat by changing the reference and let java unbox it to the new value! /hax
      */
+    // false means cancelled
     public static boolean handleBlockPlace(World world, EntityHuman who, int x, int y, int z, Integer id, int data) {
         if (who == null || !callEvent(BlockPlaceEvent.class, BlockPlaceEvent.getHandlerList())) {
-            if (!canBuild(world.getWorld().getHandle(), who, x << 16, z << 16)) {
+            if (!canBuild(world.getWorld().getHandle(), who, x, z)) {
                 return false;
             }
             return world.setTypeIdAndData(x, y, z, id, data);
@@ -131,18 +132,71 @@ public class CraftEventFactory {
         return blockState.update(true);
     }
 
-    public static boolean handleBlockIgniteEvent(World world, EntityHuman who, IgniteCause cause, int x, int y, int z) {
+    // True means cancelled
+    public static boolean handleBlockIgnite(World world, EntityHuman who, IgniteCause cause, int x, int y, int z) {
         if (!callEvent(BlockIgniteEvent.class, BlockIgniteEvent.getHandlerList())) {
             return false;
         }
 
         Block blockClicked = world.getWorld().getBlockAt(x, y, z);
-        Player player = (Player) who.getBukkitEntity();
+        Player player = who == null ? null : (Player) who.getBukkitEntity();
 
         BlockIgniteEvent event = new BlockIgniteEvent(blockClicked, cause, player);
         callEvent(event);
 
         return event.isCancelled();
+    }
+
+    // False means cancelled
+    public static boolean handleBlockSpread(Block toBlock, Block fromBlock, int id, int data) {
+        if (!callEvent(BlockSpreadEvent.class, BlockSpreadEvent.getHandlerList())) {
+            toBlock.setTypeIdAndData(id, (byte) data, true);
+            return true;
+        }
+
+        BlockState blockState = toBlock.getState();
+        blockState.setTypeId(id);
+        blockState.setRawData((byte) data);
+
+        BlockSpreadEvent event = new BlockSpreadEvent(toBlock, fromBlock, blockState);
+        callEvent(event);
+
+        if (!event.isCancelled()) {
+            return blockState.update(true);
+        }
+
+        return false;
+    }
+
+    public static boolean cancelBlockBreak(World world, EntityPlayer player, int x, int y, int z) {
+        if (!callEvent(BlockBreakEvent.class, BlockBreakEvent.getHandlerList())) {
+            return false;
+        }
+
+        org.bukkit.block.Block block = world.getWorld().getBlockAt(x, y, z);
+
+        BlockBreakEvent event = new BlockBreakEvent(block, player.getBukkitEntity());
+        callEvent(event);
+
+        return event.isCancelled();
+    }
+
+    public static void handleBlockFade(World world, int x, int y, int z, int type) {
+        if (!callEvent(BlockFadeEvent.class, BlockFadeEvent.getHandlerList())) {
+            world.setTypeId(x, y, z, type);
+            return;
+        }
+
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        BlockState state = block.getState();
+        state.setTypeId(type);
+
+        BlockFadeEvent event = new BlockFadeEvent(block, state);
+        callEvent(event);
+
+        if (!event.isCancelled()) {
+            state.update(true);
+        }
     }
 
     /**
@@ -316,18 +370,6 @@ public class CraftEventFactory {
         ThrownPotion thrownPotion = (ThrownPotion) potion.getBukkitEntity();
 
         PotionSplashEvent event = new PotionSplashEvent(thrownPotion, affectedEntities);
-        Bukkit.getPluginManager().callEvent(event);
-        return event;
-    }
-
-    /**
-     * BlockFadeEvent
-     */
-    public static BlockFadeEvent callBlockFadeEvent(Block block, int type) {
-        BlockState state = block.getState();
-        state.setTypeId(type);
-
-        BlockFadeEvent event = new BlockFadeEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }
@@ -573,7 +615,7 @@ public class CraftEventFactory {
 
     public static EntityCombustByEntityEvent callEntityCombustByEntityEvent(Entity combuster, Entity combustee, int duration) {
         EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(combuster.getBukkitEntity(), combustee.getBukkitEntity(), duration);
-        combuster.world.getServer().getPluginManager().callEvent(null);
+        combuster.world.getServer().getPluginManager().callEvent(event);
         return event;
     }
 

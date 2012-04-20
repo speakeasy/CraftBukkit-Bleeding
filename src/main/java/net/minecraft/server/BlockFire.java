@@ -4,11 +4,8 @@ import java.util.Random;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.material.MaterialData;
 // CraftBukkit end
 
 public class BlockFire extends Block {
@@ -106,11 +103,8 @@ public class BlockFire extends Block {
                 this.a(world, i, j, k + 1, 300 + b0, random, l);
 
                 // CraftBukkit start - Call to stop spread of fire.
-                org.bukkit.Server server = world.getServer();
-                org.bukkit.World bworld = world.getWorld();
-
-                IgniteCause igniteCause = BlockIgniteEvent.IgniteCause.SPREAD;
-                org.bukkit.block.Block fromBlock = bworld.getBlockAt(i, j, k);
+                IgniteCause igniteCause = IgniteCause.SPREAD;
+                org.bukkit.block.Block fromBlock = world.getWorld().getBlockAt(i, j, k);
                 // CraftBukkit end
 
                 for (int i1 = i - 1; i1 <= i + 1; ++i1) {
@@ -138,27 +132,14 @@ public class BlockFire extends Block {
                                         if (k2 > 15) {
                                             k2 = 15;
                                         }
-                                        // CraftBukkit start - Call to stop spread of fire.
-                                        org.bukkit.block.Block block = bworld.getBlockAt(i1, k1, j1);
-
-                                        if (block.getTypeId() != Block.FIRE.id) {
-                                            BlockIgniteEvent event = new BlockIgniteEvent(block, igniteCause, null);
-                                            server.getPluginManager().callEvent(event);
-
-                                            if (event.isCancelled()) {
+                                        // CraftBukkit start - Delegate events to Event Factory
+                                        //world.setTypeIdAndData(i1, k1, j1, this.id, k2);
+                                        if (world.getTypeId(i1, k1, j1) != Block.FIRE.id) {
+                                            if (CraftEventFactory.handleBlockIgnite(world, null, igniteCause, i1, k1, j1)) {
                                                 continue;
                                             }
 
-                                            org.bukkit.block.BlockState blockState = bworld.getBlockAt(i1, k1, j1).getState();
-                                            blockState.setTypeId(this.id);
-                                            blockState.setData(new MaterialData(this.id, (byte) k2));
-
-                                            BlockSpreadEvent spreadEvent = new BlockSpreadEvent(blockState.getBlock(), fromBlock, blockState);
-                                            server.getPluginManager().callEvent(spreadEvent);
-
-                                            if (!spreadEvent.isCancelled()) {
-                                                blockState.update(true);
-                                            }
+                                            CraftEventFactory.handleBlockSpread(world.getWorld().getBlockAt(i1, k1, j1), fromBlock, this.id, k2);
                                         }
                                         // CraftBukkit end
                                     }
@@ -261,9 +242,7 @@ public class BlockFire extends Block {
     }
     // CraftBukkit start
     private void fireExtinguished(World world, int x, int y, int z) {
-        if (CraftEventFactory.callBlockFadeEvent(world.getWorld().getBlockAt(x, y, z), 0).isCancelled() == false) {
-            world.setTypeId(x, y, z, 0);
-        }
+        CraftEventFactory.handleBlockFade(world, x, y, z, 0);
     }
     // CraftBukkit end
 }

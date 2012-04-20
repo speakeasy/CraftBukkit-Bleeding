@@ -2,13 +2,13 @@ package net.minecraft.server;
 
 import java.util.ArrayList;
 import java.util.Random;
+
 // CraftBukkit start
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 // CraftBukkit end
 
@@ -62,16 +62,8 @@ public class BlockMushroom extends BlockFlower {
 
             if (world.isEmpty(i1, j1, k1) && this.f(world, i1, j1, k1)) {
                 // CraftBukkit start
-                org.bukkit.World bworld = world.getWorld();
-                org.bukkit.block.BlockState blockState = bworld.getBlockAt(i1, j1, k1).getState();
-                blockState.setTypeId(this.id);
-
-                BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(i, j, k), blockState);
-                world.getServer().getPluginManager().callEvent(event);
-
-                if (!event.isCancelled()) {
-                    blockState.update(true);
-                }
+                //world.setTypeId(i1, j1, k1, this.id);
+                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpread(world.getWorld().getBlockAt(i1, j1, k1), world.getWorld().getBlockAt(i, j, k), this.id, 0);
                 // CraftBukkit end
             }
         }

@@ -3,8 +3,7 @@ package net.minecraft.server;
 import java.util.List;
 
 // CraftBukkit start
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 // CraftBukkit end
 
@@ -15,7 +14,6 @@ public class EntityWeatherLighting extends EntityWeather {
     private int c;
 
     // CraftBukkit start
-    private CraftWorld cworld;
     public boolean isEffect = false;
 
     public EntityWeatherLighting(World world, double d0, double d1, double d2) {
@@ -24,13 +22,9 @@ public class EntityWeatherLighting extends EntityWeather {
 
     public EntityWeatherLighting(World world, double d0, double d1, double d2, boolean isEffect) {
         // CraftBukkit end
-
         super(world);
 
-        // CraftBukkit start
-        this.isEffect = isEffect;
-        this.cworld = world.getWorld();
-        // CraftBukkit end
+        this.isEffect = isEffect; // CraftBukkit
 
         this.setPositionRotation(d0, d1, d2, 0.0F, 0.0F);
         this.lifeTicks = 2;
@@ -45,10 +39,7 @@ public class EntityWeatherLighting extends EntityWeather {
 
             if (world.getTypeId(i, j, k) == 0 && Block.FIRE.canPlace(world, i, j, k)) {
                 // CraftBukkit start
-                BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(i, j, k), IgniteCause.LIGHTNING, null);
-                world.getServer().getPluginManager().callEvent(event);
-
-                if (!event.isCancelled()) {
+                if (!CraftEventFactory.handleBlockIgnite(world, null, IgniteCause.LIGHTNING, i, j, k)) {
                     world.setTypeId(i, j, k, Block.FIRE.id);
                 }
                 // CraftBukkit end
@@ -61,13 +52,11 @@ public class EntityWeatherLighting extends EntityWeather {
 
                 if (world.getTypeId(j, k, l) == 0 && Block.FIRE.canPlace(world, j, k, l)) {
                     // CraftBukkit start
-                    BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(j, k, l), IgniteCause.LIGHTNING, null);
-                    world.getServer().getPluginManager().callEvent(event);
-
-                    if (!event.isCancelled()) {
-                        world.setTypeId(j, k, l, Block.FIRE.id);
+                    if (CraftEventFactory.handleBlockIgnite(world, null, IgniteCause.LIGHTNING, j, k, l)) {
+                        continue;
                     }
                     // CraftBukkit end
+                    world.setTypeId(j, k, l, Block.FIRE.id);
                 }
             }
         }
@@ -96,10 +85,7 @@ public class EntityWeatherLighting extends EntityWeather {
 
                     if (this.world.getTypeId(i, j, k) == 0 && Block.FIRE.canPlace(this.world, i, j, k)) {
                         // CraftBukkit start
-                        BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(i, j, k), IgniteCause.LIGHTNING, null);
-                        this.world.getServer().getPluginManager().callEvent(event);
-
-                        if (!event.isCancelled()) {
+                        if (!CraftEventFactory.handleBlockIgnite(world, null, IgniteCause.LIGHTNING, i, j, k)) {
                             this.world.setTypeId(i, j, k, Block.FIRE.id);
                         }
                         // CraftBukkit end

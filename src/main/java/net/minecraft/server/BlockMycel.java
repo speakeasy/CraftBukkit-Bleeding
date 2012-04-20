@@ -1,8 +1,8 @@
 package net.minecraft.server;
 
 import java.util.Random;
-import org.bukkit.event.block.BlockFadeEvent; // CraftBukkit
-import org.bukkit.event.block.BlockSpreadEvent; // CraftBukkit
+
+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 
 public class BlockMycel extends Block {
 
@@ -20,18 +20,11 @@ public class BlockMycel extends Block {
         if (!world.isStatic) {
             if (world.getLightLevel(i, j + 1, k) < 4 && Block.lightBlock[world.getTypeId(i, j + 1, k)] > 2) {
                 // CraftBukkit start
-                org.bukkit.World bworld = world.getWorld();
-                org.bukkit.block.BlockState blockState = bworld.getBlockAt(i, j, k).getState();
-                blockState.setTypeId(Block.DIRT.id);
-
-                BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
-                world.getServer().getPluginManager().callEvent(event);
-
-                if (!event.isCancelled()) {
-                    blockState.update(true);
-                }
+                //world.setTypeId(i, j, k, Block.DIRT.id);
+                CraftEventFactory.handleBlockFade(world, i, j, k, Block.DIRT.id);
                 // CraftBukkit end
             } else if (world.getLightLevel(i, j + 1, k) >= 9) {
+                org.bukkit.block.Block fromBlock = world.getWorld().getBlockAt(i, j, k); // CraftBukkit
                 for (int l = 0; l < 4; ++l) {
                     int i1 = i + random.nextInt(3) - 1;
                     int j1 = j + random.nextInt(5) - 3;
@@ -40,16 +33,8 @@ public class BlockMycel extends Block {
 
                     if (world.getTypeId(i1, j1, k1) == Block.DIRT.id && world.getLightLevel(i1, j1 + 1, k1) >= 4 && Block.lightBlock[l1] <= 2) {
                         // CraftBukkit start
-                        org.bukkit.World bworld = world.getWorld();
-                        org.bukkit.block.BlockState blockState = bworld.getBlockAt(i1, j1, k1).getState();
-                        blockState.setTypeId(this.id);
-
-                        BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(i, j, k), blockState);
-                        world.getServer().getPluginManager().callEvent(event);
-
-                        if (!event.isCancelled()) {
-                            blockState.update(true);
-                        }
+                        //world.setTypeId(i1, j1, k1, this.id);
+                        CraftEventFactory.handleBlockSpread(world.getWorld().getBlockAt(i1, j1, k1), fromBlock, this.id, 0);
                         // CraftBukkit end
                     }
                 }

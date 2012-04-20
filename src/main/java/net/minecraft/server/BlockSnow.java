@@ -1,7 +1,6 @@
 package net.minecraft.server;
 
 import java.util.Random;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
 
 public class BlockSnow extends Block {
 
@@ -77,14 +76,11 @@ public class BlockSnow extends Block {
 
     public void a(World world, int i, int j, int k, Random random) {
         if (world.a(EnumSkyBlock.BLOCK, i, j, k) > 11) {
-            // CraftBukkit start
-            if (CraftEventFactory.callBlockFadeEvent(world.getWorld().getBlockAt(i, j, k), 0).isCancelled()) {
-                return;
-            }
-            // CraftBukkit end
-
             this.b(world, i, j, k, world.getData(i, j, k), 0);
-            world.setTypeId(i, j, k, 0);
+            // CraftBukkit start - Delegate to Event Factory
+            //world.setTypeId(i, j, k, 0);
+            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFade(world, i, j, k, 0);
+            // CraftBukkit end
         }
     }
 }
