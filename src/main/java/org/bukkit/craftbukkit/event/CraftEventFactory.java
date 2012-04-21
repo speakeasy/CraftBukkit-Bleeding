@@ -520,4 +520,15 @@ public class CraftEventFactory {
         world.getServer().getPluginManager().callEvent(event);
         return event;
     }
+
+    public static BlockFluidChangeEvent callFluidChangeEvent(World world, int x, int y, int z, int type, int data) {
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        CraftBlockState state = (CraftBlockState) block.getState();
+        state.setTypeId(type);
+        state.setRawData((byte) data);
+
+        BlockFluidChangeEvent event = new BlockFluidChangeEvent(block, state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
 }
