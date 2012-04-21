@@ -278,14 +278,16 @@ public class CraftEventFactory {
 
     /**
      * BlockFadeEvent
+     * @return isCancelled
      */
-    public static BlockFadeEvent callBlockFadeEvent(Block block, int type) {
+    public static boolean callBlockFadeEvent(Block block, int type) {
+        if (BlockFadeEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
         BlockState state = block.getState();
         state.setTypeId(type);
 
         BlockFadeEvent event = new BlockFadeEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
-        return event;
+        return event.isCancelled();
     }
 
     public static EntityDeathEvent callEntityDeathEvent(EntityLiving victim) {
@@ -520,8 +522,11 @@ public class CraftEventFactory {
         world.getServer().getPluginManager().callEvent(event);
         return event;
     }
-
-    public static BlockFluidChangeEvent callFluidChangeEvent(World world, int x, int y, int z, int type, int data) {
+    /**
+     * @return isCancelled
+     */
+    public static boolean callFluidChangeEvent(World world, int x, int y, int z, int type, int data) {
+        if (BlockFluidChangeEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
         Block block = world.getWorld().getBlockAt(x, y, z);
         CraftBlockState state = (CraftBlockState) block.getState();
         state.setTypeId(type);
@@ -529,6 +534,6 @@ public class CraftEventFactory {
 
         BlockFluidChangeEvent event = new BlockFluidChangeEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
-        return event;
+        return event.isCancelled();
     }
 }

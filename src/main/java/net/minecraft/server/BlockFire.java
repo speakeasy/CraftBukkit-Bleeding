@@ -261,7 +261,7 @@ public class BlockFire extends Block {
     }
     // CraftBukkit start
     private void fireExtinguished(World world, int x, int y, int z) {
-        if (CraftEventFactory.callBlockFadeEvent(world.getWorld().getBlockAt(x, y, z), 0).isCancelled() == false) {
+        if (!CraftEventFactory.callBlockFadeEvent(world.getWorld().getBlockAt(x, y, z), 0)) {
             world.setTypeId(x, y, z, 0);
         }
     }
