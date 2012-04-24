@@ -19,12 +19,27 @@ public class PathfinderGoalFollowParent extends PathfinderGoal {
         if (this.a.getAge() >= 0) {
             return false;
         } else {
+            // CraftBukkit start
+            // If previous parent, see if it is still good match
+            if (this.b != null) {
+                if (this.b.isAlive()) {
+                    double d = this.a.j(this.b);
+                    if (d < 9.0D) { // Too close?  Nothing else will match
+                        return false;
+                    }
+                    else if (d < 256.0D) {  // Not too far - stick with this parent
+                        return true;
+                    }
+                }
+            }
+            this.b = null;
+            // CraftBukkit end
             List list = this.a.world.a(this.a.getClass(), this.a.boundingBox.grow(8.0D, 4.0D, 8.0D));
             EntityAnimal entityanimal = null;
             double d0 = Double.MAX_VALUE;
             Iterator iterator = list.iterator();
 
-            while (iterator.hasNext()) {
+            while ((d0 >= 9.0D) && iterator.hasNext()) { // CraftBukkit - quit if found one too close
                 Entity entity = (Entity) iterator.next();
                 EntityAnimal entityanimal1 = (EntityAnimal) entity;
 
@@ -37,7 +52,6 @@ public class PathfinderGoalFollowParent extends PathfinderGoal {
                     }
                 }
             }
-
             if (entityanimal == null) {
                 return false;
             } else if (d0 < 9.0D) {
@@ -64,7 +78,9 @@ public class PathfinderGoalFollowParent extends PathfinderGoal {
     }
 
     public void d() {
-        this.b = null;
+        // CraftBukkit start - hold on to 'parent' - save lots of work figuring out another one
+        // this.b = null;
+        // CraftBukkit end
     }
 
     public void e() {
