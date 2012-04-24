@@ -4,7 +4,6 @@ import java.util.Random;
 
 // CraftBukkit start
 import org.bukkit.block.BlockFace;
-import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 // CraftBukkit end
 
@@ -82,11 +81,8 @@ public class BlockFlowing extends BlockFluids {
             if (i1 != l) {
                 l = i1;
                 if (i1 < 0) {
-                    // CraftBukkit start - call event for fluid fading
-                    if (!CraftEventFactory.callBlockFadeEvent(world.getWorld().getBlockAt(i, j, k), 0)) {
-                        world.setTypeId(i, j, k, 0);
-                    }
-                    // CraftBukkit end
+                    if (!CraftEventFactory.callBlockFadeEvent(world, i, j, k, 0)) // CraftBukkit - call event for fluid fading
+                    world.setTypeId(i, j, k, 0);
                 } else {
                     // CraftBukkit start - call event for fluid change
                     if (!CraftEventFactory.callFluidChangeEvent(world, i, j, k, this.id, i1)) {

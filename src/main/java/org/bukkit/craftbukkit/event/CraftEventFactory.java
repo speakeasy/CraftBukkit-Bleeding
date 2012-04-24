@@ -30,6 +30,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.BlockView;
+import org.bukkit.block.SimpleBlockView;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -72,7 +74,7 @@ public class CraftEventFactory {
 
         ChunkCoordinates chunkcoordinates = worldServer.getSpawn();
 
-        int distanceFromSpawn = (int) Math.max(Math.abs(x - chunkcoordinates.x), Math.abs(z - chunkcoordinates.z));
+        int distanceFromSpawn = Math.max(Math.abs(x - chunkcoordinates.x), Math.abs(z - chunkcoordinates.z));
         return distanceFromSpawn > spawnSize;
     }
 
@@ -280,10 +282,10 @@ public class CraftEventFactory {
      * BlockFadeEvent
      * @return isCancelled
      */
-    public static boolean callBlockFadeEvent(Block block, int type) {
+    public static boolean callBlockFadeEvent(World world, int x, int y, int z, int type) {
         if (BlockFadeEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
-        BlockState state = block.getState();
-        state.setTypeId(type);
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        BlockView state = new SimpleBlockView(block, type, (byte) 0);
 
         BlockFadeEvent event = new BlockFadeEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
@@ -318,7 +320,7 @@ public class CraftEventFactory {
     }
 
     public static PlayerDeathEvent callPlayerDeathEvent(EntityPlayer victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage) {
-        CraftPlayer entity = (CraftPlayer) victim.getBukkitEntity();
+        CraftPlayer entity = victim.getBukkitEntity();
         PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.getExpReward(), 0, deathMessage);
         org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -405,22 +407,21 @@ public class CraftEventFactory {
         return event;
     }
 
-    public static void handleBlockGrowEvent(World world, int x, int y, int z, int type, int data) {
+    /**
+     * @return isCancelled
+     */
+    public static boolean handleBlockGrowEvent(World world, int x, int y, int z, int type, int data) {
+        if (BlockGrowEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
         Block block = world.getWorld().getBlockAt(x, y, z);
-        CraftBlockState state = (CraftBlockState) block.getState();
-        state.setTypeId(type);
-        state.setRawData((byte) data);
+        BlockView state = new SimpleBlockView(block, type, (byte) data);
 
         BlockGrowEvent event = new BlockGrowEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
-
-        if (!event.isCancelled()) {
-            state.update(true);
-        }
+        return event.isCancelled();
     }
 
     public static FoodLevelChangeEvent callFoodLevelChangeEvent(EntityHuman entity, int level) {
-        FoodLevelChangeEvent event = new FoodLevelChangeEvent((Player) entity.getBukkitEntity(), level);
+        FoodLevelChangeEvent event = new FoodLevelChangeEvent(entity.getBukkitEntity(), level);
         entity.getBukkitEntity().getServer().getPluginManager().callEvent(event);
         return event;
     }
@@ -477,7 +478,7 @@ public class CraftEventFactory {
         }
 
         CraftServer server = ((WorldServer) player.world).getServer();
-        CraftPlayer craftPlayer = (CraftPlayer) player.getBukkitEntity();
+        CraftPlayer craftPlayer = player.getBukkitEntity();
         player.activeContainer.transferTo(container, craftPlayer);
 
         InventoryOpenEvent event = new InventoryOpenEvent(container.getBukkitView());
@@ -551,10 +552,45 @@ public class CraftEventFactory {
     }
 
     /**
+     * This method will not check for registered listeners
      * @return isCancelled
      */
     public static boolean forceBlockFromToEvent(org.bukkit.block.Block source, BlockFace face) {
         BlockFromToEvent event = new BlockFromToEvent(source, face);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockSpreadEvent(World world, int x, int y, int z, int id, int fromX, int fromY, int fromZ) {
+        return callBlockSpreadEvent(world, x, y, z, id, (byte) 0, fromX, fromY, fromZ);
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockSpreadEvent(World world, int x, int y, int z, int id, byte data, int fromX, int fromY, int fromZ) {
+        if (BlockSpreadEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block source = world.getWorld().getBlockAt(fromX, fromY, fromZ);
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        BlockView state = new SimpleBlockView(block, id, data);
+
+        BlockSpreadEvent event = new BlockSpreadEvent(block, source, state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockFormEvent(World world, int x, int y, int z, int id) {
+        if (BlockFormEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        BlockView state = new SimpleBlockView(block, id, (byte) 0);
+
+        BlockFormEvent event = new BlockFormEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
         return event.isCancelled();
     }

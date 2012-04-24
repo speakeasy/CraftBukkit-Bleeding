@@ -26,7 +26,8 @@ public class BlockCactus extends Block {
                 int i1 = world.getData(i, j, k);
 
                 if (i1 == 15) {
-                    org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, i, j + 1, k, this.id, 0); // CraftBukkit
+                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(world, i, j + 1, k, this.id, 0)) // CraftBukkit
+                    world.setTypeId(i, j + 1, k, this.id);
                     world.setData(i, j, k, 0);
                 } else {
                     world.setData(i, j, k, i1 + 1);
