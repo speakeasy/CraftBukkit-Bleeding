@@ -522,6 +522,7 @@ public class CraftEventFactory {
         world.getServer().getPluginManager().callEvent(event);
         return event;
     }
+
     /**
      * @return isCancelled
      */
@@ -533,6 +534,27 @@ public class CraftEventFactory {
         state.setRawData((byte) data);
 
         BlockFluidChangeEvent event = new BlockFluidChangeEvent(block, state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockFromToEvent(World world, int x, int y, int z, BlockFace blockFace) {
+        if (BlockFromToEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block block = world.getWorld().getBlockAt(x, y, z);
+
+        BlockFromToEvent event = new BlockFromToEvent(block, blockFace);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean forceBlockFromToEvent(org.bukkit.block.Block source, BlockFace face) {
+        BlockFromToEvent event = new BlockFromToEvent(source, face);
         Bukkit.getPluginManager().callEvent(event);
         return event.isCancelled();
     }

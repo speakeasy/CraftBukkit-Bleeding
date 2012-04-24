@@ -31,11 +31,6 @@ public class BlockFlowing extends BlockFluids {
     }
 
     public void a(World world, int i, int j, int k, Random random) {
-        // CraftBukkit start
-        org.bukkit.World bworld = world.getWorld();
-        org.bukkit.Server server = world.getServer();
-        org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(i, j, k);
-        // CraftBukkit end
 
         int l = this.g(world, i, j, k);
         byte b0 = 1;
@@ -110,15 +105,7 @@ public class BlockFlowing extends BlockFluids {
 
         if (this.l(world, i, j - 1, k)) {
             // CraftBukkit start - send "down" to the server
-            BlockFromToEvent event;
-            if (BlockFromToEvent.getHandlerList().getRegisteredListeners().length != 0) {
-                event = new BlockFromToEvent(source, BlockFace.DOWN);
-                server.getPluginManager().callEvent(event);
-            } else {
-                event = null;
-            }
-
-            if (event == null || !event.isCancelled()) {
+            if (!CraftEventFactory.callBlockFromToEvent(world, i, j, k, BlockFace.DOWN)) {
                 if (this.material == Material.LAVA && world.getMaterial(i, j - 1, k) == Material.WATER) {
                     world.setTypeId(i, j - 1, k, Block.STONE.id);
                     this.fizz(world, i, j - 1, k);
@@ -143,6 +130,8 @@ public class BlockFlowing extends BlockFluids {
             if (i1 >= 8) {
                 return;
             }
+            
+            org.bukkit.block.Block source = org.bukkit.event.block.BlockFromToEvent.getHandlerList().getRegisteredListeners().length != 0 ? world.getWorld().getBlockAt(i, j, k) : null; // CraftBukkit
 
             if (aboolean[0]) {
                 this.flow(world, i - 1, j, k, i1, source, BlockFace.NORTH); // CraftBukkit
@@ -166,16 +155,7 @@ public class BlockFlowing extends BlockFluids {
         if (this.l(world, i, j, k)) {
             int i1 = world.getTypeId(i, j, k);
 
-            // CraftBukkit start
-            if (    BlockFromToEvent.getHandlerList().getRegisteredListeners().length != 0
-                    && (i1 == 0 || Block.byId[i1].material != this.material || world.getData(i, j, k) != l)) {
-                BlockFromToEvent event = new BlockFromToEvent(source, face);
-                world.getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    return;
-                }
-            }
-            // CraftBukkit end
+            if (source != null && (i1 == 0 || Block.byId[i1].material != this.material || world.getData(i, j, k) != l) && !CraftEventFactory.forceBlockFromToEvent(source, face)) return; // CraftBukkit
 
             if (i1 > 0) {
                 if (this.material == Material.LAVA) {
