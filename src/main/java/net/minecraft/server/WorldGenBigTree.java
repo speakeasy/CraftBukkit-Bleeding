@@ -296,7 +296,7 @@ public class WorldGenBigTree extends WorldGenerator implements BlockSapling.Tree
                 aint3[b3] = MathHelper.floor((double) aint[b3] + (double) i * d1);
                 int k = this.world.getTypeId(aint3[0], aint3[1], aint3[2]);
 
-                if (k != 0 && k != 18) {
+                if (k != 0 && k != 18 || aint3[1] > 256) { // CraftBukkit fix trees wrapping around
                     break;
                 }
             }
