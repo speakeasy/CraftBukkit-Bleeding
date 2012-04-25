@@ -52,6 +52,7 @@ public class PathfinderGoalFollowParent extends PathfinderGoal {
                     }
                 }
             }
+
             if (entityanimal == null) {
                 return false;
             } else if (d0 < 9.0D) {
