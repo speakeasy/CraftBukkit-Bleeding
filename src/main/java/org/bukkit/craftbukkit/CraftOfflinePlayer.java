@@ -1,22 +1,31 @@
 package org.bukkit.craftbukkit;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.minecraft.server.BanEntry;
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.NBTCompressedStreamTools;
 import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.NBTTagDouble;
+import net.minecraft.server.NBTTagFloat;
+import net.minecraft.server.NBTTagList;
 import net.minecraft.server.WorldNBTStorage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -25,6 +34,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     private final String name;
     private final CraftServer server;
     private final WorldNBTStorage storage;
+    private CraftInventoryPlayer inventory;
 
     protected CraftOfflinePlayer(CraftServer server, String name) {
         this.server = server;
@@ -208,6 +218,15 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         return null;
     }
 
+    public void setBedSpawnLocation(Location location) {
+        NBTTagCompound data = getData();
+        data.setInt("SpawnX", location.getBlockX());
+        data.setInt("SpawnY", location.getBlockY());
+        data.setInt("SpawnZ", location.getBlockZ());
+        data.setString("SpawnWorld", location.getWorld().getName());
+        saveData();
+    }
+
     public void setMetadata(String metadataKey, MetadataValue metadataValue) {
         server.getPlayerMetadata().setMetadata(this, metadataKey, metadataValue);
     }
@@ -222,5 +241,77 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     public void removeMetadata(String metadataKey, Plugin plugin) {
         server.getPlayerMetadata().removeMetadata(this, metadataKey, plugin);
+    }
+
+    public PlayerInventory getInventory() {
+        if (inventory == null) {
+            NBTTagList nbttaglist = getData().getList("Inventory");
+            net.minecraft.server.PlayerInventory inv = new net.minecraft.server.PlayerInventory(null);
+            inv.b(nbttaglist);
+            inventory = new CraftInventoryPlayer(inv);
+        }
+        return inventory;
+    }
+
+    public void updateInventory() {
+        getData().set("Inventory", inventory.getInventory().a(new NBTTagList()));
+        saveData();
+    }
+
+    public Location getLocation() {
+        NBTTagCompound data = getData();
+        Location location = null;
+        if (data.hasKey("Pos") && data.hasKey("Rotation")) {
+            NBTTagList pos = data.getList("Pos");
+            NBTTagList rot = data.getList("Rotation");
+            double locX = ((NBTTagDouble) pos.get(0)).data;
+            double locY = ((NBTTagDouble) pos.get(1)).data;
+            double locZ = ((NBTTagDouble) pos.get(2)).data;
+            float yaw = ((NBTTagFloat) rot.get(0)).data;
+            float pitch = ((NBTTagFloat) rot.get(1)).data;
+            World world = null;
+            if (data.hasKey("WorldUUIDMost") && data.hasKey("WorldUUIDLeast")) {
+                UUID uid = new UUID(data.getLong("WorldUUIDMost"), data.getLong("WorldUUIDLeast"));
+                world = server.getWorld(uid);
+            }
+            location = new Location(world, locX, locY, locZ, yaw, pitch);
+        }
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        NBTTagCompound data = getData();
+
+        NBTTagList pos = new NBTTagList();
+        pos.add(new NBTTagDouble(null, location.getX()));
+        pos.add(new NBTTagDouble(null, location.getY()));
+        pos.add(new NBTTagDouble(null, location.getZ()));
+        data.set("Pos", pos);
+
+        NBTTagList rot = new NBTTagList();
+        rot.add(new NBTTagDouble(null, location.getYaw()));
+        rot.add(new NBTTagDouble(null, location.getPitch()));
+        data.set("Rotation", rot);
+
+        data.setLong("WorldUUIDLeast", location.getWorld().getUID().getLeastSignificantBits());
+        data.setLong("WorldUUIDMost", location.getWorld().getUID().getMostSignificantBits());
+        
+        saveData();
+    }
+
+    private void saveData() {
+        try {
+            File file1 = new File(getDataFile().getParentFile(), name + ".dat~");
+            File file2 = new File(getDataFile().getParentFile(), name + ".dat");
+
+            NBTCompressedStreamTools.a(getData(), new FileOutputStream(file1));
+            if (file2.exists()) {
+                file2.delete();
+            }
+
+            file1.renameTo(file2);
+        } catch (Exception exception) {
+            Bukkit.getLogger().warning("Failed to save player data for " + name);
+        }
     }
 }

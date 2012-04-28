@@ -919,4 +919,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             }
         }
     }
+
+    public void setLocation(Location location) {
+        this.teleport(location);
+    }
 }
