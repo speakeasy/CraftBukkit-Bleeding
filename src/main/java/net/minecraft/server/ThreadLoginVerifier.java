@@ -6,7 +6,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 // CraftBukkit start
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.Bukkit;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 // CraftBukkit end
 
@@ -16,13 +16,7 @@ class ThreadLoginVerifier extends Thread {
 
     final NetLoginHandler netLoginHandler;
 
-    // CraftBukkit start
-    CraftServer server;
-
-    ThreadLoginVerifier(NetLoginHandler netloginhandler, Packet1Login packet1login, CraftServer server) {
-        this.server = server;
-        // CraftBukkit end
-
+    ThreadLoginVerifier(NetLoginHandler netloginhandler, Packet1Login packet1login) {
         this.netLoginHandler = netloginhandler;
         this.loginPacket = packet1login;
     }
@@ -42,7 +36,7 @@ class ThreadLoginVerifier extends Thread {
                 }
 
                 PlayerPreLoginEvent event = new PlayerPreLoginEvent(this.loginPacket.name, this.netLoginHandler.getSocket().getInetAddress());
-                this.server.getPluginManager().callEvent(event);
+                Bukkit.getPluginManager().callEvent(event);
 
                 if (event.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
                     this.netLoginHandler.disconnect(event.getKickMessage());

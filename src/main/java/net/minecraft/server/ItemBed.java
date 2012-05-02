@@ -16,8 +16,6 @@ public class ItemBed extends Item {
         if (l != 1) {
             return false;
         } else {
-            int clickedX = i, clickedY = j, clickedZ = k; // CraftBukkit
-
             ++j;
             BlockBed blockbed = (BlockBed) Block.BED;
             int i1 = MathHelper.floor((double) (entityhuman.yaw * 4.0F / 360.0F) + 0.5D) & 3;
@@ -47,7 +45,7 @@ public class ItemBed extends Item {
                     world.setTypeIdAndData(i, j, k, blockbed.id, i1);
 
                     // CraftBukkit start - bed
-                    BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, clickedX, clickedY, clickedZ);
+                    BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockState, i, j, k);
 
                     if (event.isCancelled() || !event.canBuild()) {
                         event.getBlockPlaced().setTypeIdAndData(blockState.getTypeId(), blockState.getRawData(), false);

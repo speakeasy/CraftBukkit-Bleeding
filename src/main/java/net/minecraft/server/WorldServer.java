@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 // CraftBukkit start
-import org.bukkit.BlockChangeDelegate;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.craftbukkit.generator.CustomChunkGenerator;
 import org.bukkit.craftbukkit.generator.InternalChunkGenerator;
@@ -12,14 +11,13 @@ import org.bukkit.craftbukkit.generator.NetherChunkGenerator;
 import org.bukkit.craftbukkit.generator.NormalChunkGenerator;
 import org.bukkit.craftbukkit.generator.SkyLandsChunkGenerator;
 import org.bukkit.event.weather.LightningStrikeEvent;
-
-public class WorldServer extends World implements BlockChangeDelegate {
-    // CraftBukkit end
+// CraftBukkit end
+public class WorldServer extends World {
 
     public ChunkProviderServer chunkProviderServer;
     public boolean weirdIsOpCache = false;
     public boolean savingDisabled;
-    public final MinecraftServer server; // CraftBukkit - private -> public final
+    private MinecraftServer server;
     private IntHashMap entitiesById;
 
     // CraftBukkit start - change signature

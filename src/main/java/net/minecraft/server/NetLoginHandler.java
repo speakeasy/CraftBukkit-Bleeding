@@ -21,7 +21,7 @@ public class NetLoginHandler extends NetHandler {
     private int f = 0;
     private String g = null;
     private Packet1Login h = null;
-    private String loginKey = Long.toString(random.nextLong(), 16); // CraftBukkit - Security fix
+    private String loginKey = "";
     public String hostname = ""; // CraftBukkit - add field
 
     public NetLoginHandler(MinecraftServer minecraftserver, Socket socket, String s) {
@@ -93,7 +93,7 @@ public class NetLoginHandler extends NetHandler {
                 // CraftBukkit end
                 this.b(packet1login);
             } else {
-                (new ThreadLoginVerifier(this, packet1login, this.server.server)).start(); // CraftBukkit
+                (new ThreadLoginVerifier(this, packet1login)).start();
             }
         }
     }
