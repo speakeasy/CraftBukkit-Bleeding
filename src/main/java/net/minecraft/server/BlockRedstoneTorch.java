@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 
 public class BlockRedstoneTorch extends BlockTorch {
 
@@ -95,25 +95,9 @@ public class BlockRedstoneTorch extends BlockTorch {
             b.remove(0);
         }
 
-        // CraftBukkit start
-        org.bukkit.plugin.PluginManager manager = world.getServer().getPluginManager();
-        org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
-        int oldCurrent = this.isOn ? 15 : 0;
-
-        BlockRedstoneEvent event = new BlockRedstoneEvent(block, oldCurrent, oldCurrent);
-        // CraftBukkit end
-
         if (this.isOn) {
             if (flag) {
-                // CraftBukkit start
-                if (oldCurrent != 0) {
-                    event.setNewCurrent(0);
-                    manager.callEvent(event);
-                    if (event.getNewCurrent() != 0) {
-                        return;
-                    }
-                }
-                // CraftBukkit end
+                if (CraftEventFactory.callRedstoneChange(world, i, j, k, 15, 0) != 0) return; // CraftBukkit
 
                 world.setTypeIdAndData(i, j, k, Block.REDSTONE_TORCH_OFF.id, world.getData(i, j, k));
                 if (this.a(world, i, j, k, true)) {
@@ -129,15 +113,7 @@ public class BlockRedstoneTorch extends BlockTorch {
                 }
             }
         } else if (!flag && !this.a(world, i, j, k, false)) {
-            // CraftBukkit start
-            if (oldCurrent != 15) {
-                event.setNewCurrent(15);
-                manager.callEvent(event);
-                if (event.getNewCurrent() != 15) {
-                    return;
-                }
-            }
-            // CraftBukkit end
+            if (CraftEventFactory.callRedstoneChange(world, i, j, k, 0, 15) != 15) return; // CraftBukkit
 
             world.setTypeIdAndData(i, j, k, Block.REDSTONE_TORCH_ON.id, world.getData(i, j, k));
         }

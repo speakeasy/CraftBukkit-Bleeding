@@ -4,7 +4,7 @@ import java.util.Random;
 
 // CraftBukkit start
 import org.bukkit.block.BlockFace;
-import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 // CraftBukkit end
 
 public class BlockFlowing extends BlockFluids {
@@ -30,11 +30,6 @@ public class BlockFlowing extends BlockFluids {
     }
 
     public void a(World world, int i, int j, int k, Random random) {
-        // CraftBukkit start
-        org.bukkit.World bworld = world.getWorld();
-        org.bukkit.Server server = world.getServer();
-        org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(i, j, k);
-        // CraftBukkit end
 
         int l = this.g(world, i, j, k);
         byte b0 = 1;
@@ -86,11 +81,19 @@ public class BlockFlowing extends BlockFluids {
             if (i1 != l) {
                 l = i1;
                 if (i1 < 0) {
-                    world.setTypeId(i, j, k, 0);
+                    // CraftBukkit start
+                    if (!CraftEventFactory.callBlockFadeEvent(world, i, j, k, 0)) {
+                        world.setTypeId(i, j, k, 0);
+                    }
+                    // CraftBukkit end
                 } else {
-                    world.setData(i, j, k, i1);
-                    world.c(i, j, k, this.id, this.d());
-                    world.applyPhysics(i, j, k, this.id);
+                    // CraftBukkit start - call event for fluid change
+                    if (!CraftEventFactory.callFluidChangeEvent(world, i, j, k, this.id, i1)) {
+                        world.setData(i, j, k, i1);
+                        world.c(i, j, k, this.id, this.d());
+                        world.applyPhysics(i, j, k, this.id);
+                    }
+                    // CraftBukkit end
                 }
             } else if (flag) {
                 this.i(world, i, j, k);
@@ -101,12 +104,7 @@ public class BlockFlowing extends BlockFluids {
 
         if (this.l(world, i, j - 1, k)) {
             // CraftBukkit start - send "down" to the server
-            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
-            if (server != null) {
-                server.getPluginManager().callEvent(event);
-            }
-
-            if (!event.isCancelled()) {
+            if (!CraftEventFactory.callBlockFromToEvent(world, i, j, k, BlockFace.DOWN)) {
                 if (this.material == Material.LAVA && world.getMaterial(i, j - 1, k) == Material.WATER) {
                     world.setTypeId(i, j - 1, k, Block.STONE.id);
                     this.fizz(world, i, j - 1, k);
@@ -132,31 +130,31 @@ public class BlockFlowing extends BlockFluids {
                 return;
             }
 
-            // CraftBukkit start - all four cardinal directions. Do not change the order!
-            BlockFace[] faces = new BlockFace[] { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST };
-            int index = 0;
+            org.bukkit.block.Block source = org.bukkit.event.block.BlockFromToEvent.getHandlerList().getRegisteredListeners().length != 0 ? world.getWorld().getBlockAt(i, j, k) : null; // CraftBukkit
 
-            for (BlockFace currentFace : faces) {
-                if (aboolean[index]) {
-                    BlockFromToEvent event = new BlockFromToEvent(source, currentFace);
-
-                    if (server != null) {
-                        server.getPluginManager().callEvent(event);
-                    }
-
-                    if (!event.isCancelled()) {
-                        this.flow(world, i + currentFace.getModX(), j, k + currentFace.getModZ(), i1);
-                    }
-                }
-                index++;
+            if (aboolean[0]) {
+                this.flow(world, i - 1, j, k, i1, source, BlockFace.NORTH); // CraftBukkit
             }
-            // CraftBukkit end
+
+            if (aboolean[1]) {
+                this.flow(world, i + 1, j, k, i1, source, BlockFace.SOUTH); // CraftBukkit
+            }
+
+            if (aboolean[2]) {
+                this.flow(world, i, j, k - 1, i1, source, BlockFace.EAST); // CraftBukkit
+            }
+
+            if (aboolean[3]) {
+                this.flow(world, i, j, k + 1, i1, source, BlockFace.WEST); // CraftBukkit
+            }
         }
     }
 
-    private void flow(World world, int i, int j, int k, int l) {
+    private void flow(World world, int i, int j, int k, int l, org.bukkit.block.Block source, BlockFace face) { // CraftBukkit - added source and face to signature
         if (this.l(world, i, j, k)) {
             int i1 = world.getTypeId(i, j, k);
+
+            if (source != null && (i1 == 0 || Block.byId[i1].material != this.material || world.getData(i, j, k) != l) && CraftEventFactory.forceBlockFromToEvent(source, face)) return; // CraftBukkit
 
             if (i1 > 0) {
                 if (this.material == Material.LAVA) {

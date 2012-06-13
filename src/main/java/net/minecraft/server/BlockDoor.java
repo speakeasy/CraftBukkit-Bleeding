@@ -172,24 +172,27 @@ public class BlockDoor extends Block {
                 if (!world.isStatic) {
                     this.b(world, i, j, k, i1, 0);
                 }
-            // CraftBukkit start
-            } else if (l > 0 && Block.byId[l].isPowerSource()) {
-                org.bukkit.World bworld = world.getWorld();
-                org.bukkit.block.Block block = bworld.getBlockAt(i, j, k);
-                org.bukkit.block.Block blockTop = bworld.getBlockAt(i, j + 1, k);
+            } else {
+                boolean flag1 = world.isBlockIndirectlyPowered(i, j, k) || world.isBlockIndirectlyPowered(i, j + 1, k);
 
-                int power = block.getBlockPower();
-                int powerTop = blockTop.getBlockPower();
-                if (powerTop > power) power = powerTop;
-                int oldPower = (world.getData(i, j, k) & 4) > 0 ? 15 : 0;
+                if ((flag1 || l > 0 && Block.byId[l].isPowerSource() || l == 0) && l != this.id) {
+                    // CraftBukkit start
+                    if (BlockRedstoneEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                        int newPower = flag1 ? 15 : 0;
+                        int oldPower = (world.getData(i, j, k) & 4) > 0 ? 15 : 0;
 
-                if (oldPower == 0 ^ power == 0) {
-                    BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, oldPower, power);
-                    world.getServer().getPluginManager().callEvent(eventRedstone);
+                        if (oldPower == 0 ^ newPower == 0) {
+                            org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
 
-                    this.setDoor(world, i, j, k, eventRedstone.getNewCurrent() > 0);
+                            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, oldPower, newPower);
+                            world.getServer().getPluginManager().callEvent(eventRedstone);
+
+                            flag1 = eventRedstone.getNewCurrent() > 0;
+                        }
+                    }
+                    // CraftBukkit end
+                    this.setDoor(world, i, j, k, flag1);
                 }
-                // CraftBukkit end
             }
         }
     }

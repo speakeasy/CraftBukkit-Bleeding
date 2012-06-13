@@ -176,57 +176,59 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
 
             // CraftBukkit start
             Player player = this.getPlayer();
-            Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
-            Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
+            if (PlayerMoveEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
+                Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
 
-            // If the packet contains movement information then we update the To location with the correct XYZ.
-            if (packet10flying.hasPos && !(packet10flying.hasPos && packet10flying.y == -999.0D && packet10flying.stance == -999.0D)) {
-                to.setX(packet10flying.x);
-                to.setY(packet10flying.y);
-                to.setZ(packet10flying.z);
-            }
+                // If the packet contains movement information then we update the To location with the correct XYZ.
+                if (packet10flying.hasPos && !(packet10flying.hasPos && packet10flying.y == -999.0D && packet10flying.stance == -999.0D)) {
+                    to.setX(packet10flying.x);
+                    to.setY(packet10flying.y);
+                    to.setZ(packet10flying.z);
+                }
 
-            // If the packet contains look information then we update the To location with the correct Yaw & Pitch.
-            if (packet10flying.hasLook) {
-                to.setYaw(packet10flying.yaw);
-                to.setPitch(packet10flying.pitch);
-            }
+                // If the packet contains look information then we update the To location with the correct Yaw & Pitch.
+                if (packet10flying.hasLook) {
+                    to.setYaw(packet10flying.yaw);
+                    to.setPitch(packet10flying.pitch);
+                }
 
-            // Prevent 40 event-calls for less than a single pixel of movement >.>
-            double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
-            float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
+                // Prevent 40 event-calls for less than a single pixel of movement >.>
+                double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
+                float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
 
-            if ((delta > 1f / 256 || deltaAngle > 10f) && (this.checkMovement && !this.player.dead)) {
-                this.lastPosX = to.getX();
-                this.lastPosY = to.getY();
-                this.lastPosZ = to.getZ();
-                this.lastYaw = to.getYaw();
-                this.lastPitch = to.getPitch();
+                if ((delta > 1f / 256 || deltaAngle > 10f) && (this.checkMovement && !this.player.dead)) {
+                    this.lastPosX = to.getX();
+                    this.lastPosY = to.getY();
+                    this.lastPosZ = to.getZ();
+                    this.lastYaw = to.getYaw();
+                    this.lastPitch = to.getPitch();
 
-                // Skip the first time we do this
-                if (from.getX() != Double.MAX_VALUE) {
-                    PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-                    this.server.getPluginManager().callEvent(event);
+                    // Skip the first time we do this
+                    if (from.getX() != Double.MAX_VALUE) {
+                        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+                        this.server.getPluginManager().callEvent(event);
 
-                    // If the event is cancelled we move the player back to their old location.
-                    if (event.isCancelled()) {
-                        this.player.netServerHandler.sendPacket(new Packet13PlayerLookMove(from.getX(), from.getY() + 1.6200000047683716D, from.getY(), from.getZ(), from.getYaw(), from.getPitch(), false));
-                        return;
-                    }
+                        // If the event is cancelled we move the player back to their old location.
+                        if (event.isCancelled()) {
+                            this.player.netServerHandler.sendPacket(new Packet13PlayerLookMove(from.getX(), from.getY() + 1.6200000047683716D, from.getY(), from.getZ(), from.getYaw(), from.getPitch(), false));
+                            return;
+                        }
 
-                    /* If a Plugin has changed the To destination then we teleport the Player
-                    there to avoid any 'Moved wrongly' or 'Moved too quickly' errors.
-                    We only do this if the Event was not cancelled. */
-                    if (!to.equals(event.getTo()) && !event.isCancelled()) {
-                        this.player.getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
-                        return;
-                    }
+                        /* If a Plugin has changed the To destination then we teleport the Player
+                        there to avoid any 'Moved wrongly' or 'Moved too quickly' errors.
+                        We only do this if the Event was not cancelled. */
+                        if (!to.equals(event.getTo()) && !event.isCancelled()) {
+                            this.player.getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
+                            return;
+                        }
 
-                    /* Check to see if the Players Location has some how changed during the call of the event.
-                    This can happen due to a plugin teleporting the player instead of using .setTo() */
-                    if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
-                        this.justTeleported = false;
-                        return;
+                        /* Check to see if the Players Location has some how changed during the call of the event.
+                        This can happen due to a plugin teleporting the player instead of using .setTo() */
+                        if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
+                            this.justTeleported = false;
+                            return;
+                        }
                     }
                 }
             }

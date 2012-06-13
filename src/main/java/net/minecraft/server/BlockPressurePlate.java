@@ -5,7 +5,6 @@ import java.util.Random;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 // CraftBukkit end
 
@@ -124,10 +123,7 @@ public class BlockPressurePlate extends Block {
                 }
             }
 
-            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(i, j, k), flag ? 1 : 0, flag1 ? 1 : 0);
-            manager.callEvent(eventRedstone);
-
-            flag1 = eventRedstone.getNewCurrent() > 0;
+            flag1 = CraftEventFactory.callRedstoneChange(world, i, j, k, flag ? 1 : 0, flag1 ? 1: 0) > 0;
         }
         // CraftBukkit end
 

@@ -23,11 +23,9 @@ import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.util.UnsafeList;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
-import org.bukkit.block.BlockState;
 // CraftBukkit end
 
 public class World implements IBlockAccess {
@@ -504,9 +502,8 @@ public class World implements IBlockAccess {
 
             if (block != null) {
                 // CraftBukkit start
-                CraftWorld world = ((WorldServer) this).getWorld();
-                if (world != null) {
-                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(i, j, k), l);
+                if (BlockPhysicsEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                    BlockPhysicsEvent event = new BlockPhysicsEvent(this.getWorld().getBlockAt(i, j, k), l);
                     this.getServer().getPluginManager().callEvent(event);
 
                     if (event.isCancelled()) {
@@ -1990,26 +1987,16 @@ public class World implements IBlockAccess {
                 l1 = this.f(j1 + k, k1 + l);
                 if (this.t(j1 + k, l1 - 1, k1 + l)) {
                     // CraftBukkit start
-                    BlockState blockState = this.getWorld().getBlockAt(j1 + k, l1 - 1, k1 + l).getState();
-                    blockState.setTypeId(Block.ICE.id);
-
-                    BlockFormEvent iceBlockForm = new BlockFormEvent(blockState.getBlock(), blockState);
-                    this.getServer().getPluginManager().callEvent(iceBlockForm);
-                    if (!iceBlockForm.isCancelled()) {
-                        blockState.update(true);
+                    if (!CraftEventFactory.callBlockFormEvent(this, j1 + k, l1 - 1, k1 + 1, Block.ICE.id)) {
+                        this.setTypeId(j1 + k, l1 - 1, k1 + l, Block.ICE.id);
                     }
                     // CraftBukkit end
                 }
 
                 if (this.x() && this.u(j1 + k, l1, k1 + l)) {
                     // CraftBukkit start
-                    BlockState blockState = this.getWorld().getBlockAt(j1 + k, l1, k1 + l).getState();
-                    blockState.setTypeId(Block.SNOW.id);
-
-                    BlockFormEvent snow = new BlockFormEvent(blockState.getBlock(), blockState);
-                    this.getServer().getPluginManager().callEvent(snow);
-                    if (!snow.isCancelled()) {
-                        blockState.update(true);
+                    if (!CraftEventFactory.callBlockFormEvent(this, j1 + k, l1 - 1, k1 + 1, Block.SNOW.id)) {
+                        this.setTypeId(j1 + k, l1, k1 + l, Block.SNOW.id);
                     }
                     // CraftBukkit end
                 }

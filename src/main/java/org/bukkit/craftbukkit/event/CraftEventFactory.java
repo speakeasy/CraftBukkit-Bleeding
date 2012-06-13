@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.server.BlockRedstoneWire;
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.Container;
 import net.minecraft.server.DamageSource;
@@ -30,6 +31,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.BlockView;
+import org.bukkit.block.SimpleBlockView;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -72,7 +75,7 @@ public class CraftEventFactory {
 
         ChunkCoordinates chunkcoordinates = worldServer.getSpawn();
 
-        int distanceFromSpawn = (int) Math.max(Math.abs(x - chunkcoordinates.x), Math.abs(z - chunkcoordinates.z));
+        int distanceFromSpawn = Math.max(Math.abs(x - chunkcoordinates.x), Math.abs(z - chunkcoordinates.z));
         return distanceFromSpawn >= spawnSize;
     }
 
@@ -278,14 +281,16 @@ public class CraftEventFactory {
 
     /**
      * BlockFadeEvent
+     * @return isCancelled
      */
-    public static BlockFadeEvent callBlockFadeEvent(Block block, int type) {
-        BlockState state = block.getState();
-        state.setTypeId(type);
+    public static boolean callBlockFadeEvent(World world, int x, int y, int z, int type) {
+        if (BlockFadeEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        BlockView state = new SimpleBlockView(block, type, (byte) 0);
 
         BlockFadeEvent event = new BlockFadeEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
-        return event;
+        return event.isCancelled();
     }
 
     public static EntityDeathEvent callEntityDeathEvent(EntityLiving victim) {
@@ -316,7 +321,7 @@ public class CraftEventFactory {
     }
 
     public static PlayerDeathEvent callPlayerDeathEvent(EntityPlayer victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage) {
-        CraftPlayer entity = (CraftPlayer) victim.getBukkitEntity();
+        CraftPlayer entity = victim.getBukkitEntity();
         PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, victim.getExpReward(), 0, deathMessage);
         org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -403,22 +408,21 @@ public class CraftEventFactory {
         return event;
     }
 
-    public static void handleBlockGrowEvent(World world, int x, int y, int z, int type, int data) {
+    /**
+     * @return isCancelled
+     */
+    public static boolean handleBlockGrowEvent(World world, int x, int y, int z, int type, int data) {
+        if (BlockGrowEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
         Block block = world.getWorld().getBlockAt(x, y, z);
-        CraftBlockState state = (CraftBlockState) block.getState();
-        state.setTypeId(type);
-        state.setRawData((byte) data);
+        BlockView state = new SimpleBlockView(block, type, (byte) data);
 
         BlockGrowEvent event = new BlockGrowEvent(block, state);
         Bukkit.getPluginManager().callEvent(event);
-
-        if (!event.isCancelled()) {
-            state.update(true);
-        }
+        return event.isCancelled();
     }
 
     public static FoodLevelChangeEvent callFoodLevelChangeEvent(EntityHuman entity, int level) {
-        FoodLevelChangeEvent event = new FoodLevelChangeEvent((Player) entity.getBukkitEntity(), level);
+        FoodLevelChangeEvent event = new FoodLevelChangeEvent(entity.getBukkitEntity(), level);
         entity.getBukkitEntity().getServer().getPluginManager().callEvent(event);
         return event;
     }
@@ -475,7 +479,7 @@ public class CraftEventFactory {
         }
 
         CraftServer server = ((WorldServer) player.world).getServer();
-        CraftPlayer craftPlayer = (CraftPlayer) player.getBukkitEntity();
+        CraftPlayer craftPlayer = player.getBukkitEntity();
         player.activeContainer.transferTo(container, craftPlayer);
 
         InventoryOpenEvent event = new InventoryOpenEvent(container.getBukkitView());
@@ -515,9 +519,98 @@ public class CraftEventFactory {
         return event;
     }
 
-    public static BlockRedstoneEvent callRedstoneChange(World world, int x, int y, int z, int oldCurrent, int newCurrent) {
+    /**
+     * @return newCurrent
+     */
+    public static int callRedstoneChange(World world, int x, int y, int z, int oldCurrent, int newCurrent) {
+        if (BlockRedstoneEvent.getHandlerList().getRegisteredListeners().length == 0) return newCurrent;
         BlockRedstoneEvent event = new BlockRedstoneEvent(world.getWorld().getBlockAt(x, y, z), oldCurrent, newCurrent);
         world.getServer().getPluginManager().callEvent(event);
-        return event;
+        return event.getNewCurrent();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callFluidChangeEvent(World world, int x, int y, int z, int type, int data) {
+        if (BlockFluidChangeEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        CraftBlockState state = (CraftBlockState) block.getState();
+        state.setTypeId(type);
+        state.setRawData((byte) data);
+
+        BlockFluidChangeEvent event = new BlockFluidChangeEvent(block, state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockFromToEvent(World world, int x, int y, int z, BlockFace blockFace) {
+        if (BlockFromToEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block block = world.getWorld().getBlockAt(x, y, z);
+
+        BlockFromToEvent event = new BlockFromToEvent(block, blockFace);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * This method will not check for registered listeners
+     * @return isCancelled
+     */
+    public static boolean forceBlockFromToEvent(org.bukkit.block.Block source, BlockFace face) {
+        BlockFromToEvent event = new BlockFromToEvent(source, face);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockSpreadEvent(World world, int x, int y, int z, int id, int fromX, int fromY, int fromZ) {
+        return callBlockSpreadEvent(world, x, y, z, id, (byte) 0, fromX, fromY, fromZ);
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockSpreadEvent(World world, int x, int y, int z, int id, byte data, int fromX, int fromY, int fromZ) {
+        if (BlockSpreadEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block source = world.getWorld().getBlockAt(fromX, fromY, fromZ);
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        BlockView state = new SimpleBlockView(block, id, data);
+
+        BlockSpreadEvent event = new BlockSpreadEvent(block, source, state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    /**
+     * @return isCancelled
+     */
+    public static boolean callBlockFormEvent(World world, int x, int y, int z, int id) {
+        if (BlockFormEvent.getHandlerList().getRegisteredListeners().length == 0) return false;
+        Block block = world.getWorld().getBlockAt(x, y, z);
+        BlockView state = new SimpleBlockView(block, id, (byte) 0);
+
+        BlockFormEvent event = new BlockFormEvent(block, state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
+    }
+
+    public static void callRedstoneChange(World world, int x, int y, int z) {
+        if (BlockRedstoneEvent.getHandlerList().getRegisteredListeners().length == 0) return;
+        int power = 0;
+        BlockRedstoneWire wire = (BlockRedstoneWire) net.minecraft.server.Block.REDSTONE_WIRE;
+        if (world.isBlockFacePowered(x, y - 1, z, 0)) power = wire.getPower(world, x, y - 1, z, power);
+        if (world.isBlockFacePowered(x, y + 1, z, 1)) power = wire.getPower(world, x, y + 1, z, power);
+        if (world.isBlockFacePowered(x, y, z - 1, 2)) power = wire.getPower(world, x, y, z - 1, power);
+        if (world.isBlockFacePowered(x, y, z + 1, 3)) power = wire.getPower(world, x, y, z + 1, power);
+        if (world.isBlockFacePowered(x - 1, y, z, 4)) power = wire.getPower(world, x - 1, y, z, power);
+        if (world.isBlockFacePowered(x + 1, y, z, 5)) power = wire.getPower(world, x + 1, y, z, power);
+        power = power > 0 ? power : world.isBlockIndirectlyPowered(x, y, z) ? 15 : 0;
+        Bukkit.getPluginManager().callEvent(new BlockRedstoneEvent(world.getWorld().getBlockAt(x, y, z), power, power));
     }
 }

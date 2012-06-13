@@ -2,8 +2,6 @@ package net.minecraft.server;
 
 import java.util.List;
 // CraftBukkit start
-import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 // CraftBukkit end
@@ -60,16 +58,19 @@ public class EntitySnowman extends EntityGolem {
 
             if (this.world.getTypeId(j, k, l) == 0 && this.world.getBiome(j, l).i() < 0.8F && Block.SNOW.canPlace(this.world, j, k, l)) {
                 // CraftBukkit start
-                BlockState blockState = this.world.getWorld().getBlockAt(j, k, l).getState();
-                blockState.setTypeId(Block.SNOW.id);
+                if (EntityBlockFormEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                    org.bukkit.block.Block block = this.world.getWorld().getBlockAt(j, k, l);
+                    org.bukkit.block.BlockView blockState = new org.bukkit.block.SimpleBlockView(block, Block.SNOW.id, (byte) 0);
 
-                EntityBlockFormEvent event = new EntityBlockFormEvent(this.getBukkitEntity(), blockState.getBlock(), blockState);
-                this.world.getServer().getPluginManager().callEvent(event);
+                    EntityBlockFormEvent event = new EntityBlockFormEvent(this.getBukkitEntity(), block, blockState);
+                    this.world.getServer().getPluginManager().callEvent(event);
 
-                if(!event.isCancelled()) {
-                    blockState.update(true);
+                    if(event.isCancelled()) {
+                        continue;
+                    }
                 }
                 // CraftBukkit end
+                this.world.setTypeId(j, k, l, Block.SNOW.id);
             }
         }
     }
@@ -95,7 +96,7 @@ public class EntitySnowman extends EntityGolem {
             loot.add(new org.bukkit.inventory.ItemStack(Item.SNOW_BALL.id, j));
         }
 
-        CraftEventFactory.callEntityDeathEvent(this, loot);
+        org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
         // CraftBukkit end
     }
 }

@@ -2,7 +2,6 @@ package net.minecraft.server;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.util.BlockStateListPopulator;
-import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 // CraftBukkit end
 
@@ -111,11 +110,7 @@ public class BlockPumpkin extends BlockDirectional {
     // CraftBukkit start
     public void doPhysics(World world, int i, int j, int k, int l) {
         if (net.minecraft.server.Block.byId[l] != null && net.minecraft.server.Block.byId[l].isPowerSource()) {
-            org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
-            int power = block.getBlockPower();
-
-            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, power, power);
-            world.getServer().getPluginManager().callEvent(eventRedstone);
+            org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(world, i, j, k);
         }
     }
     // CraftBukkit end

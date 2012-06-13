@@ -8,7 +8,6 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
@@ -359,14 +358,15 @@ public class EntityBoat extends Entity {
             // CraftBukkit start
             org.bukkit.Server server = this.world.getServer();
             org.bukkit.World bworld = this.world.getWorld();
+            if (VehicleUpdateEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                Vehicle vehicle = (Vehicle) this.getBukkitEntity();
+                server.getPluginManager().callEvent(new VehicleUpdateEvent(vehicle));
+            }
 
-            Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
-            Location to = new Location(bworld, this.locX, this.locY, this.locZ, this.yaw, this.pitch);
-            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
-
-            server.getPluginManager().callEvent(new VehicleUpdateEvent(vehicle));
-
-            if (!from.equals(to)) {
+            if (VehicleMoveEvent.getHandlerList().getRegisteredListeners().length != 0 && (prevX != this.locX || prevY != this.locY || prevZ != this.locZ || prevYaw != this.yaw || prevPitch != this.pitch)) {
+                Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
+                Location to = new Location(bworld, this.locX, this.locY, this.locZ, this.yaw, this.pitch);
+                Vehicle vehicle = (Vehicle) this.getBukkitEntity();
                 VehicleMoveEvent event = new VehicleMoveEvent(vehicle, from, to);
                 server.getPluginManager().callEvent(event);
             }
