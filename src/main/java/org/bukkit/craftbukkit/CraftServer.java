@@ -67,6 +67,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
+import org.bukkit.craftbukkit.inventory.meta.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCustom;
 import org.bukkit.craftbukkit.inventory.CraftRecipe;
@@ -1231,5 +1232,9 @@ public final class CraftServer implements Server {
 
     public WarningState getWarningState() {
         return warningState;
+    }
+
+    public CraftItemFactory getItemFactory() {
+        return CraftItemFactory.getFactory();
     }
 }
