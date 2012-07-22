@@ -108,7 +108,7 @@ public class Explosion {
 
         for (int k2 = 0; k2 < list.size(); ++k2) {
             Entity entity = (Entity) list.get(k2);
-            // CraftBukkit - start
+            // CraftBukkit start
             d0 = entity.locX - this.posX;
             d1 = entity.locY - this.posY;
             d2 = entity.locZ - this.posZ;
@@ -127,7 +127,7 @@ public class Explosion {
                     d1 = 0d;
                     d2 = 0d;
                 }
-                // CraftBukkit - end
+                // CraftBukkit end
                 double d9 = (double) this.world.a(vec3d, entity.boundingBox);
                 double d10 = (1.0D - d7) * d9;
 

@@ -577,10 +577,12 @@ public abstract class EntityHuman extends EntityLiving {
                         i = i * 3 / 2;
                     }
                 }
-                /* CraftBukkit start - Don't filter out 0 damage
+                // CraftBukkit start - Don't filter out 0 damage
+                /*
                 if (i == 0) {
                     return false;
-                } else { CraftBukkit end */
+                } else {
+                // CraftBukkit end */
                     Entity entity1 = entity;
 
                     if (entity instanceof EntityArrow && ((EntityArrow) entity).shooter != null) {

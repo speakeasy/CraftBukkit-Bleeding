@@ -18,7 +18,7 @@ public class CraftBukkitCommentsTest {
     static final Pattern PRECEDING_SINGLE_LINE_COMMENT = Pattern.compile("^\\s*// CraftBukkit.*$",Pattern.DOTALL);
     static final Pattern BLOCK_COMMENT_START = Pattern.compile("^\\s*// CraftBukkit start.*$",Pattern.DOTALL);
     static final Pattern BLOCK_COMMENT_END = Pattern.compile("^\\s*// CraftBukkit end.*$",Pattern.DOTALL);
-    static final Pattern SINGLE_LINE_COMMENT = Pattern.compile("^[^}{;]*[}{;]\\s*// CraftBukkit.*$", Pattern.DOTALL);
+    static final Pattern SINGLE_LINE_COMMENT = Pattern.compile("^.*// CraftBukkit.*$", Pattern.DOTALL);
     static final File DIRECTORY;
     static {
         String path = "src.main.java.".concat(CraftBukkitCommentsTest.class.getPackage().getName()).replace('.',File.separatorChar);
@@ -45,6 +45,17 @@ public class CraftBukkitCommentsTest {
             }
         }
         if (failed) throw new Error("failed");
+    }
+
+    @Test(expected = UnknownCommentException.class)
+    public void checkUnknownComment() throws CommentException {
+        parseLines(Arrays.<String>asList(
+                "package " + getClass().getPackage().getName() + ';',
+                "",
+                "public class Testing {",
+                "    // not-cb comment",
+                "}"
+                ));
     }
 
     @Test(expected = UnclosedCommentException.class)
@@ -114,13 +125,11 @@ public class CraftBukkitCommentsTest {
                             message(openLine, lines.get(openLine)));
                 }
                 openComment = true;
-                //out.println("Open:" + message(lineNumber, line));
                 openLine = lineNumber;
                 flagged = true;
                 continue;
             }
             if (BLOCK_COMMENT_END.matcher(line).matches()) {
-                //System.out.println("close:" + message(lineNumber, line));
                 if (!openComment) {
                     throw new UnmatchedClosingCommentException(message(lineNumber, line));
                 }
@@ -134,13 +143,14 @@ public class CraftBukkitCommentsTest {
             }
             if (SINGLE_LINE_COMMENT.matcher(line).matches()) {
                 flagged = true;
-            } else if (line.contains("org.bukkit")) {
-                if (!(openComment || tempComment)) {
+            } else if (!(openComment || tempComment)) {
+                if (line.contains("org.bukkit") /* TODO Add any CraftBukkit imported items to .contains */) {
                     throw new IllegalBukkitCallException(message(lineNumber, line));
                 }
-                flagged = true;
+                if (hasComment(line)) {
+                    throw new UnknownCommentException(message(lineNumber, line));
+                }
             }
-            //if (line.matches())
             tempComment = false;
         }
         if (openComment) {
@@ -151,7 +161,29 @@ public class CraftBukkitCommentsTest {
         }
     }
 
-    String message(final int lineNumber, final String line) {
+    static String message(final int lineNumber, final String line) {
         return "line(" + (lineNumber + 1) + "): " + line;
+    }
+
+    static boolean hasComment(final String line) {
+        boolean quote = false;
+        for (int i = 0; i < line.length(); i++) {
+            char character = line.charAt(i);
+            if (character == '"') {
+                quote = !quote;
+            } else if (quote) {
+                if (character == '\\') {
+                    i++;
+                }
+            } else if (character == '/') {
+                i++;
+                if (i == line.length()) {
+                    return false;
+                }
+                character = line.charAt(i);
+                if (character == '/' || character == '*') return true;
+            }
+        }
+        return false;
     }
 }

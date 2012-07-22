@@ -277,7 +277,7 @@ public class ItemInWorldManager {
         }
     }
 
-    // TODO: Review this code, it changed in 1.8 but I'm not sure if we need to update or not
+    // CraftBukkit - TODO: Review this code, it changed in 1.8 but I'm not sure if we need to update or not
     public boolean interact(EntityHuman entityhuman, World world, ItemStack itemstack, int i, int j, int k, int l) {
         int i1 = world.getTypeId(i, j, k);
 
