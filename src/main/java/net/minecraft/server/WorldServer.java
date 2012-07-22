@@ -93,7 +93,8 @@ public class WorldServer extends World implements BlockChangeDelegate {
     // CraftBukkit end
 
     public void entityJoinedWorld(Entity entity, boolean flag) {
-        /* CraftBukkit start - We prevent spawning in general, so this butchering is not needed
+        // CraftBukkit start - We prevent spawning in general, so this butchering is not needed
+        /*
         if (!this.server.spawnAnimals && (entity instanceof EntityAnimal || entity instanceof EntityWaterAnimal)) {
             entity.die();
         }

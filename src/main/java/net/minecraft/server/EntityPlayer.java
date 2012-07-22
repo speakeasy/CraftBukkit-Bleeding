@@ -88,7 +88,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
 
     public void spawnIn(World world) {
         super.spawnIn(world);
-        // CraftBukkit - world fallback code, either respawn location or global spawn
+        // CraftBukkit start - world fallback code, either respawn location or global spawn
         if (world == null) {
             this.dead = false;
             ChunkCoordinates position = null;
@@ -175,7 +175,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
             this.server.serverConfigurationManager.sendAll(new Packet3Chat(event.getDeathMessage()));
         }
 
-        // CraftBukkit start - we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
+        // CraftBukkit - we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
         for (int i = 0; i < this.inventory.items.length; ++i) {
             this.inventory.items[i] = null;
         }
@@ -356,7 +356,8 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
             this.netServerHandler.sendPacket(new Packet70Bed(4, 0));
         } else {
             this.a((Statistic) AchievementList.B);
-            /* CraftBukkit start - removed to fix our handling of The End portals
+            // CraftBukkit start - removed to fix our handling of The End portals
+            /*
             ChunkCoordinates chunkcoordinates = this.b.getWorldServer(i).d();
 
             if (chunkcoordinates != null) {

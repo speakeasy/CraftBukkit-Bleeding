@@ -1,8 +1,10 @@
 package net.minecraft.server;
 
-import java.util.ArrayList;
 import java.util.Random;
+
 // CraftBukkit start
+import java.util.ArrayList;
+
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Location;
 import org.bukkit.TreeType;

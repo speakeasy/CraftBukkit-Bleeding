@@ -1,7 +1,9 @@
 package net.minecraft.server;
 
-import org.bukkit.entity.Player; // CraftBukkit
+// CraftBukkit start
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
+// CraftBukkit end
 
 public class ItemDye extends Item {
 

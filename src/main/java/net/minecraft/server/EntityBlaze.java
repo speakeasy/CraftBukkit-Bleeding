@@ -1,7 +1,6 @@
 package net.minecraft.server;
 
-import java.util.List;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
+import java.util.List; // CraftBukkit
 
 public class EntityBlaze extends EntityMonster {
 
@@ -151,7 +150,7 @@ public class EntityBlaze extends EntityMonster {
                 loot.add(new org.bukkit.inventory.ItemStack(Item.BLAZE_ROD.id, j));
             }
 
-            CraftEventFactory.callEntityDeathEvent(this, loot);
+            org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, loot);
             // CraftBukkit end
         }
     }

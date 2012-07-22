@@ -5,12 +5,13 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOException; // CraftBukkit
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import java.io.IOException; // CraftBukkit
 
 public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
 

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 // CraftBukkit start
 import java.io.File;
 import java.util.logging.Handler;
+
 import org.bukkit.craftbukkit.util.ShortConsoleLogFormatter;
 import org.bukkit.craftbukkit.util.TerminalConsoleHandler;
 // CraftBukkit end
@@ -17,8 +18,7 @@ public class ConsoleLogManager {
     public static Logger a = Logger.getLogger("Minecraft");
     public static Logger global = Logger.getLogger(""); // CraftBukkit
 
-    public ConsoleLogManager() {
-    }
+    public ConsoleLogManager() {}
 
     // CraftBukkit - change of method signature!
     public static void init(MinecraftServer server) {

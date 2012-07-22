@@ -148,7 +148,8 @@ public class EntityTrackerEntry {
                 this.i = i2;
             }
 
-            /* CraftBukkit start - code moved up
+            // CraftBukkit start - code moved up
+            /*
             if (flag) {
                 this.xLoc = i;
                 this.yLoc = j;

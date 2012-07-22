@@ -404,7 +404,8 @@ public class ServerConfigurationManager {
             this.p = 0;
         }
 
-        /* CraftBukkit start -- remove updating of lag to players -- it spams way to much on big servers.
+        // CraftBukkit start -- remove updating of lag to players -- it spams way to much on big servers.
+        /*
         if (this.p < this.players.size()) {
             EntityPlayer entityplayer = (EntityPlayer) this.players.get(this.p);
 

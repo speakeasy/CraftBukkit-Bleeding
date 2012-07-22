@@ -1,6 +1,5 @@
 package net.minecraft.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
 // CraftBukkit start
@@ -17,7 +16,7 @@ public class ContainerEnchantTableSubcontainer implements IInventory {
     private List d;
 
     // CraftBukkit start
-    public List<HumanEntity> transaction = new ArrayList<HumanEntity>();
+    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     public org.bukkit.entity.Player player;
     private int maxStack = MAX_STACK;
 

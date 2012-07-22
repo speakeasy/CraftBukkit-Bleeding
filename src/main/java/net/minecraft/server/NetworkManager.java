@@ -59,7 +59,8 @@ public class NetworkManager {
             System.err.println(socketexception.getMessage());
         }
 
-        /* CraftBukkit start - moved up
+        // CraftBukkit start - moved up
+        /*
         this.input = new DataInputStream(socket.getInputStream());
         this.output = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream(), 5120));
         // CraftBukkit end */

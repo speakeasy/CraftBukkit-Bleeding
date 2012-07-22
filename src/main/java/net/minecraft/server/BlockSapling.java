@@ -1,6 +1,7 @@
 package net.minecraft.server;
 
 import java.util.Random;
+
 // CraftBukkit start
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Bukkit;

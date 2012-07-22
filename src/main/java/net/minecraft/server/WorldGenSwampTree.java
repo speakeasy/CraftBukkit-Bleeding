@@ -7,10 +7,12 @@ public class WorldGenSwampTree extends WorldGenerator  implements BlockSapling.T
     public WorldGenSwampTree() {}
 
     public boolean a(World world, Random random, int i, int j, int k) {
+        // CraftBukkit start
         return generate((org.bukkit.BlockChangeDelegate) world, random, i, j, k);
     }
 
     public boolean generate(org.bukkit.BlockChangeDelegate world, Random random, int i, int j, int k) {
+        // CraftBukkit end
         int l;
 
         for (l = random.nextInt(4) + 5; world.getTypeId(i, j - 1, k) != 0 && Block.byId[world.getTypeId(i, j - 1, k)].material == Material.WATER; --j) { // CraftBukkit - bypass World.getMaterial

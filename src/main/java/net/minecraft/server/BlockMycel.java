@@ -1,8 +1,11 @@
 package net.minecraft.server;
 
 import java.util.Random;
-import org.bukkit.event.block.BlockFadeEvent; // CraftBukkit
-import org.bukkit.event.block.BlockSpreadEvent; // CraftBukkit
+
+// CraftBukkit start
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+// CraftBukkit end
 
 public class BlockMycel extends Block {
 

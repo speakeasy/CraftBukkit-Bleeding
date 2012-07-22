@@ -46,5 +46,5 @@ public interface IInventory {
     void setMaxStackSize(int size);
 
     int MAX_STACK = 64;
-    //CraftBukkit end
+    // CraftBukkit end
 }
