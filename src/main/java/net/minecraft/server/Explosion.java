@@ -8,7 +8,6 @@ import java.util.Set;
 
 // CraftBukkit start
 import org.bukkit.Bukkit;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -151,7 +150,7 @@ public class Explosion {
                 } else {
                     final org.bukkit.entity.Entity damager = this.source.getBukkitEntity();
                     final EntityDamageEvent.DamageCause damageCause;
-                    if (damager instanceof TNTPrimed) {
+                    if (damager instanceof org.bukkit.entity.TNTPrimed) {
                         damageCause = EntityDamageEvent.DamageCause.BLOCK_EXPLOSION;
                     } else {
                         damageCause = EntityDamageEvent.DamageCause.ENTITY_EXPLOSION;

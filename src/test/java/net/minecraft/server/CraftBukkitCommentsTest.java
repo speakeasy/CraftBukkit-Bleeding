@@ -34,8 +34,8 @@ public class CraftBukkitCommentsTest {
                     throw new DuplicateImportException();
                 }
             }
-            qualifiedPattern = Pattern.compile("[^a-zA-Z\\.]" + Pattern.quote(qualified) + "[^a-zA-Z]");
-            unqualifiedPattern = Pattern.compile("[^a-zA-Z\\.]" + name + "[^a-zA-Z]");
+            qualifiedPattern = Pattern.compile("[^a-zA-Z\\.\"]" + Pattern.quote(qualified) + "[^a-zA-Z]");
+            unqualifiedPattern = Pattern.compile("[^a-zA-Z\\.\"]" + name + "[^a-zA-Z]");
         }
 
         void checkLine(String line, boolean isComment) throws CommentException {

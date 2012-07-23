@@ -1,12 +1,6 @@
 package net.minecraft.server;
 
-// CraftBukkit start
-import java.util.List;
-
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.InventoryHolder;
-// CraftBukkit end
+import org.bukkit.craftbukkit.entity.CraftHumanEntity; // CraftBukkit
 
 public interface IInventory {
 
@@ -39,9 +33,9 @@ public interface IInventory {
 
     void onClose(CraftHumanEntity who);
 
-    List<HumanEntity> getViewers();
+    java.util.List<org.bukkit.entity.HumanEntity> getViewers();
 
-    InventoryHolder getOwner();
+    org.bukkit.inventory.InventoryHolder getOwner();
 
     void setMaxStackSize(int size);
 
