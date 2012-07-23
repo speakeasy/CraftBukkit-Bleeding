@@ -5,7 +5,6 @@ import java.util.List;
 
 // CraftBukkit start
 import org.bukkit.entity.Painting;
-import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakEvent.RemoveCause;
 import org.bukkit.event.painting.PaintingBreakEvent;
 // CraftBukkit end
@@ -216,7 +215,7 @@ public class EntityPainting extends Entity {
             // CraftBukkit start
             PaintingBreakEvent event = null;
             if (damagesource.getEntity() != null) {
-                event = new PaintingBreakByEntityEvent((Painting) this.getBukkitEntity(), damagesource.getEntity() == null ? null : damagesource.getEntity().getBukkitEntity());
+                event = new org.bukkit.event.painting.PaintingBreakByEntityEvent((Painting) this.getBukkitEntity(), damagesource.getEntity() == null ? null : damagesource.getEntity().getBukkitEntity());
             } else {
                 if (damagesource == DamageSource.FIRE) {
                     event = new PaintingBreakEvent((Painting) this.getBukkitEntity(), RemoveCause.FIRE);

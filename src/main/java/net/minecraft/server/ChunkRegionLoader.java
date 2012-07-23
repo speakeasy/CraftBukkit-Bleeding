@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import java.io.IOException; // CraftBukkit
-
 public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
 
     private List a = new ArrayList();
@@ -133,7 +131,7 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
         return true;
     }
 
-    public void a(PendingChunkToSave pendingchunktosave) throws IOException { // CraftBukkit - Added throws
+    public void a(PendingChunkToSave pendingchunktosave) throws java.io.IOException { // CraftBukkit - Added throws
         DataOutputStream dataoutputstream = RegionFileCache.c(this.d, pendingchunktosave.a.x, pendingchunktosave.a.z);
 
         NBTCompressedStreamTools.a(pendingchunktosave.b, (DataOutput) dataoutputstream);

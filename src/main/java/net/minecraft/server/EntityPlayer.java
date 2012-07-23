@@ -6,14 +6,11 @@ import java.util.List;
 import java.util.Set;
 
 // CraftBukkit start
-import java.util.EnumSet;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.ChunkCompressionThread;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryType;
 // CraftBukkit end
 
@@ -167,7 +164,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
             }
         }
 
-        PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, damagesource.getLocalizedDeathMessage(this));
+        org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, damagesource.getLocalizedDeathMessage(this));
 
         String deathMessage = event.getDeathMessage();
 
@@ -254,7 +251,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
                 boolean flag1 = false;
 
                 // CraftBukkit - Add check against Chunk Packets in the ChunkCompressionThread.
-                if (this.netServerHandler.lowPriorityCount() + ChunkCompressionThread.getPlayerQueueSize(this) < 4) {
+                if (this.netServerHandler.lowPriorityCount() + org.bukkit.craftbukkit.ChunkCompressionThread.getPlayerQueueSize(this) < 4) {
                     flag1 = true;
                 }
 
@@ -564,7 +561,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         this.netServerHandler.sendPacket(new Packet104WindowItems(container.windowId, list));
         this.netServerHandler.sendPacket(new Packet103SetSlot(-1, -1, this.inventory.getCarried()));
         // CraftBukkit start - send a Set Slot to update the crafting result slot
-        if (EnumSet.of(InventoryType.CRAFTING,InventoryType.WORKBENCH).contains(container.getBukkitView().getType())) {
+        if (java.util.EnumSet.of(InventoryType.CRAFTING,InventoryType.WORKBENCH).contains(container.getBukkitView().getType())) {
             this.netServerHandler.sendPacket(new Packet103SetSlot(container.windowId, 0, container.getSlot(0).getItem()));
         }
         // CraftBukkit end

@@ -1,7 +1,5 @@
 package net.minecraft.server;
 
-import java.util.List; // CraftBukkit
-
 public class EntityBlaze extends EntityMonster {
 
     private float a = 0.5F;
@@ -143,7 +141,7 @@ public class EntityBlaze extends EntityMonster {
     protected void dropDeathLoot(boolean flag, int i) {
         if (flag) {
             // CraftBukkit start
-            List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
+            java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
             int j = this.random.nextInt(2 + i);
 
             if (j > 0) {

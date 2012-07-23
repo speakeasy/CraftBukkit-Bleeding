@@ -5,13 +5,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// CraftBukkit start
-import java.io.File;
-import java.util.logging.Handler;
-
-import org.bukkit.craftbukkit.util.ShortConsoleLogFormatter;
-import org.bukkit.craftbukkit.util.TerminalConsoleHandler;
-// CraftBukkit end
+import java.io.File; // CraftBukkit
 
 public class ConsoleLogManager {
 
@@ -26,13 +20,13 @@ public class ConsoleLogManager {
 
         a.setUseParentHandlers(false);
         // CraftBukkit start
-        ConsoleHandler consolehandler = new TerminalConsoleHandler(server.reader);
+        ConsoleHandler consolehandler = new org.bukkit.craftbukkit.util.TerminalConsoleHandler(server.reader);
 
-        for (Handler handler : global.getHandlers()) {
+        for (java.util.logging.Handler handler : global.getHandlers()) {
             global.removeHandler(handler);
         }
 
-        consolehandler.setFormatter(new ShortConsoleLogFormatter(server));
+        consolehandler.setFormatter(new org.bukkit.craftbukkit.util.ShortConsoleLogFormatter(server));
         global.addHandler(consolehandler);
         // CraftBukkit end
 

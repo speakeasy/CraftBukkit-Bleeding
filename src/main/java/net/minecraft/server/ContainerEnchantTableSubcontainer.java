@@ -5,7 +5,6 @@ import java.util.List;
 // CraftBukkit start
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.InventoryHolder;
 // CraftBukkit end
 
 public class ContainerEnchantTableSubcontainer implements IInventory {
@@ -36,7 +35,7 @@ public class ContainerEnchantTableSubcontainer implements IInventory {
         return transaction;
     }
 
-    public InventoryHolder getOwner() {
+    public org.bukkit.inventory.InventoryHolder getOwner() {
         return this.player;
     }
 
