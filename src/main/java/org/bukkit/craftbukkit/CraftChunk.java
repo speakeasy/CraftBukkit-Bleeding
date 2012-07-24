@@ -183,8 +183,8 @@ public class CraftChunk implements Chunk {
                             continue;
                         }
 
-                        blockids[j<<1] |= (b & 0xF0) << 4;
-                        blockids[(j<<1)+1] |= (b & 0x0F) << 8;
+                        blockids[j<<1] |= (b & 0x0F) << 8;
+                        blockids[(j<<1)+1] |= (b & 0xF0) << 4;
                     }
                 }
 
