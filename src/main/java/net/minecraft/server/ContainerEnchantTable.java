@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+// import java.util.Iterator; // CraftBukkit
 import java.util.List;
 import java.util.Random;
 

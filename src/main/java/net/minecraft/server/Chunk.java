@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+// import java.util.ArrayList; // CraftBukkit
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
