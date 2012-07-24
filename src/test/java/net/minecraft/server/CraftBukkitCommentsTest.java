@@ -57,7 +57,7 @@ public class CraftBukkitCommentsTest {
 
     static final Charset charset = Charset.forName("UTF-8");
     static final Pattern PRECEDING_SINGLE_LINE_COMMENT = Pattern.compile("^\\s*// CraftBukkit.*$",Pattern.DOTALL);
-    static final Pattern BLOCK_COMMENT_START = Pattern.compile("^\\s*// CraftBukkit start.*$",Pattern.DOTALL);
+    static final Pattern BLOCK_COMMENT_START = Pattern.compile("^\\s*/[/\\*] CraftBukkit start.*$",Pattern.DOTALL);
     static final Pattern BLOCK_COMMENT_END = Pattern.compile("^\\s*// CraftBukkit end.*$",Pattern.DOTALL);
     static final Pattern SINGLE_LINE_COMMENT = Pattern.compile("^.*// CraftBukkit.*$", Pattern.DOTALL);
     static final Pattern IMPORT = Pattern.compile("^import (([a-z]+\\.)+([A-Z][A-Za-z]+));.*$", Pattern.DOTALL);

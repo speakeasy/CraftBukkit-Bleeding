@@ -818,8 +818,7 @@ public class NetServerHandler extends NetHandler implements ICommandListener {
         }
         // CraftBukkit end
 
-        // CraftBukkit start - No longer needed as we have already handled it in server.dispatchServerCommand above.
-        /*
+        /* CraftBukkit start - No longer needed as we have already handled it in server.dispatchServerCommand above.
         if (s.toLowerCase().startsWith("/me ")) {
             s = "* " + this.player.name + " " + s.substring(s.indexOf(" ")).trim();
             logger.info(s);

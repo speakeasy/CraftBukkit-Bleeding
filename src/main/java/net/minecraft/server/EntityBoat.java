@@ -304,7 +304,6 @@ public class EntityBoat extends Entity {
                     this.world.getServer().getPluginManager().callEvent(destroyEvent);
 
                     if (!destroyEvent.isCancelled()) {
-                    // CraftBukkit end
                         this.die();
 
                         int k;
@@ -316,7 +315,8 @@ public class EntityBoat extends Entity {
                         for (k = 0; k < 2; ++k) {
                             this.a(Item.STICK.id, 1, 0.0F);
                         }
-                    } // CraftBukkit
+                    }
+                    // CraftBukkit end
                 }
             } else {
                 this.motX *= 0.9900000095367432D;

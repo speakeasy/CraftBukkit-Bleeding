@@ -353,8 +353,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
             this.netServerHandler.sendPacket(new Packet70Bed(4, 0));
         } else {
             this.a((Statistic) AchievementList.B);
-            // CraftBukkit start - removed to fix our handling of The End portals
-            /*
+            /* CraftBukkit start - removed to fix our handling of The End portals
             ChunkCoordinates chunkcoordinates = this.b.getWorldServer(i).d();
 
             if (chunkcoordinates != null) {

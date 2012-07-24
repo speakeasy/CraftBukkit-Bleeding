@@ -575,12 +575,9 @@ public abstract class EntityHuman extends EntityLiving {
                         i = i * 3 / 2;
                     }
                 }
-                // CraftBukkit start - Don't filter out 0 damage
-                /*
-                if (i == 0) {
+                if (false && i == 0) { // CraftBukkit - Don't filter out 0 damage
                     return false;
                 } else {
-                // CraftBukkit end */
                     Entity entity1 = entity;
 
                     if (entity instanceof EntityArrow && ((EntityArrow) entity).shooter != null) {
@@ -593,7 +590,7 @@ public abstract class EntityHuman extends EntityLiving {
 
                     this.a(StatisticList.x, i);
                     return super.damageEntity(damagesource, i);
-                //} // CraftBukkit
+                }
             }
         }
     }

@@ -1071,8 +1071,7 @@ public abstract class Entity {
         this.motX = ((NBTTagDouble) nbttaglist1.get(0)).data;
         this.motY = ((NBTTagDouble) nbttaglist1.get(1)).data;
         this.motZ = ((NBTTagDouble) nbttaglist1.get(2)).data;
-        // CraftBukkit start
-        /* moved section down
+        /* CraftBukkit start - moved section down
         if (Math.abs(this.motX) > 10.0D) {
             this.motX = 0.0D;
         }

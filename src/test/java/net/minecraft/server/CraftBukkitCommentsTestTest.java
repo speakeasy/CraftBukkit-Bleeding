@@ -162,6 +162,45 @@ public class CraftBukkitCommentsTestTest {
                 ));
     }
 
+    @Test(expected = UnclosedCommentException.class)
+    public void checkUnclosedBlockComment() throws CommentException {
+        parseLines(Arrays.<String>asList(
+                "package " + getClass().getPackage().getName() + ';',
+                "",
+                "public class Testing {",
+                "    /* CraftBukkit start",
+                "}"
+                ));
+    }
+
+    @Test(expected = DuplicateOpeningCommentException.class)
+    public void checkBlockDuplicateOpenningComment() throws CommentException {
+        parseLines(Arrays.<String>asList(
+                "package " + getClass().getPackage().getName() + ';',
+                "",
+                "public class Testing {",
+                "    /* CraftBukkit start",
+                "    // CraftBukkit start",
+                "    // CraftBukkit end */",
+                "    // CraftBukkit end",
+                "}"
+                ));
+    }
+
+    @Test(expected = DuplicateOpeningCommentException.class)
+    public void checkDuplicateBlockOpenningComment() throws CommentException {
+        parseLines(Arrays.<String>asList(
+                "package " + getClass().getPackage().getName() + ';',
+                "",
+                "public class Testing {",
+                "    /* CraftBukkit start",
+                "    /* CraftBukkit start",
+                "    // CraftBukkit end */",
+                "    // CraftBukkit end */",
+                "}"
+                ));
+    }
+
     @Test(expected = DuplicateOpeningCommentException.class)
     public void checkNestedComment() throws CommentException {
         parseLines(Arrays.<String>asList(

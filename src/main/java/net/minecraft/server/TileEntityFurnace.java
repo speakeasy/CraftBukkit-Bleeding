@@ -195,8 +195,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory {
                 }
             }
 
-            // CraftBukkit start - moved up
-            /*
+            /* CraftBukkit start - moved up
             if (this.isBurning() && this.canBurn()) {
                 ++this.cookTime;
                 if (this.cookTime == 200) {

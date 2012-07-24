@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+//import java.util.ArrayList; // CraftBukkit
 import java.util.Iterator;
 
 import org.bukkit.craftbukkit.util.UnsafeList; // CraftBukkit
@@ -46,27 +47,23 @@ public class PathfinderGoalSelector {
 
         boolean flag1 = false;
 
-        // CraftBukkit start - removed usage of arraylist
-        /*
+        /* CraftBukkit start - removed usage of arraylist
         if (flag1 && arraylist.size() > 0) {
             System.out.println("Starting: ");
         }
-        */
-        // CraftBukkit end
+        // CraftBukkit end */
 
         Iterator iterator1;
         PathfinderGoalSelectorItem pathfindergoalselectoritem1;
 
-        // CraftBukkit start - removed usage of arraylist
-        /*
+        /* CraftBukkit start - removed usage of arraylist
         for (iterator1 = arraylist.iterator(); iterator1.hasNext(); pathfindergoalselectoritem1.a.c()) {
             pathfindergoalselectoritem1 = (PathfinderGoalSelectorItem) iterator1.next();
             if (flag1) {
                 System.out.println(pathfindergoalselectoritem1.a.toString() + ", ");
             }
         }
-        */
-        // CraftBukkit end
+        // CraftBukkit end */
 
         if (flag1 && this.b.size() > 0) {
             System.out.println("Running: ");
