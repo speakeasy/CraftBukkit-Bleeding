@@ -226,6 +226,39 @@ public class CraftBukkitCommentsTestTest {
                 ));
     }
 
+    @Test(expected = UnexpectedEndOfFile.class)
+    public void checkNoNewlineAtEndOfFile() throws CommentException {
+        parseLines(Arrays.<String>asList(
+                "package " + getClass().getPackage().getName() + ';',
+                "",
+                "public class Testing {",
+                "    // CraftBukkit - I forgot newline!!",
+                "}"
+                ));
+    }
+
+    @Test(expected = IllegalCharacter.class)
+    public void checkCarriageReturn() throws CommentException {
+        parseLines(Arrays.<String>asList(
+                "package " + getClass().getPackage().getName() + ';',
+                "",
+                "public class Testing {",
+                "    // CraftBukkit - I use bad carriage return\r",
+                "}"
+                ));
+    }
+
+    @Test(expected = IllegalCharacter.class)
+    public void checkTab() throws CommentException {
+        parseLines(Arrays.<String>asList(
+                "package " + getClass().getPackage().getName() + ';',
+                "",
+                "public class Testing {",
+                "\t// CraftBukkit - I use bad tab",
+                "}"
+                ));
+    }
+
     @Test
     public void checkStartMatcher() { // TODO: Remove, not needed
         final int constant = 0x10;

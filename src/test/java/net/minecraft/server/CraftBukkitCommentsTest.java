@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,7 @@ public class CraftBukkitCommentsTest {
     static final Pattern SINGLE_LINE_COMMENT = Pattern.compile("^.*// CraftBukkit.*$", Pattern.DOTALL);
     static final Pattern IMPORT = Pattern.compile("^import (([a-z]+\\.)+([A-Z][A-Za-z]+));.*$", Pattern.DOTALL);
     static final Pattern FULLY_QUALIFIED = Pattern.compile("[^a-zA-Z\\.\"](([a-z]+\\.)+([A-Z][A-Za-z]+))[^a-zA-Z]");
+    static final Pattern NEWLINE_SPLIT = Pattern.compile("\n", Pattern.LITERAL);
     static final Set<String> EXCEPTIONS;
     static final File DIRECTORY;
     static {
@@ -90,7 +92,7 @@ public class CraftBukkitCommentsTest {
         int lineCount = 0;
         for (File file : DIRECTORY.listFiles()) {
             try {
-                final List lines = Files.readLines(file, charset);
+                final List lines = Arrays.asList(NEWLINE_SPLIT.split(Files.toString(file, charset), -1));
                 parseLines(lines);
                 lineCount += lines.size();
             } catch (Throwable t) {
@@ -110,6 +112,12 @@ public class CraftBukkitCommentsTest {
         boolean tempComment = false;
         int lineNumber = 0;
         for (String line; lineNumber < lines.size() && (line = lines.get(lineNumber)) != null; ++lineNumber) {
+            if (line.indexOf('\r') != -1) {
+                throw new IllegalCharacter("0x0d (carriage return) on " + message(lineNumber, line));
+            }
+            if (line.indexOf('\t') != -1) {
+                throw new IllegalCharacter("0x09 (tab) on " + message(lineNumber, line));
+            }
             if (BLOCK_COMMENT_START.matcher(line).matches()) {
                 if (openComment) {
                     throw new DuplicateOpeningCommentException(
@@ -194,6 +202,9 @@ public class CraftBukkitCommentsTest {
             if (imported.count < 2) {
                 throw new SingleUseBukkitImportException(imported.qualified);
             }
+        }
+        if (lines.get(lines.size() - 1).length() != 0) {
+            throw new UnexpectedEndOfFile("Newline expected " + message(lines.size(), lines.get(lines.size() - 1)));
         }
     }
 
