@@ -20,14 +20,14 @@ public class BiomeDecorator {
     protected WorldGenerator n;
     protected WorldGenerator o;
     protected WorldGenerator p;
-    protected WorldGenerator q;
-    protected WorldGenerator r;
-    protected WorldGenerator s;
-    protected WorldGenerator t;
-    protected WorldGenerator u;
-    protected WorldGenerator v;
-    protected WorldGenerator w;
-    protected WorldGenerator x;
+    protected WorldGenerator yellowFlowerGen;
+    protected WorldGenerator redRoseGen;
+    protected WorldGenerator brownMushroomGen;
+    protected WorldGenerator redMushroomGen;
+    protected WorldGenerator hugeMushroomGen;
+    protected WorldGenerator reedGen;
+    protected WorldGenerator cactusGen;
+    protected WorldGenerator watterLilyGen;
     protected int y;
     protected int z;
     protected int A;
@@ -53,14 +53,14 @@ public class BiomeDecorator {
         this.n = new WorldGenMinable(Block.REDSTONE_ORE.id, 7);
         this.o = new WorldGenMinable(Block.DIAMOND_ORE.id, 7);
         this.p = new WorldGenMinable(Block.LAPIS_ORE.id, 6);
-        this.q = new WorldGenFlowers(Block.YELLOW_FLOWER.id);
-        this.r = new WorldGenFlowers(Block.RED_ROSE.id);
-        this.s = new WorldGenFlowers(Block.BROWN_MUSHROOM.id);
-        this.t = new WorldGenFlowers(Block.RED_MUSHROOM.id);
-        this.u = new WorldGenHugeMushroom();
-        this.v = new WorldGenReed();
-        this.w = new WorldGenCactus();
-        this.x = new WorldGenWaterLily();
+        this.yellowFlowerGen = new WorldGenFlowers(Block.YELLOW_FLOWER.id);
+        this.redRoseGen = new WorldGenFlowers(Block.RED_ROSE.id);
+        this.brownMushroomGen = new WorldGenFlowers(Block.BROWN_MUSHROOM.id);
+        this.redMushroomGen = new WorldGenFlowers(Block.RED_MUSHROOM.id);
+        this.hugeMushroomGen = new WorldGenHugeMushroom();
+        this.reedGen = new WorldGenReed();
+        this.cactusGen = new WorldGenCactus();
+        this.watterLilyGen = new WorldGenWaterLily();
         this.y = 0;
         this.z = 0;
         this.A = 2;
@@ -135,27 +135,27 @@ public class BiomeDecorator {
         for (j = 0; j < this.J; ++j) {
             k = this.c + this.b.nextInt(16) + 8;
             l = this.d + this.b.nextInt(16) + 8;
-            this.u.a(this.a, this.b, k, this.a.getHighestBlockYAt(k, l), l);
+            this.hugeMushroomGen.a(this.a, this.b, k, this.a.getHighestBlockYAt(k, l), l);
         }
 
         int i1;
 
         for (j = 0; j < this.A; ++j) {
             k = this.c + this.b.nextInt(16) + 8;
-            l = this.b.nextInt(128);
+            l = this.b.nextInt(256);  //256=128
             i1 = this.d + this.b.nextInt(16) + 8;
-            this.q.a(this.a, this.b, k, l, i1);
+            this.yellowFlowerGen.a(this.a, this.b, k, l, i1);
             if (this.b.nextInt(4) == 0) {
                 k = this.c + this.b.nextInt(16) + 8;
-                l = this.b.nextInt(128);
+                l = this.b.nextInt(256);  //256=128
                 i1 = this.d + this.b.nextInt(16) + 8;
-                this.r.a(this.a, this.b, k, l, i1);
+                this.redRoseGen.a(this.a, this.b, k, l, i1);
             }
         }
 
         for (j = 0; j < this.B; ++j) {
             k = this.c + this.b.nextInt(16) + 8;
-            l = this.b.nextInt(128);
+            l = this.b.nextInt(256);  //256=128
             i1 = this.d + this.b.nextInt(16) + 8;
             WorldGenerator worldgenerator1 = this.e.b(this.b);
 
@@ -164,7 +164,7 @@ public class BiomeDecorator {
 
         for (j = 0; j < this.C; ++j) {
             k = this.c + this.b.nextInt(16) + 8;
-            l = this.b.nextInt(128);
+            l = this.b.nextInt(256);  //256=128
             i1 = this.d + this.b.nextInt(16) + 8;
             (new WorldGenDeadBush(Block.DEAD_BUSH.id)).a(this.a, this.b, k, l, i1);
         }
@@ -173,11 +173,11 @@ public class BiomeDecorator {
             k = this.c + this.b.nextInt(16) + 8;
             l = this.d + this.b.nextInt(16) + 8;
 
-            for (i1 = this.b.nextInt(128); i1 > 0 && this.a.getTypeId(k, i1 - 1, l) == 0; --i1) {
+            for (i1 = this.b.nextInt(256); i1 > 0 && this.a.getTypeId(k, i1 - 1, l) == 0; --i1) {   //256=128
                 ;
             }
 
-            this.x.a(this.a, this.b, k, i1, l);
+            this.watterLilyGen.a(this.a, this.b, k, i1, l);
         }
 
         for (j = 0; j < this.D; ++j) {
@@ -185,70 +185,70 @@ public class BiomeDecorator {
                 k = this.c + this.b.nextInt(16) + 8;
                 l = this.d + this.b.nextInt(16) + 8;
                 i1 = this.a.getHighestBlockYAt(k, l);
-                this.s.a(this.a, this.b, k, i1, l);
+                this.brownMushroomGen.a(this.a, this.b, k, i1, l);
             }
 
             if (this.b.nextInt(8) == 0) {
                 k = this.c + this.b.nextInt(16) + 8;
                 l = this.d + this.b.nextInt(16) + 8;
-                i1 = this.b.nextInt(128);
-                this.t.a(this.a, this.b, k, i1, l);
+                i1 = this.b.nextInt(256);  //256=128
+                this.redMushroomGen.a(this.a, this.b, k, i1, l);
             }
         }
 
         if (this.b.nextInt(4) == 0) {
             j = this.c + this.b.nextInt(16) + 8;
-            k = this.b.nextInt(128);
+            k = this.b.nextInt(256);  //256=128
             l = this.d + this.b.nextInt(16) + 8;
-            this.s.a(this.a, this.b, j, k, l);
+            this.brownMushroomGen.a(this.a, this.b, j, k, l);
         }
 
         if (this.b.nextInt(8) == 0) {
             j = this.c + this.b.nextInt(16) + 8;
-            k = this.b.nextInt(128);
+            k = this.b.nextInt(256);  //256=128
             l = this.d + this.b.nextInt(16) + 8;
-            this.t.a(this.a, this.b, j, k, l);
+            this.redMushroomGen.a(this.a, this.b, j, k, l);
         }
 
         for (j = 0; j < this.E; ++j) {
             k = this.c + this.b.nextInt(16) + 8;
             l = this.d + this.b.nextInt(16) + 8;
-            i1 = this.b.nextInt(128);
-            this.v.a(this.a, this.b, k, i1, l);
+            i1 = this.b.nextInt(256);  //256=128
+            this.reedGen.a(this.a, this.b, k, i1, l);
         }
 
         for (j = 0; j < 10; ++j) {
             k = this.c + this.b.nextInt(16) + 8;
-            l = this.b.nextInt(128);
+            l = this.b.nextInt(256);  //256=128
             i1 = this.d + this.b.nextInt(16) + 8;
-            this.v.a(this.a, this.b, k, l, i1);
+            this.reedGen.a(this.a, this.b, k, l, i1);
         }
 
         if (this.b.nextInt(32) == 0) {
             j = this.c + this.b.nextInt(16) + 8;
-            k = this.b.nextInt(128);
+            k = this.b.nextInt(256);  //256=128
             l = this.d + this.b.nextInt(16) + 8;
             (new WorldGenPumpkin()).a(this.a, this.b, j, k, l);
         }
 
         for (j = 0; j < this.F; ++j) {
             k = this.c + this.b.nextInt(16) + 8;
-            l = this.b.nextInt(128);
+            l = this.b.nextInt(256);  //256=128
             i1 = this.d + this.b.nextInt(16) + 8;
-            this.w.a(this.a, this.b, k, l, i1);
+            this.cactusGen.a(this.a, this.b, k, l, i1);
         }
 
         if (this.K) {
             for (j = 0; j < 50; ++j) {
                 k = this.c + this.b.nextInt(16) + 8;
-                l = this.b.nextInt(this.b.nextInt(120) + 8);
+                l = this.b.nextInt(this.b.nextInt(240) + 8); //120=240
                 i1 = this.d + this.b.nextInt(16) + 8;
                 (new WorldGenLiquids(Block.WATER.id)).a(this.a, this.b, k, l, i1);
             }
 
             for (j = 0; j < 20; ++j) {
                 k = this.c + this.b.nextInt(16) + 8;
-                l = this.b.nextInt(this.b.nextInt(this.b.nextInt(112) + 8) + 8);
+                l = this.b.nextInt(this.b.nextInt(this.b.nextInt(224) + 8) + 8); //112=224
                 i1 = this.d + this.b.nextInt(16) + 8;
                 (new WorldGenLiquids(Block.LAVA.id)).a(this.a, this.b, k, l, i1);
             }
