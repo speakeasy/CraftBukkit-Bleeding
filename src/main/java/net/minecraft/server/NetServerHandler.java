@@ -148,14 +148,16 @@ public class NetServerHandler extends NetHandler {
             this.networkManager.d();
 
             // CraftBukkit start
-            leaveMessage = event.getLeaveMessage();
+            getPlayer().disconnect(s);
+            // Forward the leave message on to disconnect, for the PlayerQuitEvent
+            leaveMessage = this.minecraftServer.getServerConfigurationManager().disconnect(this.player, event.getLeaveMessage());
             if (leaveMessage != null && leaveMessage.length() > 0) {
                 this.minecraftServer.getServerConfigurationManager().sendAll(new Packet3Chat(leaveMessage));
             }
-            getPlayer().disconnect(s);
+            // getPlayer().disconnect(s); // Moved up to preserve it being before getServerConfigurationManager.disconnect()
             // CraftBukkit end
 
-            this.minecraftServer.getServerConfigurationManager().disconnect(this.player);
+            // this.minecraftServer.getServerConfigurationManager().disconnect(this.player); // CraftBukkit - Moved up
             this.disconnected = true;
         }
     }

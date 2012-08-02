@@ -198,7 +198,13 @@ public abstract class ServerConfigurationManagerAbstract {
         entityplayer.q().getPlayerManager().movePlayer(entityplayer);
     }
 
-    public String disconnect(EntityPlayer entityplayer) { // CraftBukkit - return string
+    // CraftBukkit start - return String and support for leave message
+    public String disconnect(EntityPlayer entityplayer) {
+        return this.disconnect(entityplayer, null);
+    }
+    // CraftBukkit end
+
+    public String disconnect(EntityPlayer entityplayer, String leaveMessage) { // CraftBukkit - return String and added leaveMessage
         if (entityplayer.netServerHandler.disconnected) return null; // CraftBukkit - exploitsies fix
 
         // this.b(entityplayer); // CraftBukkit - Quitting must be before we do final save of data, in case plugins need to modify it
@@ -209,7 +215,7 @@ public abstract class ServerConfigurationManagerAbstract {
         this.players.remove(entityplayer);
 
         // CraftBukkit start
-        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(entityplayer), "\u00A7e" + entityplayer.name + " left the game.");
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(entityplayer), leaveMessage != null ?  leaveMessage : "\u00A7e" + entityplayer.name + " left the game.");
         this.cserver.getPluginManager().callEvent(playerQuitEvent);
 
         // .name -> .listName, replace sendAll with loop
