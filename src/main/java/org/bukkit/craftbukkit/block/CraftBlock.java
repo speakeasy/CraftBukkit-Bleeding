@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.block;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 
 import net.minecraft.server.BiomeBase;
 import net.minecraft.server.BlockRedstoneWire;
@@ -32,6 +33,7 @@ public class CraftBlock implements Block {
     private final int z;
     private static final Biome BIOME_MAPPING[];
     private static final BiomeBase BIOMEBASE_MAPPING[];
+    public static final EnumSet<Biome> SUPPORTED_BIOMES;
 
     public CraftBlock(CraftChunk chunk, int x, int y, int z) {
         this.x = x;
@@ -414,6 +416,7 @@ public class CraftBlock implements Block {
         BIOME_MAPPING[BiomeBase.SMALL_MOUNTAINS.id] = Biome.SMALL_MOUNTAINS;
         BIOME_MAPPING[BiomeBase.JUNGLE.id] = Biome.JUNGLE;
         BIOME_MAPPING[BiomeBase.JUNGLE_HILLS.id] = Biome.JUNGLE_HILLS;
+        List<Biome> supported = new ArrayList<Biome>();
         /* Sanity check - we should have a record for each record in the BiomeBase.a table */
         /* Helps avoid missed biomes when we upgrade bukkit to new code with new biomes */
         for (int i = 0; i < BIOME_MAPPING.length; i++) {
@@ -422,8 +425,10 @@ public class CraftBlock implements Block {
             }
             if (BIOME_MAPPING[i] != null) {  /* Build reverse mapping for setBiome */
                 BIOMEBASE_MAPPING[BIOME_MAPPING[i].ordinal()] = BiomeBase.biomes[i];
+                supported.add(BIOME_MAPPING[i]);
             }
         }
+        SUPPORTED_BIOMES = EnumSet.copyOf(supported);
     }
 
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {

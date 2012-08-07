@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit;
 
 import java.io.File;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -509,7 +510,7 @@ public class CraftWorld implements World {
 
     public void setBiome(int x, int z, Biome bio) {
         BiomeBase bb = CraftBlock.biomeToBiomeBase(bio);
-        if (this.world.isLoaded(x, 0, z)) {
+        if (this.world.isLoaded(x, 0, z) && (bb != null)) {
             net.minecraft.server.Chunk chunk = this.world.getChunkAtWorldCoords(x, z);
 
             if (chunk != null) {
@@ -1149,4 +1150,10 @@ public class CraftWorld implements World {
     public void setWaterAnimalSpawnLimit(int limit) {
         waterAnimalSpawn = limit;
     }
+    
+    public EnumSet<Biome> getSupportedBiomes() {
+        // Server level list for now - just be ready for possibility of world specific biome support set
+        return CraftBlock.SUPPORTED_BIOMES;
+    }
+
 }
