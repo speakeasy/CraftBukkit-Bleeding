@@ -6,24 +6,25 @@ import java.util.Random;
 
 public class ChunkProviderGenerate implements IChunkProvider {
 
-    private Random random;
-    private NoiseGeneratorOctaves noise1;
-    private NoiseGeneratorOctaves noise2;
-    private NoiseGeneratorOctaves noise3;
-    private NoiseGeneratorOctaves noise4;
+    private Random random; //k=random
+    private NoiseGeneratorOctaves noise1; //l=noise1
+    private NoiseGeneratorOctaves noise2; //m=noise2
+    private NoiseGeneratorOctaves noise3; //n=noise3
+    private NoiseGeneratorOctaves noise4; //o=noise4
     public NoiseGeneratorOctaves a;
     public NoiseGeneratorOctaves b;
     public NoiseGeneratorOctaves c;
-    private World world;
-    private final boolean generateStructures;
+    private World world; //p=world
+    private final boolean generateStructures; //q=generateStructures
     private double[] r;
     private double[] s = new double[256];
-    private WorldGenBase caveGen = new WorldGenCaves();
-    private WorldGenStronghold strongholdGen = new WorldGenStronghold();
-    private WorldGenVillage villageGen = new WorldGenVillage(0);
-    private WorldGenMineshaft mineshaftGen = new WorldGenMineshaft();
-    private WorldGenBase canyonGen = new WorldGenCanyon();
-    private BiomeBase[] biomeBases;
+    private WorldGenBase caveGen = new WorldGenCaves(); //t=caveGen
+    private WorldGenStronghold strongholdGen = new WorldGenStronghold(); //u=strongholdGen
+    private WorldGenVillage villageGen = new WorldGenVillage(0); //v=villageGen
+    private WorldGenMineshaft mineshaftGen = new WorldGenMineshaft(); //w=mineshaftGen
+    private WorldGenLargeFeature largeFeatureGen = new WorldGenLargeFeature(); //x=largeFeatureGen
+    private WorldGenBase canyonGen = new WorldGenCanyon(); //y=canyonGen
+    private BiomeBase[] biomeBases; //z=biomeBases
     double[] d;
     double[] e;
     double[] f;
@@ -45,10 +46,10 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.c = new NoiseGeneratorOctaves(this.random, 8);
     }
 
-    private void makeWorldStoneAndWater(int xx, int zz, byte[] rawChunk) {
+    public void makeWorldStoneAndWater(int xx, int zz, byte[] rawChunk) { //a()=makeWorldStoneAndWater(), i=xx, j=zz, abyte=rawChunk
         byte b0 = 4;
         byte b1 = 16;
-        int waterline = 63; // Absolute sea level
+        byte waterline = 63; // Absolute sea level, b2=waterline
         int k = b0 + 1;
         byte b3 = 17;
         int l = b0 + 1;
@@ -56,9 +57,9 @@ public class ChunkProviderGenerate implements IChunkProvider {
         this.biomeBases = this.world.getWorldChunkManager().getBiomes(this.biomeBases, xx * 4 - 2, zz * 4 - 2, k + 5, l + 5);
         this.r = this.a(this.r, xx * b0, 0, zz * b0, k, b3, l);
 
-        for (int xxx = 0; xxx < b0; ++xxx) { // This loop makes the world's stone
-            for (int zzz = 0; zzz < b0; ++zzz) {
-                for (int yyy = 0; yyy < b1; ++yyy) {
+        for (int xxx = 0; xxx < b0; ++xxx) { // This loop makes the world's stone, i1=xxx
+            for (int zzz = 0; zzz < b0; ++zzz) { //j1=zzz
+                for (int yyy = 0; yyy < b1; ++yyy) { //k1=yyy
                     double d0 = 0.125D;
                     double d1 = this.r[((xxx + 0) * l + zzz + 0) * b3 + yyy + 0];
                     double d2 = this.r[((xxx + 0) * l + zzz + 1) * b3 + yyy + 0];
@@ -69,7 +70,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                     double d7 = (this.r[((xxx + 1) * l + zzz + 0) * b3 + yyy + 1] - d3) * d0;
                     double d8 = (this.r[((xxx + 1) * l + zzz + 1) * b3 + yyy + 1] - d4) * d0;
 
-                    for (int l1 = 0; l1 < 8; ++l1) { //8
+                    for (int l1 = 0; l1 < 8; ++l1) {
                         double d9 = 0.25D;
                         double d10 = d1;
                         double d11 = d2;
@@ -77,7 +78,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                         double d13 = (d4 - d2) * d9;
 
                         for (int i2 = 0; i2 < 4; ++i2) {
-                            int chunkOffset = i2 + xxx * 4 << 11 | 0 + zzz * 4 << 7 | yyy * 8 + l1;
+                            int chunkOffset = i2 + xxx * 4 << 11 | 0 + zzz * 4 << 7 | yyy * 8 + l1; //j2=chunkOffset
                             short short1 = 128;
 
                             chunkOffset -= short1;
@@ -86,13 +87,12 @@ public class ChunkProviderGenerate implements IChunkProvider {
                             double d16 = d10 - d15;
 
                             for (int k2 = 0; k2 < 4; ++k2) {
-                                chunkOffset += short1;
                                 if ((d16 += d15) > 0.0D) {
-                                    rawChunk[chunkOffset] = (byte) Block.STONE.id;
-                                } else if (yyy * 8 + l1 < waterline) { // CraftBukkit
-                                    rawChunk[chunkOffset] = (byte) Block.STATIONARY_WATER.id;
+                                    rawChunk[chunkOffset += short1] = (byte) Block.STONE.id;
+                                } else if (yyy * 8 + l1 < waterline) {
+                                    rawChunk[chunkOffset += short1] = (byte) Block.STATIONARY_WATER.id;
                                 } else {
-                                    rawChunk[chunkOffset] = 0;
+                                    rawChunk[chunkOffset += short1] = 0;
                                 }
                             }
 
@@ -110,8 +110,8 @@ public class ChunkProviderGenerate implements IChunkProvider {
         }
     }
 
-    private void applyBiomeTopCoverAndBedrock(int xx, int j, byte[] rawChunk, BiomeBase[] biomeBases) {
-        int grassBeginHeight = 63;  // CraftBukkit SEALEVEL - above here, grass/sandstone/ice form
+    public void applyBiomeTopCoverAndBedrock(int xx, int j, byte[] rawChunk, BiomeBase[] biomeBases) { //a=applyBiomeTopCoverAndBedrock, i=xx, abyte=rawChunk, abiomebase=biomeBases
+        byte grassBeginHeight = 63; //b0=grassBeginHeight CraftBukkit SEALEVEL - above here, grass/sandstone/ice form
         double d0 = 0.03125D;
 
         this.s = this.noise4.a(this.s, xx * 16, j * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
@@ -119,14 +119,14 @@ public class ChunkProviderGenerate implements IChunkProvider {
         for (int k = 0; k < 16; ++k) {
             for (int l = 0; l < 16; ++l) {
                 BiomeBase biomebase = biomeBases[l + k * 16];
-                float f = biomebase.h();
+                float f = biomebase.j();
                 int i1 = (int) (this.s[k + l * 16] / 3.0D + 3.0D + this.random.nextDouble() * 0.25D);
                 int j1 = -1;
                 byte b1 = biomebase.A;
                 byte b2 = biomebase.B;
 
-                for (int k1 = 255; k1 >= 0; --k1) { //255=127
-                    int l1 = (l * 16 + k) * 256 + k1; //256=128
+                for (int k1 = 255; k1 >= 0; --k1) { //127=>255
+                    int l1 = (l * 16 + k) * 256 + k1; //128=>256
 
                     if (k1 <= 0 + this.random.nextInt(5)) {
                         rawChunk[l1] = (byte) Block.BEDROCK.id;
@@ -154,7 +154,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
                                 }
 
                                 j1 = i1;
-                                if (k1 >= grassBeginHeight - 1) { // CraftBukkit
+                                if (k1 >= grassBeginHeight - 1) {
                                     rawChunk[l1] = b1;
                                 } else {
                                     rawChunk[l1] = b2;
@@ -174,23 +174,26 @@ public class ChunkProviderGenerate implements IChunkProvider {
         }
     }
 
-    public Chunk getChunkAt(int xx, int zz) {
+    public Chunk getChunkAt(int xx, int zz) { //i=xx, j=zz
         return this.getOrCreateChunk(xx, zz);
     }
 
-    public Chunk getOrCreateChunk(int xx, int zz) {
+    public Chunk getOrCreateChunk(int xx, int zz) { //i=xx, j=zz
         this.random.setSeed((long) xx * 341873128712L + (long) zz * 132897987541L);
-        
-        byte[] chunk128 = new byte[16*16*128];//byte['\u8000'];
+
+        //CraftBukkit begin
+        byte[] chunk128 = new byte[16*16*128]; //abyte=chunk128, byte['\u8000']=byte[16*16*128]
         this.makeWorldStoneAndWater(xx, zz, chunk128);
-        
+
         byte[] stone128 = new byte[2048];
-        Arrays.fill(stone128, (byte)Block.STONE.id);
+        Arrays.fill(stone128, (byte) Block.STONE.id);
         byte[] chunk256 = new byte[16*16*256];
         for (int i = 0; i < 16*16; i++) {
                 System.arraycopy(stone128, 0, chunk256, 256*i, 128);
                 System.arraycopy(chunk128, 128*i, chunk256, 256*i+128, 128);
         }
+        //CraftBukkit end
+
         this.biomeBases = this.world.getWorldChunkManager().getBiomeBlock(this.biomeBases, xx * 16, zz * 16, 16, 16);
         this.applyBiomeTopCoverAndBedrock(xx, zz, chunk256, this.biomeBases);
         this.caveGen.a(this, this.world, xx, zz, chunk256);
@@ -199,9 +202,15 @@ public class ChunkProviderGenerate implements IChunkProvider {
             this.mineshaftGen.a(this, this.world, xx, zz, chunk256);
             this.villageGen.a(this, this.world, xx, zz, chunk256);
             this.strongholdGen.a(this, this.world, xx, zz, chunk256);
+            this.largeFeatureGen.a(this, this.world, xx, zz, chunk256);
         }
 
         Chunk chunk = new Chunk(this.world, chunk256, xx, zz);
+        byte[] abyte1 = chunk.m();
+
+        for (int k = 0; k < abyte1.length; ++k) {
+            abyte1[k] = (byte) this.biomeBases[k].id;
+        }
 
         chunk.initLighting();
         return chunk;
@@ -352,6 +361,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
             this.mineshaftGen.a(this.world, this.random, i, j);
             flag = this.villageGen.a(this.world, this.random, i, j);
             this.strongholdGen.a(this.world, this.random, i, j);
+            this.largeFeatureGen.a(this.world, this.random, i, j);
         }
 
         int k1;
@@ -360,14 +370,14 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
         if (!flag && this.random.nextInt(4) == 0) {
             k1 = k + this.random.nextInt(16) + 8;
-            l1 = this.random.nextInt(256); //256=128
+            l1 = this.random.nextInt(128);
             i2 = l + this.random.nextInt(16) + 8;
             (new WorldGenLakes(Block.STATIONARY_WATER.id)).a(this.world, this.random, k1, l1, i2);
         }
 
         if (!flag && this.random.nextInt(8) == 0) {
             k1 = k + this.random.nextInt(16) + 8;
-            l1 = this.random.nextInt(this.random.nextInt(120) + 8 + 128); //added +128
+            l1 = this.random.nextInt(this.random.nextInt(120) + 8);
             i2 = l + this.random.nextInt(16) + 8;
             if (l1 < 63 || this.random.nextInt(10) == 0) {
                 (new WorldGenLakes(Block.STATIONARY_LAVA.id)).a(this.world, this.random, k1, l1, i2);
@@ -391,12 +401,12 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
         for (k1 = 0; k1 < 16; ++k1) {
             for (l1 = 0; l1 < 16; ++l1) {
-                i2 = this.world.f(k + k1, l + l1);
-                if (this.world.s(k1 + k, i2 - 1, l1 + l)) {
+                i2 = this.world.g(k + k1, l + l1);
+                if (this.world.u(k1 + k, i2 - 1, l1 + l)) {
                     this.world.setTypeId(k1 + k, i2 - 1, l1 + l, Block.ICE.id);
                 }
 
-                if (this.world.u(k1 + k, i2, l1 + l)) {
+                if (this.world.w(k1 + k, i2, l1 + l)) {
                     this.world.setTypeId(k1 + k, i2, l1 + l, Block.SNOW.id);
                 }
             }
@@ -417,6 +427,10 @@ public class ChunkProviderGenerate implements IChunkProvider {
         return true;
     }
 
+    public String getName() {
+        return "RandomLevelSource";
+    }
+
     public List getMobsFor(EnumCreatureType enumcreaturetype, int i, int j, int k) {
         BiomeBase biomebase = this.world.getBiome(i, k);
 
@@ -425,5 +439,9 @@ public class ChunkProviderGenerate implements IChunkProvider {
 
     public ChunkPosition findNearestMapFeature(World world, String s, int i, int j, int k) {
         return "Stronghold".equals(s) && this.strongholdGen != null ? this.strongholdGen.getNearestGeneratedFeature(world, i, j, k) : null;
+    }
+
+    public int getLoadedChunks() {
+        return 0;
     }
 }

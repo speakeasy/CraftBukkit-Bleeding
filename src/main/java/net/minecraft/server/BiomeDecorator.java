@@ -101,19 +101,19 @@ public class BiomeDecorator {
         for (i = 0; i < this.H; ++i) {
             j = this.c + this.b.nextInt(16) + 8;
             k = this.d + this.b.nextInt(16) + 8;
-            this.g.a(this.a, this.b, j, this.a.g(j, k), k);
+            this.g.a(this.a, this.b, j, this.a.h(j, k), k);
         }
 
         for (i = 0; i < this.I; ++i) {
             j = this.c + this.b.nextInt(16) + 8;
             k = this.d + this.b.nextInt(16) + 8;
-            this.f.a(this.a, this.b, j, this.a.g(j, k), k);
+            this.f.a(this.a, this.b, j, this.a.h(j, k), k);
         }
 
         for (i = 0; i < this.G; ++i) {
             j = this.c + this.b.nextInt(16) + 8;
             k = this.d + this.b.nextInt(16) + 8;
-            this.g.a(this.a, this.b, j, this.a.g(j, k), k);
+            this.g.a(this.a, this.b, j, this.a.h(j, k), k);
         }
 
         i = this.z;
@@ -279,7 +279,7 @@ public class BiomeDecorator {
         this.a(20, this.i, 0, 256); //256=128
         this.a(10, this.j, 0, 256); //256=128
         this.a(20, this.k, 0, 256); //256=128
-        this.a(20, this.l, 0, 64); //192=64
+        this.a(20, this.l, 0, 192); //192=64
         this.a(2, this.m, 0, 96); //96=32
         this.a(8, this.n, 0, 48); //48=16
         this.a(1, this.o, 0, 48); //48=16
