@@ -58,40 +58,40 @@ public class PathfinderGoalSelector {
             }
         }
 
-        this.c.a("goalStart");
+        // this.c.a("goalStart"); // CraftBukkit - not in production code
         iterator = arraylist.iterator();
 
         while (iterator.hasNext()) {
             pathfindergoalselectoritem = (PathfinderGoalSelectorItem) iterator.next();
-            this.c.a(pathfindergoalselectoritem.a.getClass().getSimpleName());
+            // this.c.a(pathfindergoalselectoritem.a.getClass().getSimpleName()); // CraftBukkit - not in production code
             pathfindergoalselectoritem.a.e();
-            this.c.b();
+            // this.c.b(); // CraftBukkit - not in production code
         }
 
-        this.c.b();
-        this.c.a("goalTick");
+        // this.c.b(); // CraftBukkit - not in production code
+        // this.c.a("goalTick"); // CraftBukkit - not in production code
         iterator = this.b.iterator();
 
         while (iterator.hasNext()) {
             pathfindergoalselectoritem = (PathfinderGoalSelectorItem) iterator.next();
-            this.c.a(pathfindergoalselectoritem.a.getClass().getSimpleName());
+            // this.c.a(pathfindergoalselectoritem.a.getClass().getSimpleName()); // CraftBukkit - not in production code
             pathfindergoalselectoritem.a.d();
-            this.c.b();
+            // this.c.b(); // CraftBukkit - not in production code
         }
 
-        this.c.b();
+        // this.c.b(); // CraftBukkit - not in production code
     }
 
     private boolean a(PathfinderGoalSelectorItem pathfindergoalselectoritem) {
-        this.c.a("canContinue");
+        // this.c.a("canContinue"); // CraftBukkit - not in production code
         boolean flag = pathfindergoalselectoritem.a.b();
 
-        this.c.b();
+        // this.c.b(); // CraftBukkit - not in production code
         return flag;
     }
 
     private boolean b(PathfinderGoalSelectorItem pathfindergoalselectoritem) {
-        this.c.a("canUse");
+        // this.c.a("canUse"); // CraftBukkit - not in production code
         Iterator iterator = this.a.iterator();
 
         while (iterator.hasNext()) {
@@ -100,17 +100,17 @@ public class PathfinderGoalSelector {
             if (pathfindergoalselectoritem1 != pathfindergoalselectoritem) {
                 if (pathfindergoalselectoritem.b >= pathfindergoalselectoritem1.b) {
                     if (this.b.contains(pathfindergoalselectoritem1) && !this.a(pathfindergoalselectoritem, pathfindergoalselectoritem1)) {
-                        this.c.b();
+                        // this.c.b(); // CraftBukkit - not in production code
                         return false;
                     }
                 } else if (this.b.contains(pathfindergoalselectoritem1) && !pathfindergoalselectoritem1.a.g()) {
-                    this.c.b();
+                    // this.c.b(); // CraftBukkit - not in production code
                     return false;
                 }
             }
         }
 
-        this.c.b();
+        // this.c.b(); // CraftBukkit - not in production code
         return true;
     }
 
