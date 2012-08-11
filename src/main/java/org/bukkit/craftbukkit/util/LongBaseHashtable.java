@@ -17,7 +17,7 @@ public class LongBaseHashtable extends LongHash {
         return getEntry(toLong(msw, lsw));
     }
 
-    public synchronized void put(EntryBase entry) {
+    public void put(EntryBase entry) {
         int mainIdx = (int) (entry.key & 255);
         EntryBase[][] outer = this.values[mainIdx];
         if (outer == null) this.values[mainIdx] = outer = new EntryBase[256][];
@@ -42,11 +42,11 @@ public class LongBaseHashtable extends LongHash {
         }
     }
 
-    public synchronized EntryBase getEntry(long key) {
+    public EntryBase getEntry(long key) {
         return containsKey(key) ? cache : null;
     }
 
-    public synchronized boolean containsKey(long key) {
+    public boolean containsKey(long key) {
         if (this.cache != null && cache.key == key) return true;
 
         int outerIdx = (int) ((key >> 32) & 255);
@@ -68,7 +68,7 @@ public class LongBaseHashtable extends LongHash {
         return false;
     }
 
-    public synchronized void remove(long key) {
+    public void remove(long key) {
         EntryBase[][] outer = this.values[(int) (key & 255)];
         if (outer == null) return;
 
@@ -91,7 +91,7 @@ public class LongBaseHashtable extends LongHash {
         }
     }
 
-    public synchronized ArrayList<EntryBase> entries() {
+    public ArrayList<EntryBase> entries() {
         ArrayList<EntryBase> ret = new ArrayList<EntryBase>();
 
         for (EntryBase[][] outer : this.values) {
