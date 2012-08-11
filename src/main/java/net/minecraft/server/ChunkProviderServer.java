@@ -83,7 +83,6 @@ public class ChunkProviderServer implements IChunkProvider {
             }
 
             this.chunks.put(i, j, chunk); // CraftBukkit
-            // this.chunkList.add(chunk); // CraftBukkit
             if (chunk != null) {
                 chunk.addEntities();
             }
