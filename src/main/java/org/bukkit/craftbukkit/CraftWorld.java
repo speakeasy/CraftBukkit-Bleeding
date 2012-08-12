@@ -113,6 +113,10 @@ public class CraftWorld implements World {
         return world.chunkProviderServer.isChunkLoaded(x, z);
     }
 
+    public boolean isChunkUnloadPending(int x, int z) {
+        return this.world.chunkProviderServer.unloadQueue.containsKey(x, z);
+    }
+
     public Chunk[] getLoadedChunks() {
         Object[] chunks = world.chunkProviderServer.chunks.values().toArray();
         org.bukkit.Chunk[] craftChunks = new CraftChunk[chunks.length];
@@ -218,22 +222,7 @@ public class CraftWorld implements World {
     }
 
     public boolean isChunkInUse(int x, int z) {
-        Player[] players = server.getOnlinePlayers();
-
-        for (Player player : players) {
-            Location loc = player.getLocation();
-            if (loc.getWorld() != world.chunkProviderServer.world.getWorld()) {
-                continue;
-            }
-
-            // If the chunk is within 256 blocks of a player, refuse to accept the unload request
-            // This is larger than the distance of loaded chunks that actually surround a player
-            // The player is the center of a 21x21 chunk grid, so the edge is 10 chunks (160 blocks) away from the player
-            if (Math.abs(loc.getBlockX() - (x << 4)) <= 256 && Math.abs(loc.getBlockZ() - (z << 4)) <= 256) {
-                return true;
-            }
-        }
-        return false;
+        return world.getPlayerManager().isChunkInUse(x, z);
     }
 
     public boolean loadChunk(int x, int z, boolean generate) {
