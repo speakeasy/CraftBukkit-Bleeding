@@ -161,9 +161,11 @@ public class CraftWorld implements World {
         }
 
         net.minecraft.server.Chunk chunk = world.chunkProviderServer.getOrCreateChunk(x, z);
-
+        if (chunk.mustSave) {   // If chunk had previously been queued to save, must do save to avoid loss of that data
+            save = true;
+        }
+        chunk.removeEntities(); // Always remove entities - even if discarding, need to get them out of world table
         if (save && !(chunk instanceof EmptyChunk)) {
-            chunk.removeEntities();
             world.chunkProviderServer.saveChunk(chunk);
             world.chunkProviderServer.saveChunkNOP(chunk);
         }
