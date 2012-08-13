@@ -58,12 +58,8 @@ public class CraftScheduler implements BukkitScheduler, Runnable {
 
                             if (currentTick >= firstTick) {
                                 schedulerQueue.remove(first);
-                                processTask(first);
-                                if (first.getPeriod() >= 0) {
-                                    first.updateExecution();
-                                    schedulerQueue.put(first, first.isSync());
-                                }
                             } else {
+                                first = null;
                                 stop = true;
                             }
                         } else {
@@ -73,26 +69,45 @@ public class CraftScheduler implements BukkitScheduler, Runnable {
                         stop = true;
                     }
                 }
+                // If task to run, process it - prevent blocking other calls to enqueue jobs during long async runs
+                if (first != null) {
+                    processTask(first);
+                    // If repeating, enqueue again
+                    if (first.getPeriod() >= 0) {
+                        first.updateExecution();
+                        synchronized (schedulerQueue) {
+                            schedulerQueue.put(first, first.isSync());
+                        }
+                    }
+                }
             } while (!stop);
 
-            long sleepTime = 0;
-            if (first == null) {
-                sleepTime = 60000L;
-            } else {
-                currentTick = getCurrentTick();
-                sleepTime = (firstTick - currentTick) * 50 + 25;
-            }
-
-            if (sleepTime < 50L) {
-                sleepTime = 50L;
-            } else if (sleepTime > 60000L) {
-                sleepTime = 60000L;
-            }
-
+            currentTick = getCurrentTick();
             synchronized (schedulerQueue) {
-                try {
-                    schedulerQueue.wait(sleepTime);
-                } catch (InterruptedException ie) {}
+                // Could have changed once we left synchronized section above - so check here versus using stale one
+                if (schedulerQueue.isEmpty()) {
+                    first = null;
+                }
+                else {
+                    first = schedulerQueue.firstKey();
+                }
+                long sleepTime = 0;
+                if (first == null) {
+                    sleepTime = 60000L;
+                } else {
+                    sleepTime = (first.getExecutionTick() - currentTick) * 50 + 25;
+                }
+                if (sleepTime > 0) { // If not overdue
+                    if (sleepTime < 50L) {
+                        sleepTime = 50L;
+                    } else if (sleepTime > 60000L) {
+                        sleepTime = 60000L;
+                    }
+
+                    try {
+                        schedulerQueue.wait(sleepTime);
+                    } catch (InterruptedException ie) {}
+                }
             }
         }
     }
@@ -194,12 +209,18 @@ public class CraftScheduler implements BukkitScheduler, Runnable {
         if (delay < 0) {
             throw new IllegalArgumentException("Delay cannot be less than 0");
         }
-
+        if (period == 0) { period = 1; } // Once per tick minimum period
+        
         CraftTask newTask = new CraftTask(plugin, task, true, getCurrentTick() + delay, period);
 
-        synchronized (schedulerQueue) {
-            schedulerQueue.put(newTask, true);
-            schedulerQueue.notify();
+        if ((delay == 0) && (period < 0)) { // If no delay and one-shot, put it in the main thread queue
+            addToMainThreadQueue(newTask);
+        }
+        else {
+            synchronized (schedulerQueue) {
+                schedulerQueue.put(newTask, true);
+                schedulerQueue.notify();
+            }
         }
         return newTask.getIdNumber();
     }
