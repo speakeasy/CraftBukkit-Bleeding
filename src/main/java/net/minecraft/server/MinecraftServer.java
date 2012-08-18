@@ -80,6 +80,7 @@ public abstract class MinecraftServer implements Runnable, IMojangStatistics, IC
     public static int currentTick;
     public final Thread primaryThread;
     public java.util.Queue<PlayerChatEvent> chatQueue = new java.util.concurrent.ConcurrentLinkedQueue<PlayerChatEvent>();
+    public int autosavePeriod = 900; // Default to silly vanilla behavior
     // CraftBukkit end
 
     public MinecraftServer(OptionSet options) { // CraftBukkit - signature file -> OptionSet
@@ -472,7 +473,7 @@ public abstract class MinecraftServer implements Runnable, IMojangStatistics, IC
 
         // this.methodProfiler.a("root"); // CraftBukkit - not in production code
         this.q();
-        if (this.ticks % 900 == 0) {
+        if ((this.autosavePeriod > 0) && ((this.ticks % this.autosavePeriod) == 0)) { // CraftBukkit
             // this.methodProfiler.a("save"); // CraftBukkit - not in production code
             this.t.savePlayers();
             this.saveChunks(true);
