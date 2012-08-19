@@ -12,6 +12,7 @@ import java.util.TreeSet;
 // CraftBukkit start
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.util.LongHash;
+import org.bukkit.craftbukkit.util.LongObjectHashMap;
 
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
@@ -24,7 +25,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     private final MinecraftServer server;
     public EntityTracker tracker; // CraftBukkit - private final -> public
     private final PlayerManager manager;
-    private Set N;
+    private LongObjectHashMap<Set<NextTickListEntry>> N; // CraftBukkit - change to something chunk friendly
     private TreeSet O;
     public ChunkProviderServer chunkProviderServer;
     public boolean weirdIsOpCache = false;
@@ -52,7 +53,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         if (this.N == null) {
-            this.N = new HashSet();
+            this.N = new LongObjectHashMap<Set<NextTickListEntry>>(); // CraftBukkit
         }
 
         if (this.O == null) {
@@ -395,10 +396,11 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                     nextticklistentry.a((long) i1 + this.worldData.getTime());
                 }
 
-                if (!this.N.contains(nextticklistentry)) {
-                    this.N.add(nextticklistentry);
-                    this.O.add(nextticklistentry);
-                }
+                //if (!this.N.contains(nextticklistentry)) { // CraftBukkit
+                //    this.N.add(nextticklistentry); // CraftBukkit
+                //    this.O.add(nextticklistentry); // CraftBukkit
+                //} // CraftBukkit
+                addNextTickIfNeeded(nextticklistentry); // CraftBukkit
             }
         }
     }
@@ -410,10 +412,11 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             nextticklistentry.a((long) i1 + this.worldData.getTime());
         }
 
-        if (!this.N.contains(nextticklistentry)) {
-            this.N.add(nextticklistentry);
-            this.O.add(nextticklistentry);
-        }
+        //if (!this.N.contains(nextticklistentry)) { // CraftBukkit
+        //    this.N.add(nextticklistentry); // CraftBukkit
+        //    this.O.add(nextticklistentry); // CraftBukkit
+        //} // CraftBukkit
+        this.addNextTickIfNeeded(nextticklistentry); // CraftBukkit
     }
 
     public void tickEntities() {
@@ -431,9 +434,9 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     public boolean a(boolean flag) {
         int i = this.O.size();
 
-        if (i != this.N.size()) {
-            throw new IllegalStateException("TickNextTick list out of synch");
-        } else {
+        //if (i != this.N.size()) { // CraftBukkit
+        //    throw new IllegalStateException("TickNextTick list out of synch"); // CraftBukkit
+        //} else { // CraftBukkit
             if (i > 1000) {
                 // CraftBukkit start - if the server has too much to process over time, try to alleviate that
                 if (i > 20 * 1000) {
@@ -451,8 +454,9 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                     break;
                 }
 
-                this.O.remove(nextticklistentry);
-                this.N.remove(nextticklistentry);
+                //this.O.remove(nextticklistentry); // CraftBukkit
+                //this.N.remove(nextticklistentry); // CraftBukkit
+                this.removeNextTickIfNeeded(nextticklistentry); // CraftBukkit
                 byte b0 = 8;
 
                 if (this.c(nextticklistentry.a - b0, nextticklistentry.b - b0, nextticklistentry.c - b0, nextticklistentry.a + b0, nextticklistentry.b + b0, nextticklistentry.c + b0)) {
@@ -465,10 +469,12 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
             }
 
             return !this.O.isEmpty();
-        }
+        //} // CraftBukkit
     }
 
     public List a(Chunk chunk, boolean flag) {
+        return this.getNextTickEntriesForChunk(chunk, flag); // CraftBukkit
+        /* CraftBukkit start
         ArrayList arraylist = null;
         ChunkCoordIntPair chunkcoordintpair = chunk.l();
         int i = chunkcoordintpair.x << 4;
@@ -495,6 +501,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         return arraylist;
+        // CraftBukkit end */
     }
 
     public void entityJoinedWorld(Entity entity, boolean flag) {
@@ -571,7 +578,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         }
 
         if (this.N == null) {
-            this.N = new HashSet();
+            this.N = new LongObjectHashMap<Set<NextTickListEntry>>();
         }
 
         if (this.O == null) {
@@ -847,7 +854,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         NextTickListEntry nextticklistentry;
 
-        for (Iterator iterator = this.N.iterator(); iterator.hasNext(); nextticklistentry.e += j) {
+        for (Iterator iterator = this.O.iterator(); iterator.hasNext(); nextticklistentry.e += j) { // CraftBukkit
             nextticklistentry = (NextTickListEntry) iterator.next();
         }
 
@@ -868,4 +875,46 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
     public PlayerManager getPlayerManager() {
         return this.manager;
     }
+    // CraftBukkit start
+    private final void addNextTickIfNeeded(NextTickListEntry ent) {
+        long coord = LongHash.toLong(ent.a >> 4, ent.c >> 4);
+        Set<NextTickListEntry> chunkset = N.get(coord);
+        if (chunkset == null) {
+            chunkset = new HashSet<NextTickListEntry>();
+            N.put(coord, chunkset);
+        }
+        else if (chunkset.contains(ent)) {
+            return;
+        }
+        chunkset.add(ent);
+        O.add(ent);
+    }
+    private final void removeNextTickIfNeeded(NextTickListEntry ent) {
+        long coord = LongHash.toLong(ent.a >> 4, ent.c >> 4);
+        Set<NextTickListEntry> chunkset = N.get(coord);
+        if (chunkset == null) {
+            return;
+        }
+        if (chunkset.remove(ent)) {
+            O.remove(ent);
+            if (chunkset.isEmpty()) {
+                N.remove(coord);
+            }
+        }
+    }
+    private final List<NextTickListEntry> getNextTickEntriesForChunk(Chunk chunk, boolean remove) {
+        long coord = LongHash.toLong(chunk.x, chunk.z);
+        Set<NextTickListEntry> chunkset = N.get(coord);
+        if (chunkset == null) {
+            return null;
+        }
+        List<NextTickListEntry> list = new ArrayList<NextTickListEntry>(chunkset);
+        if (remove) {
+            N.remove(coord);
+            O.removeAll(list);
+            chunkset.clear();
+        }
+        return list;
+    }
+    // CraftBukkit end
 }

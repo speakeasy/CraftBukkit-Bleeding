@@ -941,6 +941,40 @@ public abstract class World implements IBlockAccess {
         int i1 = MathHelper.floor(axisalignedbb.c);
         int j1 = MathHelper.floor(axisalignedbb.f + 1.0D);
 
+        // CraftBukkit start
+        int ystart = ((k - 1) < 0) ? 0 : (k - 1);
+        for (int chunkx = (i >> 4); chunkx <= ((j - 1) >> 4); chunkx++) {
+            int cx = chunkx << 4;
+            for (int chunkz = (i1 >> 4); chunkz <= ((j1 - 1) >> 4); chunkz++) {
+                if (!this.isChunkLoaded(chunkx, chunkz)) {
+                    continue;
+                }
+                int cz = chunkz << 4;
+                Chunk chunk = this.getChunkAt(chunkx, chunkz);
+                // Compute ranges within chunk
+                int xstart = (i < cx)?cx:i;
+                int xend = (j < (cx+16))?j:(cx+16);
+                int zstart = (i1 < cz)?cz:i1;
+                int zend = (j1 < (cz+16))?j1:(cz+16);
+                // Loop through blocks within chunk
+                for (int x = xstart; x < xend; x++) {
+                    for (int z = zstart; z < zend; z++) {
+                        for (int y = ystart; y < l; y++) {
+                            int blkid = chunk.getTypeId(x - cx, y, z - cz);
+                            if (blkid > 0) {
+                                Block block = Block.byId[blkid];
+
+                                if (block != null) {
+                                    block.a(this, x, y, z, axisalignedbb, this.d, entity);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // CraftBukkit end
+        /* CraftBukkit
         for (int k1 = i; k1 < j; ++k1) {
             for (int l1 = i1; l1 < j1; ++l1) {
                 if (this.isLoaded(k1, 64, l1)) {
@@ -954,7 +988,7 @@ public abstract class World implements IBlockAccess {
                 }
             }
         }
-
+        */ // CraftBukkit
         double d0 = 0.25D;
         List list = this.getEntities(entity, axisalignedbb.grow(d0, d0, d0));
         Iterator iterator = list.iterator();
@@ -1425,7 +1459,45 @@ public abstract class World implements IBlockAccess {
         } else {
             boolean flag = false;
             Vec3D vec3d = Vec3D.a().create(0.0D, 0.0D, 0.0D);
+            // CraftBukkit start
+            int ystart = (k < 0) ? 0 : k;
+            for (int chunkx = (i >> 4); chunkx <= ((j - 1) >> 4); chunkx++) {
+                int cx = chunkx << 4;
+                for (int chunkz = (i1 >> 4); chunkz <= ((j1 - 1) >> 4); chunkz++) {
+                    if (!this.isChunkLoaded(chunkx, chunkz)) {
+                        continue;
+                    }
+                    int cz = chunkz << 4;
+                    Chunk chunk = this.getChunkAt(chunkx, chunkz);
+                    // Compute ranges within chunk
+                    int xstart = (i < cx) ? cx : i;
+                    int xend = (j < (cx + 16)) ? j : (cx + 16);
+                    int zstart = (i1 < cz) ? cz : i1;
+                    int zend = (j1 < (cz + 16)) ? j1 : (cz + 16);
+                    // Loop through blocks within chunk
+                    for (int x = xstart; x < xend; x++) {
+                        for (int z = zstart; z < zend; z++) {
+                            for (int y = ystart; y < l; y++) {
+                                int blkid = chunk.getTypeId(x - cx, y, z - cz);
+                                if (blkid > 0) {
+                                    Block block = Block.byId[blkid];
 
+                                    if (block != null && block.material == material) {
+                                        double d0 = (double) ((float) (y + 1) - BlockFluids.d(chunk.getData(x - cx, y, z - cz)));
+
+                                        if ((double) l >= d0) {
+                                            flag = true;
+                                            block.a(this, x, y, z, entity, vec3d);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // CraftBukkit end
+            /* CraftBukkit
             for (int k1 = i; k1 < j; ++k1) {
                 for (int l1 = k; l1 < l; ++l1) {
                     for (int i2 = i1; i2 < j1; ++i2) {
@@ -1442,7 +1514,7 @@ public abstract class World implements IBlockAccess {
                     }
                 }
             }
-
+            */ // CraftBukkit
             if (vec3d.c() > 0.0D) {
                 vec3d = vec3d.b();
                 double d1 = 0.014D;
