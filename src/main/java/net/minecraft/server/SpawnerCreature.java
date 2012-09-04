@@ -85,13 +85,14 @@ public final class SpawnerCreature {
                 if (limit == 0) {
                     return 0;
                 }
+                int mobcnt = 0;
                 // CraftBukkit end
 
-                if ((!enumcreaturetype.d() || flag1) && (enumcreaturetype.d() || flag) && worldserver.a(enumcreaturetype.a()) <= limit * b.size() / 256) { // CraftBukkit - use per-world limits
+                if ((!enumcreaturetype.d() || flag1) && (enumcreaturetype.d() || flag) && (mobcnt = worldserver.a(enumcreaturetype.a())) <= limit * b.size() / 256) { // CraftBukkit - use per-world limits
                     Iterator iterator = b.keySet().iterator();
-
+                    int moblimit = (limit * b.size() / 256) - mobcnt + 1; // CraftBukkit - up to 1 more than limit
                     label108:
-                    while (iterator.hasNext()) {
+                    while (iterator.hasNext() && (moblimit > 0)) { // CraftBukkit - while more allowed
                         // CraftBukkit start
                         long key = ((Long) iterator.next()).longValue();
 
@@ -154,6 +155,12 @@ public final class SpawnerCreature {
                                                                 // CraftBukkit - added a reason for spawning this creature
                                                                 worldserver.addEntity(entityliving, SpawnReason.NATURAL);
                                                                 a(entityliving, worldserver, f, f1, f2);
+                                                                // CraftBukkit start
+                                                                moblimit--; 
+                                                                if (moblimit <= 0) { // If we're past limit, stop spawn
+                                                                    continue label108;
+                                                                }
+                                                                // CraftBukkit end
                                                                 if (j2 >= entityliving.bl()) {
                                                                     continue label108;
                                                                 }
