@@ -94,6 +94,7 @@ public abstract class World implements IBlockAccess {
     int lastXAccessed = Integer.MIN_VALUE;
     int lastZAccessed = Integer.MIN_VALUE;
     final Object chunkLock = new Object();
+    private byte chunkTickRadius;
 
     public CraftWorld getWorld() {
         return this.world;
@@ -109,6 +110,7 @@ public abstract class World implements IBlockAccess {
         this.world = new CraftWorld((WorldServer) this, gen, env);
         this.ticksPerAnimalSpawns = this.getServer().getTicksPerAnimalSpawns(); // CraftBukkit
         this.ticksPerMonsterSpawns = this.getServer().getTicksPerMonsterSpawns(); // CraftBukkit
+        this.chunkTickRadius = (byte)((this.getServer().getViewDistance() < 7) ? this.getServer().getViewDistance() : 7); // CraftBukkit - don't tick chunks we don't load for player
         // CraftBukkit end
 
         this.M = this.random.nextInt(12000);
@@ -1816,7 +1818,7 @@ public abstract class World implements IBlockAccess {
             entityhuman = (EntityHuman) this.players.get(i);
             j = MathHelper.floor(entityhuman.locX / 16.0D);
             k = MathHelper.floor(entityhuman.locZ / 16.0D);
-            byte b0 = 7;
+            byte b0 = chunkTickRadius; // CraftBukkit - replace 7 with view-distance sensitive radius
 
             for (int l = -b0; l <= b0; ++l) {
                 for (int i1 = -b0; i1 <= b0; ++i1) {

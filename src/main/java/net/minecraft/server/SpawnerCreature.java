@@ -16,6 +16,7 @@ public final class SpawnerCreature {
 
     private static LongObjectHashMap b = new LongObjectHashMap(); // CraftBukkit - HashMap -> LongObjectHashMap
     protected static final Class[] a = new Class[] { EntitySpider.class, EntityZombie.class, EntitySkeleton.class};
+    private static byte spawnRadius = 0; // CraftBukkit
 
     protected static ChunkPosition getRandomPosition(World world, int i, int j) {
         Chunk chunk = world.getChunkAt(i, j);
@@ -34,13 +35,20 @@ public final class SpawnerCreature {
 
             int i;
             int j;
-
+            // CraftBukkit start - limit radius to spawn distance (chunks aren't loaded)
+            if (spawnRadius == 0) {
+                spawnRadius = (byte)worldserver.getServer().getViewDistance();
+                if (spawnRadius > 8) {
+                    spawnRadius = 8;
+                }
+            }
+            // CraftBukkit end
             for (i = 0; i < worldserver.players.size(); ++i) {
                 EntityHuman entityhuman = (EntityHuman) worldserver.players.get(i);
                 int k = MathHelper.floor(entityhuman.locX / 16.0D);
 
                 j = MathHelper.floor(entityhuman.locZ / 16.0D);
-                byte b0 = 8;
+                byte b0 = spawnRadius; // CraftBukkit - replace 8 with view distance constrained valued
 
                 for (int l = -b0; l <= b0; ++l) {
                     for (int i1 = -b0; i1 <= b0; ++i1) {
