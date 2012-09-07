@@ -17,8 +17,7 @@ import java.util.logging.Logger;
 
 import net.minecraft.server.*;
 
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.Validate;
 
 import org.bukkit.*;
 import org.bukkit.Achievement;
@@ -324,7 +323,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return true;
         */
 
-        throw new NotImplementedException("Chunk changes do not yet work"); // TODO: Chunk changes.
+        throw new UnsupportedOperationException("Chunk changes do not yet work"); // TODO: Chunk changes.
     }
 
     public void sendMap(MapView map) {
