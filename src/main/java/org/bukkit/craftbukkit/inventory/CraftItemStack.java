@@ -9,8 +9,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.inventory.meta.CraftItemFactory;
-import org.bukkit.craftbukkit.inventory.meta.CraftItemMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 @DelegateDeserialization(ItemStack.class)
@@ -230,12 +228,12 @@ public class CraftItemStack extends ItemStack {
 
     @Override
     public ItemMeta getItemMeta() {
-        return CraftItemFactory.getFactory().getItemMeta(this);
+        return CraftItemFactory.instance().getItemMeta(this);
     }
 
     @Override
     public boolean setItemMeta(ItemMeta itemMeta) {
-        if (!CraftItemFactory.getFactory().isValidMeta(itemMeta, this)) {
+        if (!CraftItemFactory.instance().isValidMeta(itemMeta, this)) {
             return false;
         }
 

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory.meta;
+package org.bukkit.craftbukkit.inventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
