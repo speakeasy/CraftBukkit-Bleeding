@@ -10,4 +10,8 @@ public class WorldProviderNormal extends WorldProvider {
         return 192;
     }
     // CraftBukkit - End
+
+    public String getName() {
+        return "Overworld";
+    }
 }
