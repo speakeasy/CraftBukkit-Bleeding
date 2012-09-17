@@ -766,7 +766,14 @@ public abstract class World implements IBlockAccess {
             while (iterator.hasNext()) {
                 IWorldAccess iworldaccess = (IWorldAccess) iterator.next();
 
-                ((WorldManager) iworldaccess).a(s, entity.locX, entity.locY - (double) entity.height, entity.locZ, f, f1, entity); // CraftBukkit - Cast to WorldManager, add sourceentity
+                // CraftBukkit start - call with entity if WorldManager (but dont break other IWorldManager implementations)
+                if (iworldaccess instanceof WorldManager) {
+                    ((WorldManager) iworldaccess).a(s, entity.locX, entity.locY - (double) entity.height, entity.locZ, f, f1, entity);
+                }
+                else {
+                    iworldaccess.a(s, entity.locX, entity.locY - (double) entity.height, entity.locZ, f, f1);
+                }
+                // CraftBukkit end
             }
         }
     }
