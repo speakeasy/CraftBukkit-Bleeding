@@ -8,13 +8,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap; // CraftBukkit
 import java.util.List;
 import java.util.Set;
 
 public class ChunkRegionLoader implements IAsyncChunkSaver, IChunkLoader {
 
-    private List a = new ArrayList();
-    private Set b = new HashSet();
+    //private List a = new ArrayList(); // CraftBukkit
+    //private Set b = new HashSet(); // CraftBukkit
+    private LinkedHashMap<ChunkCoordIntPair, PendingChunkToSave> pendingSaves = new LinkedHashMap<ChunkCoordIntPair, PendingChunkToSave>(); // CraftBukkit
     private Object c = new Object();
     private final File d;
 
@@ -28,6 +30,13 @@ public class ChunkRegionLoader implements IAsyncChunkSaver, IChunkLoader {
         Object object = this.c;
 
         synchronized (this.c) {
+            // CraftBukkit start
+            PendingChunkToSave pendingchunktosave = pendingSaves.get(chunkcoordintpair);
+            if (pendingchunktosave != null) {
+                nbttagcompound = pendingchunktosave.b;
+            }
+            /*
+            // CraftBukkit end
             if (this.b.contains(chunkcoordintpair)) {
                 Iterator iterator = this.a.iterator();
 
@@ -40,6 +49,7 @@ public class ChunkRegionLoader implements IAsyncChunkSaver, IChunkLoader {
                     }
                 }
             }
+            */ // CraftBukkit
         }
 
         if (nbttagcompound == null) {
@@ -101,6 +111,12 @@ public class ChunkRegionLoader implements IAsyncChunkSaver, IChunkLoader {
         Object object = this.c;
 
         synchronized (this.c) {
+            // CraftBukkit start
+            if (this.pendingSaves.put(chunkcoordintpair, new PendingChunkToSave(chunkcoordintpair, nbttagcompound)) != null) {
+                return;
+            }
+            /*
+            // CraftBukkit end
             if (this.b.contains(chunkcoordintpair)) {
                 for (int i = 0; i < this.a.size(); ++i) {
                     if (((PendingChunkToSave) this.a.get(i)).a.equals(chunkcoordintpair)) {
@@ -112,6 +128,7 @@ public class ChunkRegionLoader implements IAsyncChunkSaver, IChunkLoader {
 
             this.a.add(new PendingChunkToSave(chunkcoordintpair, nbttagcompound));
             this.b.add(chunkcoordintpair);
+            */ // CraftBukkit
             FileIOThread.a.a(this);
         }
     }
@@ -121,12 +138,21 @@ public class ChunkRegionLoader implements IAsyncChunkSaver, IChunkLoader {
         Object object = this.c;
 
         synchronized (this.c) {
+            // CraftBukkit start
+            if (this.pendingSaves.isEmpty()) {
+                return false;
+            }
+            pendingchunktosave = this.pendingSaves.values().iterator().next();
+            this.pendingSaves.remove(pendingchunktosave.a);
+            /*
+            // CraftBukkt end
             if (this.a.isEmpty()) {
                 return false;
             }
 
             pendingchunktosave = (PendingChunkToSave) this.a.remove(0);
             this.b.remove(pendingchunktosave.a);
+            */ // CraftBukkit
         }
 
         if (pendingchunktosave != null) {
