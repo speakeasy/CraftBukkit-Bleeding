@@ -17,9 +17,12 @@ import net.minecraft.server.EntityItem;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.EntityPotion;
+import net.minecraft.server.EntityVillager;
+import net.minecraft.server.IMerchant;
 import net.minecraft.server.InventoryCrafting;
 import net.minecraft.server.Item;
 import net.minecraft.server.ItemStack;
+import net.minecraft.server.MerchantRecipeList;
 import net.minecraft.server.Packet101CloseWindow;
 import net.minecraft.server.World;
 import net.minecraft.server.WorldServer;
@@ -49,6 +52,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
@@ -59,6 +63,7 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.MerchantRecipe;
 
 public class CraftEventFactory {
     // helper methods
@@ -543,5 +548,27 @@ public class CraftEventFactory {
         CraftItemStack item = new CraftItemStack(brokenItem);
         PlayerItemBreakEvent event = new PlayerItemBreakEvent((Player) human.getBukkitEntity(), item);
         Bukkit.getPluginManager().callEvent(event);
+    }
+
+    public static PlayerMerchantTradeEvent callPlayerMerchantTradeEvent(EntityHuman human, IMerchant merchant, MerchantRecipeList villagerDefault, MerchantRecipeList previousVillagerDefault, MerchantRecipeList currentOffer) {
+        List<MerchantRecipe> currentDefaultOffer = new ArrayList<MerchantRecipe>();
+        for (Object o : villagerDefault) {
+            net.minecraft.server.MerchantRecipe r = (net.minecraft.server.MerchantRecipe) o;
+            currentDefaultOffer.add(currentDefaultOffer.size(), new MerchantRecipe(new CraftItemStack(r.getBuyItem1()), new CraftItemStack(r.getBuyItem2()), new CraftItemStack(r.getBuyItem3()), r.getUses()));
+        }
+        List<MerchantRecipe> previousDefaultOffer = new ArrayList<MerchantRecipe>();
+        for (Object o : previousVillagerDefault) {
+            net.minecraft.server.MerchantRecipe r = (net.minecraft.server.MerchantRecipe) o;
+            previousDefaultOffer.add(previousDefaultOffer.size(), new MerchantRecipe(new CraftItemStack(r.getBuyItem1()), new CraftItemStack(r.getBuyItem2()), new CraftItemStack(r.getBuyItem3()), r.getUses()));
+        }
+        List<MerchantRecipe> current = new ArrayList<MerchantRecipe>();
+        for (Object o : currentOffer) {
+            net.minecraft.server.MerchantRecipe r = (net.minecraft.server.MerchantRecipe) o;
+            current.add(current.size(), new MerchantRecipe(new CraftItemStack(r.getBuyItem1()), new CraftItemStack(r.getBuyItem2()), new CraftItemStack(r.getBuyItem3()), r.getUses()));
+        }
+        PlayerMerchantTradeEvent.State state = previousVillagerDefault == null ? PlayerMerchantTradeEvent.State.NEW_INTERACTION : PlayerMerchantTradeEvent.State.UPDATED_INTERACTION;
+        PlayerMerchantTradeEvent event = new PlayerMerchantTradeEvent((Player) human.getBukkitEntity(), (Villager)(((Entity) merchant).getBukkitEntity()), currentDefaultOffer, previousDefaultOffer, current, state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 }

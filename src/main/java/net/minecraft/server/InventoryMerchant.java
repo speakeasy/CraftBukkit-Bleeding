@@ -3,7 +3,10 @@ package net.minecraft.server;
 // CraftBukkit start
 import java.util.List;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.player.PlayerMerchantTradeEvent;
 // CraftBukkit end
 
 public class InventoryMerchant implements IInventory {
@@ -15,6 +18,8 @@ public class InventoryMerchant implements IInventory {
     private int e;
 
     // CraftBukkit start
+    public MerchantRecipeList offers;
+    public MerchantRecipeList merchantOffers;
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
 
@@ -46,6 +51,15 @@ public class InventoryMerchant implements IInventory {
     public InventoryMerchant(EntityHuman entityhuman, IMerchant imerchant) {
         this.player = entityhuman;
         this.merchant = imerchant;
+        // CraftBukkit start - customize the offer for this situation
+        this.merchantOffers = imerchant.getOffers(entityhuman); // Store the current merchant's offers so we can detect changes later
+        PlayerMerchantTradeEvent event = CraftEventFactory.callPlayerMerchantTradeEvent(entityhuman, imerchant, merchantOffers, null, merchantOffers);
+        List<org.bukkit.inventory.MerchantRecipe> offer = event.getOffer();
+        this.offers = new MerchantRecipeList();
+        for (org.bukkit.inventory.MerchantRecipe r : offer) {
+            this.offers.add(this.offers.size(), new MerchantRecipe(((CraftItemStack) r.getBuyingItem1()).clone().getHandle(), ((CraftItemStack) r.getBuyingItem2()).clone().getHandle(), ((CraftItemStack) r.getResult()).clone().getHandle()));
+        }
+        // CraftBukkit end
     }
 
     public int getSize() {
@@ -149,6 +163,19 @@ public class InventoryMerchant implements IInventory {
             this.setItem(2, (ItemStack) null);
         } else {
             MerchantRecipeList merchantrecipelist = this.merchant.getOffers(this.player);
+            // CraftBukkit start
+            if (!merchantrecipelist.equals(this.merchantOffers)) {
+                PlayerMerchantTradeEvent event = CraftEventFactory.callPlayerMerchantTradeEvent(this.player, this.merchant, merchantOffers, null, merchantOffers);
+                List<org.bukkit.inventory.MerchantRecipe> offer = event.getOffer();
+                this.offers = new MerchantRecipeList();
+                for (org.bukkit.inventory.MerchantRecipe r : offer) {
+                    this.offers.add(this.offers.size(), new MerchantRecipe(((CraftItemStack) r.getBuyingItem1()).clone().getHandle(), ((CraftItemStack) r.getBuyingItem2()).clone().getHandle(), ((CraftItemStack) r.getResult()).clone().getHandle()));
+                }
+                this.merchantOffers = merchantrecipelist;
+            }
+            // Last, set it to the offer
+            merchantrecipelist = this.offers;
+            // CraftBukkit end
 
             if (merchantrecipelist != null) {
                 MerchantRecipe merchantrecipe = merchantrecipelist.a(itemstack, itemstack1, this.e);
@@ -170,6 +197,12 @@ public class InventoryMerchant implements IInventory {
             }
         }
     }
+
+    // CraftBukkit start - get stored offers
+    public MerchantRecipeList getOffers() {
+        return this.offers;
+    }
+    // CraftBukkit end
 
     public MerchantRecipe getRecipe() {
         return this.recipe;

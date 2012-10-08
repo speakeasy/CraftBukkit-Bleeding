@@ -569,7 +569,10 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         InventoryMerchant inventorymerchant = ((ContainerMerchant) this.activeContainer).getMerchantInventory();
 
         this.netServerHandler.sendPacket(new Packet100OpenWindow(this.containerCounter, 6, inventorymerchant.getName(), inventorymerchant.getSize()));
-        MerchantRecipeList merchantrecipelist = imerchant.getOffers(this);
+        // CraftBukkit start - use InventoryMerchant's offer list for trading api
+        // MerchantRecipeList merchantrecipelist = imerchant.getOffers(this);
+        MerchantRecipeList merchantrecipelist = inventorymerchant.getOffers();
+        // CraftBukkit end
 
         if (merchantrecipelist != null) {
             try {
