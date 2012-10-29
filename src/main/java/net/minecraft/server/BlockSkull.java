@@ -78,7 +78,7 @@ public class BlockSkull extends BlockContainer {
         return i;
     }
 
-    public void dropNaturally(World world, int i, int j, int k, int l, float f, int i1) {}
+    // public void dropNaturally(World world, int i, int j, int k, int l, float f, int i1) {} // CraftBukkit - removed
 
     public void a(World world, int i, int j, int k, int l, EntityHuman entityhuman) {
         if (entityhuman.abilities.canInstantlyBuild) {
@@ -89,7 +89,8 @@ public class BlockSkull extends BlockContainer {
         super.a(world, i, j, k, l, entityhuman);
     }
 
-    public void remove(World world, int i, int j, int k, int l, int i1) {
+    // CraftBukkit start - removed
+    /*public void remove(World world, int i, int j, int k, int l, int i1) {
         if (!world.isStatic) {
             if ((i1 & 8) == 0) {
                 this.a(world, i, j, k, new ItemStack(Item.SKULL.id, 1, this.getDropData(world, i, j, k)));
@@ -97,7 +98,8 @@ public class BlockSkull extends BlockContainer {
 
             super.remove(world, i, j, k, l, i1);
         }
-    }
+    }*/
+    // CraftBukkit end
 
     public int getDropType(int i, Random random, int j) {
         return Item.SKULL.id;
