@@ -1011,8 +1011,12 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
         ichunkprovider.getChunkAt(chunkcoordinates.x + 3 >> 4, chunkcoordinates.z - 3 >> 4);
         ichunkprovider.getChunkAt(chunkcoordinates.x - 3 >> 4, chunkcoordinates.z + 3 >> 4);
         ichunkprovider.getChunkAt(chunkcoordinates.x + 3 >> 4, chunkcoordinates.z + 3 >> 4);
-        if (world.getTypeId(chunkcoordinates.x, chunkcoordinates.y, chunkcoordinates.z) != Block.BED.id) {
-            return flag && world.isEmpty(chunkcoordinates.x, chunkcoordinates.y, chunkcoordinates.z) && world.isEmpty(chunkcoordinates.x, chunkcoordinates.y + 1, chunkcoordinates.z) ? chunkcoordinates : null;
+        // CraftBukkit start - Handle forced spawn points
+        if (flag) {
+            return chunkcoordinates;
+        } else if (world.getTypeId(chunkcoordinates.x, chunkcoordinates.y, chunkcoordinates.z) != Block.BED.id) {
+            return null;
+            // CraftBukkit end
         } else {
             ChunkCoordinates chunkcoordinates1 = BlockBed.b(world, chunkcoordinates.x, chunkcoordinates.y, chunkcoordinates.z, 0);
 
