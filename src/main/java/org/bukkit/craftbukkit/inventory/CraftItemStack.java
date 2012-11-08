@@ -9,6 +9,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.inventory.meta.ItemMeta;
 
 @DelegateDeserialization(ItemStack.class)
 public class CraftItemStack extends ItemStack {
@@ -227,6 +228,21 @@ public class CraftItemStack extends ItemStack {
             itemStack.item = this.item.cloneItemStack();
         }
         return itemStack;
+    }
+
+    @Override
+    public ItemMeta getItemMeta() {
+        return CraftItemFactory.instance().getItemMeta(this);
+    }
+
+    @Override
+    public boolean setItemMeta(ItemMeta itemMeta) {
+        if (!CraftItemFactory.instance().isValidMeta(itemMeta, this)) {
+            return false;
+        }
+
+        ((CraftItemMeta) itemMeta).applyToItem(this);
+        return true;
     }
 
     public static net.minecraft.server.ItemStack createNMSItemStack(ItemStack original) {

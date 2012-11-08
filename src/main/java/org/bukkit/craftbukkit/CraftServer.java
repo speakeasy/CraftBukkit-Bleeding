@@ -71,6 +71,7 @@ import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
 import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCustom;
+import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
 import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
@@ -1302,5 +1303,9 @@ public final class CraftServer implements Server {
         }
         Collections.sort(completions, String.CASE_INSENSITIVE_ORDER);
         return completions;
+    }
+
+    public CraftItemFactory getItemFactory() {
+        return CraftItemFactory.instance();
     }
 }
