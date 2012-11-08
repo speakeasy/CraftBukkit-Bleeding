@@ -20,7 +20,6 @@ public final class CraftItemFactory implements ItemFactory {
     }
     private static CraftItemFactory instance = new CraftItemFactory();
 
-    // TODO: Add Enchantments
     private CraftItemFactory() {}
 
     public boolean isValidMeta(ItemMeta meta, ItemStack itemstack) {
@@ -33,7 +32,9 @@ public final class CraftItemFactory implements ItemFactory {
 
     private CraftItemMeta getItemMeta(Material material, ItemStack itemstack) {
         if (material == null) {
-            material = itemstack.getType();
+            if (itemstack != null) {
+                material = itemstack.getType();
+            }
 
             if (material == null) {
                 material = Material.AIR;
@@ -47,6 +48,21 @@ public final class CraftItemFactory implements ItemFactory {
                     return new CraftBookMeta((CraftItemStack) itemstack);
                 } else {
                     return new CraftBookMeta();
+                }
+            case SKULL_ITEM:
+                if (itemstack instanceof CraftItemStack) {
+                    return new CraftBookMeta((CraftItemStack) itemstack);
+                } else {
+                    return new CraftBookMeta();
+                }
+            case LEATHER_HELMET:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case LEATHER_BOOTS:
+                if (itemstack instanceof CraftItemStack) {
+                    return new CraftLeatherArmorMeta((CraftItemStack) itemstack);
+                } else {
+                    return new CraftLeatherArmorMeta();
                 }
             default:
                 return new CraftItemMeta();
@@ -77,7 +93,8 @@ public final class CraftItemFactory implements ItemFactory {
         if (meta2 == null) {
             return ((CraftItemMeta) meta1).isEmpty();
         }
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        return meta1.equals(meta2);
     }
 
     public static CraftItemFactory instance() {

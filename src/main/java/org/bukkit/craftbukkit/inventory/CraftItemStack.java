@@ -12,7 +12,7 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.ItemMeta;
 
 @DelegateDeserialization(ItemStack.class)
-public class CraftItemStack extends ItemStack {
+public final class CraftItemStack extends ItemStack {
     protected net.minecraft.server.ItemStack item;
 
     public CraftItemStack(net.minecraft.server.ItemStack item) {
@@ -27,6 +27,7 @@ public class CraftItemStack extends ItemStack {
     public CraftItemStack(ItemStack item) {
         this(item.getTypeId(), item.getAmount(), item.getDurability());
         addUnsafeEnchantments(item.getEnchantments());
+        setItemMeta(item.getItemMeta());
     }
 
     /* 'Overwritten' constructors from ItemStack, yay for Java sucking */
@@ -68,29 +69,17 @@ public class CraftItemStack extends ItemStack {
      */
 
     @Override
-    public Material getType() {
-        super.setTypeId(item != null ? item.id : 0); // sync, needed?
-        return super.getType();
-    }
-
-    @Override
     public int getTypeId() {
-        super.setTypeId(item != null ? item.id : 0); // sync, needed?
         return item != null ? item.id : 0;
     }
 
     @Override
     public void setTypeId(int type) {
         if (type == 0) {
-            super.setTypeId(0);
-            super.setAmount(0);
             item = null;
         } else {
             if (item == null) {
                 item = new net.minecraft.server.ItemStack(type, 1, 0);
-                super.setTypeId(type);
-                super.setAmount(1);
-                super.setDurability((short) 0);
             } else {
                 item.id = type;
                 super.setTypeId(item.id);
@@ -100,15 +89,12 @@ public class CraftItemStack extends ItemStack {
 
     @Override
     public int getAmount() {
-        super.setAmount(item != null ? item.count : 0); // sync, needed?
-        return (item != null ? item.count : 0);
+        return item != null ? item.count : 0;
     }
 
     @Override
     public void setAmount(int amount) {
         if (amount == 0) {
-            super.setTypeId(0);
-            super.setAmount(0);
             item = null;
         } else {
             super.setAmount(amount);
@@ -173,7 +159,7 @@ public class CraftItemStack extends ItemStack {
         return getEnchantments(item);
     }
 
-    public static Map<Enchantment, Integer> getEnchantments(net.minecraft.server.ItemStack item) {
+    static Map<Enchantment, Integer> getEnchantments(net.minecraft.server.ItemStack item) {
         Map<Enchantment, Integer> result = new HashMap<Enchantment, Integer>();
         NBTTagList list = (item == null) ? null : item.getEnchantments();
 

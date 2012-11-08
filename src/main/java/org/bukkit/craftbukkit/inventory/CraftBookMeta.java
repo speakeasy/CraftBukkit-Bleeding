@@ -6,6 +6,7 @@ import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
 import org.apache.commons.lang.Validate;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
@@ -17,6 +18,8 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     // Build meta based off handle
     CraftBookMeta(CraftItemStack itemstack) {
+        super(itemstack);
+
         NBTTagCompound tag = itemstack.getHandle().getTag();
         if (tag.hasKey("title")) {
             this.title = tag.getString("title");
@@ -36,11 +39,18 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         }
     }
 
-    // Clone the meta
-    private CraftBookMeta(CraftBookMeta itemmeta) {
-        this.title = itemmeta.title;
-        this.author = itemmeta.author;
-        this.pages.addAll(itemmeta.pages);
+    @Override
+    boolean isEmpty() {
+        // TODO: CraftBookMeta.isEmpty
+        return super.isEmpty();
+    }
+
+    boolean applicableTo(ItemStack itemstack) {
+        switch(itemstack.getType()) {
+            case BOOK:
+            case BOOK_AND_QUILL: return true;
+            default: return false;
+        }
     }
 
     public String getTitle() {
@@ -72,15 +82,29 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         return pages.get(page - 1);
     }
 
-    public boolean setPage(final int page, final String data) {
-        if (!isValidPage(page)) {
-            return false;
-        } else if (data != null && data.length() > 256) {
-            return false;
-        }
+    public boolean setPage(final int page, final String text) {
+        Validate.isTrue(isValidPage(page), "Invalid page number " + page + "/" + pages.size());
 
-        pages.set(page - 1, data == null ? "" : data);
+        pages.set(page - 1, text == null ? "" : text.length() > 256 ? text.substring(0, 256) : text);
         return true;
+    }
+
+    public void setPages(final String... pages) {
+        this.pages.clear();
+
+        addPage(pages);
+    }
+
+    public void addPage(final String... pages) {
+        for (String page : pages) {
+            if (page == null) {
+                page = "";
+            } else if (page.length() > 256) {
+                page = page.substring(0, 256);
+            }
+
+            this.pages.add(page);
+        }
     }
 
     public int getPageCount() {
@@ -103,7 +127,9 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    public void applyToItem(CraftItemStack item) {
+    void applyToItem(CraftItemStack item) {
+        super.applyToItem(item);
+
         NBTTagCompound itemData = item.getHandle().getTag();
         itemData.setString("title", this.title);
         itemData.setString("author", this.author);
@@ -113,5 +139,19 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
             itemPages.add(new NBTTagString("" + i, pages.get(i - 1)));
         }
         itemData.set("pages", itemPages);
+    }
+
+
+
+    public boolean equals(Object object) {
+        if (!super.equals(object)) {
+            return false;
+        } else if (!(object instanceof CraftBookMeta)) {
+            return false;
+        }
+
+        CraftBookMeta objectMeta = (CraftBookMeta) object;
+
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
