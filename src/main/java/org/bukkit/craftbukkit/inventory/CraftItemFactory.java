@@ -82,9 +82,4 @@ public final class CraftItemFactory implements ItemFactory {
     public static CraftItemFactory instance() {
         return instance;
     }
-
-    ItemMeta getItemMeta(net.minecraft.server.ItemStack item) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }
