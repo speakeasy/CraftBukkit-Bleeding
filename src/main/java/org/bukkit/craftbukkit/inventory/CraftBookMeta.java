@@ -41,8 +41,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     @Override
     boolean isEmpty() {
-        // TODO: CraftBookMeta.isEmpty
-        return super.isEmpty();
+        return title == null && author == null && pages.isEmpty() && super.isEmpty();
     }
 
     boolean applicableTo(ItemStack itemstack) {
@@ -122,7 +121,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     @Override
     public CraftBookMeta clone() {
         CraftBookMeta meta = (CraftBookMeta) super.clone();
-        meta.pages = (List<String>) ((ArrayList<String>) pages).clone();
+        meta.pages = new ArrayList<String>(pages);
         return meta;
     }
 
@@ -136,7 +135,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
         NBTTagList itemPages = new NBTTagList("pages");
         for (int i = 1; i < pages.size() + 1; i++) {
-            itemPages.add(new NBTTagString("" + i, pages.get(i - 1)));
+            itemPages.add(new NBTTagString(String.valueOf(i), pages.get(i - 1)));
         }
         itemData.set("pages", itemPages);
     }
