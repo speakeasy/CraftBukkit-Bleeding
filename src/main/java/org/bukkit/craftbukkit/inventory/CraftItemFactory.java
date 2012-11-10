@@ -28,7 +28,7 @@ public final class CraftItemFactory implements ItemFactory {
             return false;
         }
 
-        return ((CraftItemMeta) meta).applicableTo(itemstack);
+        return ((CraftItemMeta) meta).applicableTo(itemstack.getType());
     }
 
     private CraftItemMeta getItemMeta(Material material, ItemStack itemstack) {

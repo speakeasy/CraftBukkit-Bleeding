@@ -229,7 +229,13 @@ public final class CraftItemStack extends ItemStack {
             return false;
         }
 
-        ((CraftItemMeta) itemMeta).applyToItem(this);
+        NBTTagCompound tag = getHandle().getTag();
+        if (tag == null) {
+            tag = new NBTTagCompound();
+            getHandle().setTag(tag);
+        }
+
+        ((CraftItemMeta) itemMeta).applyToItem(tag);
         return true;
     }
 

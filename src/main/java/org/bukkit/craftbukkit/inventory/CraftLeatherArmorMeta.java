@@ -20,13 +20,9 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
         }
     }
 
-    void applyToItem(CraftItemStack item) {
-        super.applyToItem(item);
-
+    void applyToItem(NBTTagCompound itemTag) {
         // TODO when is color empty?
         if (color > 0) {
-            NBTTagCompound itemTag = item.getHandle().getTag();
-
             setDisplay(itemTag, new NBTTagInt("color", color));
         }
     }

@@ -22,14 +22,7 @@ class CraftItemMeta implements ItemMeta {
         readTag(tag);
     }
 
-    void applyToItem(CraftItemStack item) {
-        net.minecraft.server.ItemStack nmsStack = item.getHandle();
-        NBTTagCompound itemTag = nmsStack.tag;
-
-        if (itemTag == null) {
-            itemTag = nmsStack.tag = new NBTTagCompound();
-        }
-
+    void applyToItem(NBTTagCompound itemTag) {
         if (displayName != null) {
             setDisplay(itemTag, new NBTTagString("Name", displayName));
         }

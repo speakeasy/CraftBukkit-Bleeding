@@ -20,10 +20,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
         return !hasOwner() && super.isEmpty();
     }
 
-    void applyToItem(CraftItemStack item) {
-        super.applyToItem(item);
-
-        NBTTagCompound tag = item.getHandle().getTag();
+    void applyToItem(NBTTagCompound tag) {
         if (player == null) {
             tag.remove("SkullOwner");
         } else {

@@ -37,10 +37,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    void applyToItem(CraftItemStack item) {
-        super.applyToItem(item);
-
-        NBTTagCompound itemData = item.getHandle().getTag();
+    void applyToItem(NBTTagCompound itemData) {
         if (this.title == null) {
             itemData.remove("title");
         } else {
