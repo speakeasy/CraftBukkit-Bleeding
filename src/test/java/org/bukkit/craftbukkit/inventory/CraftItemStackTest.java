@@ -1,7 +1,11 @@
 package org.bukkit.craftbukkit.inventory;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+
 import net.minecraft.server.Enchantment;
 import net.minecraft.server.StatisticList;
+
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,12 +22,12 @@ public class CraftItemStackTest {
         nmsItemStack.addEnchantment(Enchantment.DAMAGE_ALL, 1);
         ItemStack itemStack = CraftItemStack.asCraftMirror(nmsItemStack);
         ItemStack clone = itemStack.clone();
-        assert (clone.getType().equals(itemStack.getType()));
-        assert (clone.getAmount() == itemStack.getAmount());
-        assert (clone.getDurability() == itemStack.getDurability());
-        assert (clone.getEnchantments().equals(itemStack.getEnchantments()));
-        assert (clone.getTypeId() == itemStack.getTypeId());
-        assert (clone.getData().equals(itemStack.getData()));
+        assertThat(clone.getType(), is(itemStack.getType()));
+        assertThat(clone.getAmount(), is(itemStack.getAmount()));
+        assertThat(clone.getDurability(), is(itemStack.getDurability()));
+        assertThat(clone.getEnchantments(), is(itemStack.getEnchantments()));
+        assertThat(clone.getTypeId(), is(itemStack.getTypeId()));
+        assertThat(clone.getData(), is(itemStack.getData()));
     }
 
     @Test
@@ -31,6 +35,6 @@ public class CraftItemStackTest {
         net.minecraft.server.ItemStack nmsItemStack = null;
         ItemStack itemStack = CraftItemStack.asCraftMirror(nmsItemStack);
         ItemStack clone = itemStack.clone();
-        assert (clone.equals(itemStack));
+        assertThat(clone, is((itemStack)));
     }
 }
