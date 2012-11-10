@@ -1,9 +1,11 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.Validate;
+import net.minecraft.server.NBTBase;
+import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.NBTTagList;
+import net.minecraft.server.NBTTagString;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,12 +14,14 @@ class CraftItemMeta implements ItemMeta {
     private String displayName;
     private List<String> lore; // TODO: lore
     private Map<Enchantment, Integer> enchantments; // TODO: enchantments
-    private int maxStackSize; // TODO: custom max size
+    private int maxStackSize; // Scratch this
 
     CraftItemMeta() {}
 
     CraftItemMeta(CraftItemStack itemstack) {
-        // TODO: Set item data
+        net.minecraft.server.ItemStack nmsStack = itemstack.getHandle();
+
+        readTag(nmsStack.tag);
     }
 
     public CraftItemMeta clone() {
@@ -28,9 +32,52 @@ class CraftItemMeta implements ItemMeta {
         }
     }
 
+    private void readTag(NBTTagCompound itemTag) {
+        if (itemTag == null) {
+            return;
+        }
+
+        if (itemTag.hasKey("display")) {
+            NBTTagCompound display = itemTag.getCompound("display");
+            if (display.hasKey("Name")) {
+                setDisplayName(display.getString("Name"));
+            }
+
+            if (display.hasKey("Lore")) {
+                // TODO: Lore
+            }
+        }
+
+        if (itemTag.hasKey("ench")) {
+            NBTTagList enchantments = itemTag.getList("ench");
+
+            // TODO: Enchantments
+        }
+    }
+
     void applyToItem(CraftItemStack item) {
-        item.getHandle().c(displayName); // Set display name, creates stuff for us
+        net.minecraft.server.ItemStack nmsStack = item.getHandle();
+        NBTTagCompound itemTag = nmsStack.tag;
+
+        if (itemTag == null) {
+            itemTag = new NBTTagCompound();
+        }
+
+        if (displayName != null) {
+            setDisplay(itemTag, new NBTTagString("Name", displayName));
+        }
+
         // TODO: Apply enchantments
+    }
+
+    void setDisplay(NBTTagCompound tag, NBTBase nbtitem) {
+        NBTTagCompound display = tag.getCompound("display");
+
+        if (!tag.hasKey("display")) {
+            tag.setCompound("display", tag);
+        }
+
+        display.set(nbtitem.getName(), nbtitem);
     }
 
     boolean applicableTo(ItemStack itemstack) {
@@ -122,7 +169,6 @@ class CraftItemMeta implements ItemMeta {
             return false;
         }
 
-        // CustomStackSize check
         return true;
     }
 

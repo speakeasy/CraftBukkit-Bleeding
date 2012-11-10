@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
 import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.NBTTagInt;
 import org.bukkit.inventory.ItemStack;
 
 class CraftLeatherArmorMeta extends CraftItemMeta {
@@ -36,13 +37,8 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
 
         if (color > 0) { // && color < (the max color...)
             NBTTagCompound itemTag = item.getHandle().getTag();
-            NBTTagCompound display = itemTag.getCompound("display");
 
-            if (!itemTag.hasKey("display")) {
-                itemTag.setCompound("display", display);
-            }
-
-            display.setInt("color", color);
+            setDisplay(itemTag, new NBTTagInt("color", color));
         }
     }
 
