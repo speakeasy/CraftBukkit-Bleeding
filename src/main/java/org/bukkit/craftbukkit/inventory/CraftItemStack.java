@@ -18,6 +18,10 @@ import com.google.common.collect.ImmutableMap;
 public final class CraftItemStack extends ItemStack {
 
     public static net.minecraft.server.ItemStack asNMSCopy(ItemStack original) {
+        if (original instanceof CraftItemStack) {
+            CraftItemStack stack = (CraftItemStack) original;
+            return stack.item == null ? null : stack.item.cloneItemStack();
+        }
         if (original == null || original.getTypeId() <= 0) {
             return null;
         }
