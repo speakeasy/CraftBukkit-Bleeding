@@ -12,66 +12,78 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
-
 import com.google.common.collect.ImmutableMap;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
+
+    public static net.minecraft.server.ItemStack asNMSCopy(ItemStack original) {
+        if (original == null || original.getTypeId() <= 0) {
+            return null;
+        }
+        net.minecraft.server.ItemStack stack = new net.minecraft.server.ItemStack(original.getTypeId(), original.getAmount(), original.getDurability());
+        if (original.hasItemMeta()) {
+            setItemMeta(stack, original.getItemMeta());
+        }
+        return stack;
+    }
+
+    public static net.minecraft.server.ItemStack copyNMSStack(net.minecraft.server.ItemStack original, int amount) {
+        net.minecraft.server.ItemStack stack = original.cloneItemStack();
+        stack.count = amount;
+        return stack;
+    }
+
+    /**
+     * Copies the NMS stack to return as a strictly-Bukkit stack
+     */
+    public static ItemStack asBukkitCopy(net.minecraft.server.ItemStack original) {
+        ItemStack stack = new ItemStack(original.id, original.count, (short) original.getData());
+        if (hasItemMeta(original)) {
+            stack.setItemMeta(getItemMeta(original));
+        }
+        return stack;
+    }
+
+    public static CraftItemStack asCraftMirror(net.minecraft.server.ItemStack original) {
+        return new CraftItemStack(original);
+    }
+
+    public static CraftItemStack asCraftCopy(ItemStack original) {
+        if (original instanceof CraftItemStack) {
+            CraftItemStack stack = (CraftItemStack) original;
+            return new CraftItemStack(stack.item == null ? null : stack.item.cloneItemStack());
+        }
+        return new CraftItemStack(original);
+    }
+
+    public static CraftItemStack asNewCraftStack(net.minecraft.server.Item item) {
+        return asNewCraftStack(item, 1);
+    }
+
+    public static CraftItemStack asNewCraftStack(net.minecraft.server.Item item, int amount) {
+        return new CraftItemStack(item.id, amount, (short) 0, null);
+    }
+
     net.minecraft.server.ItemStack item;
 
+    /**
+     * Mirror
+     */
     private CraftItemStack(net.minecraft.server.ItemStack item) {
-        super(
-            item != null ? item.id: 0,
-            item != null ? item.count : 0,
-            (short)(item != null ? item.getData() : 0)
-        );
         this.item = item;
     }
 
     private CraftItemStack(ItemStack item) {
-        this(item.getTypeId(), item.getAmount(), item.getDurability());
-        addUnsafeEnchantments(item.getEnchantments());
-        setItemMeta(item.getItemMeta());
+        this(item.getTypeId(), item.getAmount(), item.getDurability(), item.hasItemMeta() ? item.getItemMeta() : null);
     }
 
-    /* 'Overwritten' constructors from ItemStack, yay for Java sucking */
-    private CraftItemStack(final int type) {
-        this(type, 1);
+    private CraftItemStack(int typeId, int amount, short durability, ItemMeta itemMeta) {
+        setTypeId(typeId);
+        setAmount(amount);
+        setDurability(durability);
+        setItemMeta(itemMeta);
     }
-
-    private CraftItemStack(final Material type) {
-        this(type, 1);
-    }
-
-    private CraftItemStack(final int type, final int amount) {
-        this(type, amount, (byte) 0);
-    }
-
-    private CraftItemStack(final Material type, final int amount) {
-        this(type.getId(), amount);
-    }
-
-    private CraftItemStack(final int type, final int amount, final short damage) {
-        this(type, amount, damage, null);
-    }
-
-    private CraftItemStack(final Material type, final int amount, final short damage) {
-        this(type.getId(), amount, damage);
-    }
-
-    private CraftItemStack(final Material type, final int amount, final short damage, final Byte data) {
-        this(type.getId(), amount, damage, data);
-    }
-
-    private CraftItemStack(int type, int amount, short damage, Byte data) {
-        this(new net.minecraft.server.ItemStack(type, amount, data != null ? data : damage));
-    }
-
-    /*
-     * Unsure if we have to sync before each of these calls the values in 'item'
-     * are all public.
-     */
 
     @Override
     public int getTypeId() {
@@ -252,33 +264,6 @@ public final class CraftItemStack extends ItemStack {
         return item == null ? null : item.getEnchantments();
     }
 
-    @Deprecated
-    private void rebuildEnchantments(Map<Enchantment, Integer> enchantments) {
-        if (item == null) return;
-
-        NBTTagCompound tag = item.tag;
-        NBTTagList list = new NBTTagList("ench");
-
-        if (tag == null) {
-            tag = item.tag = new NBTTagCompound();
-        }
-
-        for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-            NBTTagCompound subtag = new NBTTagCompound();
-
-            subtag.setShort("id", (short) entry.getKey().getId());
-            subtag.setShort("lvl", (short) (int) entry.getValue());
-
-            list.add(subtag);
-        }
-
-        if (enchantments.isEmpty()) {
-            tag.remove("ench");
-        } else {
-            tag.set("ench", list);
-        }
-    }
-
     public net.minecraft.server.ItemStack getHandle() {
         return item;
     }
@@ -294,10 +279,14 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public ItemMeta getItemMeta() {
-        if (!hasItemMeta()) {
-            return CraftItemFactory.instance().getItemMeta(getType());
+        return getItemMeta(item);
+    }
+
+    static ItemMeta getItemMeta(net.minecraft.server.ItemStack item) {
+        if (!hasItemMeta(item)) {
+            return CraftItemFactory.instance().getItemMeta(getType(item));
         }
-        switch (getType()) {
+        switch (getType(item)) {
             case WRITTEN_BOOK:
             case BOOK_AND_QUILL:
                 return new CraftBookMeta(item.tag);
@@ -313,30 +302,36 @@ public final class CraftItemStack extends ItemStack {
         }
     }
 
+    static Material getType(net.minecraft.server.ItemStack item) {
+        Material material = Material.getMaterial(item == null ? 0 : item.id);
+        return material == null ? Material.AIR : material;
+    }
+
     @Override
     public boolean setItemMeta(ItemMeta itemMeta) {
-        if (!CraftItemFactory.instance().isValidMeta(itemMeta, this)) {
+        return setItemMeta(item, itemMeta);
+    }
+
+    static boolean setItemMeta(net.minecraft.server.ItemStack item, ItemMeta itemMeta) {
+        if (item == null) {
+            return false;
+        }
+        if (itemMeta == null) {
+            item.tag = null;
+            return true;
+        }
+        if (!CraftItemFactory.instance().isValidMeta(itemMeta, getType(item))) {
             return false;
         }
 
-        NBTTagCompound tag = getHandle().getTag();
+        NBTTagCompound tag = item.getTag();
         if (tag == null) {
             tag = new NBTTagCompound();
-            getHandle().setTag(tag);
+            item.setTag(tag);
         }
 
         ((CraftItemMeta) itemMeta).applyToItem(tag);
         return true;
-    }
-
-    @Override
-    public MaterialData getData() {
-        return super.getData();
-    }
-
-    @Override
-    public void setData(MaterialData data) {
-        super.setData(data); // TODO: reset on set type
     }
 
     @Override
@@ -378,44 +373,10 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public boolean hasItemMeta() {
+        return hasItemMeta(item);
+    }
+
+    static boolean hasItemMeta(net.minecraft.server.ItemStack item) {
         return !(item == null || item.tag == null || item.tag.d());
-    }
-
-    public static net.minecraft.server.ItemStack asNMSCopy(ItemStack original) {
-        if (original == null || original.getTypeId() <= 0) {
-            return null;
-        } else if (original instanceof CraftItemStack) {
-            return ((CraftItemStack) original).getHandle(); // TODO, use actual copy
-        }
-        return new CraftItemStack(original).getHandle();
-    }
-
-    public static net.minecraft.server.ItemStack copyNMSStack(net.minecraft.server.ItemStack original, int amount) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Copies the NMS stack to return as a strictly-Bukkit stack
-     */
-    public static ItemStack asBukkitCopy(net.minecraft.server.ItemStack original) {
-        ItemStack stack = new ItemStack(original.id, original.count, (short) original.getData());
-        stack.addUnsafeEnchantments(getEnchantments(original));
-        return stack;
-    }
-
-    public static CraftItemStack asCraftMirror(net.minecraft.server.ItemStack original) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static CraftItemStack asCraftCopy(ItemStack original) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static CraftItemStack asNewCraftStack(net.minecraft.server.Item item) {
-        throw new UnsupportedOperationException();
-    }
-
-    public static CraftItemStack asNewCraftStack(net.minecraft.server.Item item, int amount) {
-        throw new UnsupportedOperationException();
     }
 }
