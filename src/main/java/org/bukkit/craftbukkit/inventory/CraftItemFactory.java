@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.inventory;
 
 import java.util.Map;
 
-import net.minecraft.server.NBTTagCompound;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -31,63 +31,32 @@ public final class CraftItemFactory implements ItemFactory {
         return ((CraftItemMeta) meta).applicableTo(itemstack.getType());
     }
 
-    private CraftItemMeta getItemMeta(Material material, ItemStack itemstack) {
-        if (material == null) {
-            if (itemstack != null) {
-                material = itemstack.getType();
-            }
-
-            if (material == null) {
-                material = Material.AIR;
-            }
-        }
-
-        NBTTagCompound tag = null;
-        if (itemstack instanceof CraftItemStack) {
-            net.minecraft.server.ItemStack handle = ((CraftItemStack) itemstack).getHandle();
-            if (handle != null) {
-                tag = handle.getTag();
-            }
-        }
-
+    private CraftItemMeta makeItemMeta(Material material) {
         switch (material) {
             case WRITTEN_BOOK:
             case BOOK_AND_QUILL:
-                if (tag != null) {
-                    return new CraftBookMeta(tag);
-                } else {
-                    return new CraftBookMeta();
-                }
+                return new CraftBookMeta();
             case SKULL_ITEM:
-                if (tag != null) {
-                    return new CraftSkullMeta(tag);
-                } else {
-                    return new CraftSkullMeta();
-                }
+                return new CraftSkullMeta();
             case LEATHER_HELMET:
             case LEATHER_CHESTPLATE:
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
-                if (tag != null) {
-                    return new CraftLeatherArmorMeta(tag);
-                } else {
-                    return new CraftLeatherArmorMeta();
-                }
+                return new CraftLeatherArmorMeta();
             default:
-                if (tag != null) {
-                    return new CraftItemMeta(tag);
-                } else {
-                    return new CraftItemMeta();
-                }
+                return new CraftItemMeta();
         }
     }
 
-    public ItemMeta getItemMeta(ItemStack itemstack) {
-        return getItemMeta(null, itemstack);
+    public ItemMeta getItemMeta(ItemStack itemStack) {
+        Validate.notNull(itemStack, "Stack cannot be null");
+        Material material = itemStack.getType();
+        return makeItemMeta(material == null ? Material.AIR : material);
     }
 
     public ItemMeta getItemMeta(Material material) {
-        return getItemMeta(material, null);
+        Validate.notNull(material, "Material cannot be null");
+        return makeItemMeta(material);
     }
 
     public boolean equals(ItemMeta meta1, ItemMeta meta2) {
@@ -112,5 +81,10 @@ public final class CraftItemFactory implements ItemFactory {
 
     public static CraftItemFactory instance() {
         return instance;
+    }
+
+    ItemMeta getItemMeta(net.minecraft.server.ItemStack item) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

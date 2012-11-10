@@ -207,6 +207,9 @@ public final class CraftItemStack extends ItemStack {
         }
         if (index == 0 && size == 0) {
             item.tag.remove("ench");
+            if (item.tag.d()) {
+                item.tag = null;
+            }
         }
 
         listCopy = new NBTTagList("ench");
@@ -291,7 +294,23 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public ItemMeta getItemMeta() {
-        return CraftItemFactory.instance().getItemMeta(this);
+        if (!hasItemMeta()) {
+            return CraftItemFactory.instance().getItemMeta(getType());
+        }
+        switch (getType()) {
+            case WRITTEN_BOOK:
+            case BOOK_AND_QUILL:
+                return new CraftBookMeta(item.tag);
+            case SKULL_ITEM:
+                return new CraftSkullMeta(item.tag);
+            case LEATHER_HELMET:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case LEATHER_BOOTS:
+                return new CraftLeatherArmorMeta(item.tag);
+            default:
+                return new CraftItemMeta(item.tag);
+        }
     }
 
     @Override
@@ -322,14 +341,37 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        if (item == null) {
+            return "ItemStack{AIR}";
+        }
+        StringBuilder toString = new StringBuilder("ItemStack{").append(getType().name()).append(" x ").append(getAmount());
+        if (item.tag != null && !item.tag.d()) {
+            toString.append(", ").append(getItemMeta());
+        }
+        return toString.append('}').toString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof CraftItemStack) {
+            CraftItemStack that = (CraftItemStack) obj;
+            if (item == that.item) {
+                return true;
+            }
+            if (item == null || that.item == null) {
+                return false;
+            }
+            return (!hasItemMeta()) ? (!that.hasItemMeta()) : (item.tag != null && item.tag.equals(that.item.tag));
+        }
+        return obj.getClass() == ItemStack.class && obj.equals(this);
+    }
+
+    @Override
+    public boolean hasItemMeta() {
+        return item != null && item.tag != null && item.tag.d();
     }
 
     public static net.minecraft.server.ItemStack asNMSCopy(ItemStack original) {
