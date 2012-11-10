@@ -51,9 +51,9 @@ public final class CraftItemFactory implements ItemFactory {
                 }
             case SKULL_ITEM:
                 if (itemstack instanceof CraftItemStack) {
-                    return new CraftBookMeta((CraftItemStack) itemstack);
+                    return new CraftSkullMeta((CraftItemStack) itemstack);
                 } else {
-                    return new CraftBookMeta();
+                    return new CraftSkullMeta();
                 }
             case LEATHER_HELMET:
             case LEATHER_CHESTPLATE:
