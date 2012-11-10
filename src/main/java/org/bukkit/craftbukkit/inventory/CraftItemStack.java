@@ -133,7 +133,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public void addUnsafeEnchantment(Enchantment ench, int level) {
-        Validate.notNull(ench, "Cannot remove null enchantment");
+        Validate.notNull(ench, "Cannot add null enchantment");
 
         if (!makeTag(item)) {
             return;
