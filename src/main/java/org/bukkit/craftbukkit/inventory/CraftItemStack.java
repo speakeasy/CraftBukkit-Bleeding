@@ -352,26 +352,33 @@ public final class CraftItemStack extends ItemStack {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean isSimilar(ItemStack stack) {
+        if (stack == null) {
+            return false;
+        }
+        if (stack == this) {
             return true;
         }
-        if (obj instanceof CraftItemStack) {
-            CraftItemStack that = (CraftItemStack) obj;
-            if (item == that.item) {
-                return true;
-            }
-            if (item == null || that.item == null) {
-                return false;
-            }
-            return (!hasItemMeta()) ? (!that.hasItemMeta()) : (item.tag != null && item.tag.equals(that.item.tag));
+        if (!(stack instanceof CraftItemStack)) {
+            return stack.getClass() == ItemStack.class && stack.isSimilar(this);
         }
-        return obj.getClass() == ItemStack.class && obj.equals(this);
+
+        CraftItemStack that = (CraftItemStack) stack;
+        if (item == that.item) {
+            return true;
+        }
+        if (item == null || that.item == null) {
+            return false;
+        }
+        if (!(that.getTypeId() == getTypeId() && getDurability() == that.getDurability())) {
+            return false;
+        }
+        return hasItemMeta() ? that.hasItemMeta() && item.tag.equals(that.item.tag) : !that.hasItemMeta();
     }
 
     @Override
     public boolean hasItemMeta() {
-        return item != null && item.tag != null && item.tag.d();
+        return !(item == null || item.tag == null || item.tag.d());
     }
 
     public static net.minecraft.server.ItemStack asNMSCopy(ItemStack original) {
