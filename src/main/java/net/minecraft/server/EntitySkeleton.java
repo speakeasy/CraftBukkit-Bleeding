@@ -161,7 +161,7 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
             if (k < 5) {
                 ItemStack itemstack = this.l(k <= 0 ? 1 : 0);
                 if (itemstack != null) {
-                    loot.add(new org.bukkit.craftbukkit.inventory.CraftItemStack(itemstack));
+                    loot.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack));
                 }
             }
         }

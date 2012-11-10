@@ -21,7 +21,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     public ItemStack getItemInHand() {
-        return new CraftItemStack(getInventory().getItemInHand());
+        return CraftItemStack.asCraftMirror(getInventory().getItemInHand());
     }
 
     public void setItemInHand(ItemStack stack) {
@@ -69,7 +69,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         ItemStack[] ret = new ItemStack[mcItems.length];
 
         for (int i = 0; i < mcItems.length; i++) {
-            ret[i] = new CraftItemStack(mcItems[i]);
+            ret[i] = CraftItemStack.asCraftMirror(mcItems[i]);
         }
         return ret;
     }

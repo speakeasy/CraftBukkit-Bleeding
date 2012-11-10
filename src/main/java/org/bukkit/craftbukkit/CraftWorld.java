@@ -283,7 +283,7 @@ public class CraftWorld implements World {
     public org.bukkit.entity.Item dropItem(Location loc, ItemStack item) {
         Validate.notNull(item, "Cannot drop a Null item.");
         Validate.isTrue(item.getTypeId() != 0, "Cannot drop AIR.");
-        CraftItemStack clone = new CraftItemStack(item);
+        CraftItemStack clone = CraftItemStack.asCraftCopy(item);
         EntityItem entity = new EntityItem(world, loc.getX(), loc.getY(), loc.getZ(), clone.getHandle());
         entity.pickupDelay = 10;
         world.addEntity(entity);

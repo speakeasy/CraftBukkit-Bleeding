@@ -21,13 +21,13 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
             getHandle().getDataWatcher().a(2, 5);
             getHandle().getDataWatcher().h(2);
         } else {
-            getHandle().a(CraftItemStack.createNMSItemStack(item));
+            getHandle().a(CraftItemStack.asNMSCopy(item));
         }
     }
 
     public org.bukkit.inventory.ItemStack getItem() {
         ItemStack i = getHandle().i();
-        return i == null ? new org.bukkit.inventory.ItemStack(Material.AIR) : CraftItemStack.asBukkitStack(i);
+        return i == null ? new org.bukkit.inventory.ItemStack(Material.AIR) : CraftItemStack.asBukkitCopy(i);
     }
 
     public Rotation getRotation() {

@@ -16,7 +16,7 @@ public class CraftItemStackTest {
     public void testCloneEnchantedItem() throws Exception {
         net.minecraft.server.ItemStack nmsItemStack = new net.minecraft.server.ItemStack(net.minecraft.server.Item.POTION);
         nmsItemStack.addEnchantment(Enchantment.DAMAGE_ALL, 1);
-        ItemStack itemStack = new CraftItemStack(nmsItemStack);
+        ItemStack itemStack = CraftItemStack.asCraftMirror(nmsItemStack);
         ItemStack clone = itemStack.clone();
         assert (clone.getType().equals(itemStack.getType()));
         assert (clone.getAmount() == itemStack.getAmount());
@@ -29,7 +29,7 @@ public class CraftItemStackTest {
     @Test
     public void testCloneNullItem() throws Exception {
         net.minecraft.server.ItemStack nmsItemStack = null;
-        ItemStack itemStack = new CraftItemStack(nmsItemStack);
+        ItemStack itemStack = CraftItemStack.asCraftMirror(nmsItemStack);
         ItemStack clone = itemStack.clone();
         assert (clone.equals(itemStack));
     }

@@ -29,9 +29,9 @@ public class DispenseBehaviorFilledBucket extends DispenseBehaviorItem {
         int k2 = k + enumfacing.e();
         if (world.isEmpty(i2, j, k2) || world.getMaterial(i2, j, k2).isBuildable()) {
             org.bukkit.block.Block block = world.getWorld().getBlockAt(i, j, k);
-            org.bukkit.inventory.ItemStack bukkitItem = new CraftItemStack(itemstack).clone();
+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
 
-            BlockDispenseEvent event = new BlockDispenseEvent(block, bukkitItem, new org.bukkit.util.Vector(0, 0, 0));
+            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
             if (!BlockDispenser.eventFired) {
                 world.getServer().getPluginManager().callEvent(event);
             }
@@ -40,16 +40,16 @@ public class DispenseBehaviorFilledBucket extends DispenseBehaviorItem {
                 return itemstack;
             }
 
-            if (!event.getItem().equals(bukkitItem)) {
+            if (!event.getItem().equals(craftItem)) {
                 // Chain to handler for new item
                 IDispenseBehavior idispensebehavior = (IDispenseBehavior) BlockDispenser.a.a(itemstack.getItem());
                 if (idispensebehavior != IDispenseBehavior.a && idispensebehavior != this) {
-                    idispensebehavior.a(isourceblock, CraftItemStack.createNMSItemStack(event.getItem()));
+                    idispensebehavior.a(isourceblock, CraftItemStack.asNMSCopy(event.getItem()));
                     return itemstack;
                 }
             }
 
-            itembucket = (ItemBucket) CraftItemStack.createNMSItemStack(event.getItem()).getItem();
+            itembucket = (ItemBucket) CraftItemStack.asNMSCopy(event.getItem()).getItem();
         }
         // CraftBukkit end
 

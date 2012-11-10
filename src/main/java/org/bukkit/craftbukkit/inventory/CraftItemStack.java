@@ -2,9 +2,11 @@ package org.bukkit.craftbukkit.inventory;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.server.EnchantmentManager;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
+
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
@@ -15,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public final class CraftItemStack extends ItemStack {
     protected net.minecraft.server.ItemStack item;
 
-    public CraftItemStack(net.minecraft.server.ItemStack item) {
+    private CraftItemStack(net.minecraft.server.ItemStack item) {
         super(
             item != null ? item.id: 0,
             item != null ? item.count : 0,
@@ -24,42 +26,42 @@ public final class CraftItemStack extends ItemStack {
         this.item = item;
     }
 
-    public CraftItemStack(ItemStack item) {
+    private CraftItemStack(ItemStack item) {
         this(item.getTypeId(), item.getAmount(), item.getDurability());
         addUnsafeEnchantments(item.getEnchantments());
         setItemMeta(item.getItemMeta());
     }
 
     /* 'Overwritten' constructors from ItemStack, yay for Java sucking */
-    public CraftItemStack(final int type) {
+    private CraftItemStack(final int type) {
         this(type, 1);
     }
 
-    public CraftItemStack(final Material type) {
+    private CraftItemStack(final Material type) {
         this(type, 1);
     }
 
-    public CraftItemStack(final int type, final int amount) {
+    private CraftItemStack(final int type, final int amount) {
         this(type, amount, (byte) 0);
     }
 
-    public CraftItemStack(final Material type, final int amount) {
+    private CraftItemStack(final Material type, final int amount) {
         this(type.getId(), amount);
     }
 
-    public CraftItemStack(final int type, final int amount, final short damage) {
+    private CraftItemStack(final int type, final int amount, final short damage) {
         this(type, amount, damage, null);
     }
 
-    public CraftItemStack(final Material type, final int amount, final short damage) {
+    private CraftItemStack(final Material type, final int amount, final short damage) {
         this(type.getId(), amount, damage);
     }
 
-    public CraftItemStack(final Material type, final int amount, final short damage, final Byte data) {
+    private CraftItemStack(final Material type, final int amount, final short damage, final Byte data) {
         this(type.getId(), amount, damage, data);
     }
 
-    public CraftItemStack(int type, int amount, short damage, Byte data) {
+    private CraftItemStack(int type, int amount, short damage, Byte data) {
         this(new net.minecraft.server.ItemStack(type, amount, data != null ? data : damage));
     }
 
@@ -231,7 +233,7 @@ public final class CraftItemStack extends ItemStack {
         return true;
     }
 
-    public static net.minecraft.server.ItemStack createNMSItemStack(ItemStack original) {
+    public static net.minecraft.server.ItemStack asNMSCopy(ItemStack original) {
         if (original == null || original.getTypeId() <= 0) {
             return null;
         } else if (original instanceof CraftItemStack) {
@@ -243,9 +245,25 @@ public final class CraftItemStack extends ItemStack {
     /**
      * Copies the NMS stack to return as a strictly-Bukkit stack
      */
-    public static ItemStack asBukkitStack(net.minecraft.server.ItemStack original) {
+    public static ItemStack asBukkitCopy(net.minecraft.server.ItemStack original) {
         ItemStack stack = new ItemStack(original.id, original.count, (short) original.getData());
         stack.addUnsafeEnchantments(getEnchantments(original));
         return stack;
+    }
+
+    public static CraftItemStack asCraftMirror(net.minecraft.server.ItemStack original) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static CraftItemStack asCraftCopy(ItemStack original) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static CraftItemStack asNewCraftStack(net.minecraft.server.Item item) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static CraftItemStack asNewCraftStack(net.minecraft.server.Item item, int amount) {
+        throw new UnsupportedOperationException();
     }
 }
