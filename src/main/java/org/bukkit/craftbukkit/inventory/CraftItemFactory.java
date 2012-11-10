@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.inventory;
 
 import java.util.Map;
 
+import net.minecraft.server.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -41,17 +42,25 @@ public final class CraftItemFactory implements ItemFactory {
             }
         }
 
+        NBTTagCompound tag = null;
+        if (itemstack instanceof CraftItemStack) {
+            net.minecraft.server.ItemStack handle = ((CraftItemStack) itemstack).getHandle();
+            if (handle != null) {
+                tag = handle.getTag();
+            }
+        }
+
         switch (material) {
             case WRITTEN_BOOK:
             case BOOK_AND_QUILL:
-                if (itemstack instanceof CraftItemStack) {
-                    return new CraftBookMeta((CraftItemStack) itemstack);
+                if (tag != null) {
+                    return new CraftBookMeta(tag);
                 } else {
                     return new CraftBookMeta();
                 }
             case SKULL_ITEM:
-                if (itemstack instanceof CraftItemStack) {
-                    return new CraftSkullMeta((CraftItemStack) itemstack);
+                if (tag != null) {
+                    return new CraftSkullMeta(tag);
                 } else {
                     return new CraftSkullMeta();
                 }
@@ -59,13 +68,17 @@ public final class CraftItemFactory implements ItemFactory {
             case LEATHER_CHESTPLATE:
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
-                if (itemstack instanceof CraftItemStack) {
-                    return new CraftLeatherArmorMeta((CraftItemStack) itemstack);
+                if (tag != null) {
+                    return new CraftLeatherArmorMeta(tag);
                 } else {
                     return new CraftLeatherArmorMeta();
                 }
             default:
-                return new CraftItemMeta();
+                if (tag != null) {
+                    return new CraftItemMeta(tag);
+                } else {
+                    return new CraftItemMeta();
+                }
         }
     }
 

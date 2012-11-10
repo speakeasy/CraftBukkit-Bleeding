@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
 import net.minecraft.server.NBTTagCompound;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 import org.bukkit.inventory.meta.SkullMeta;
 
 class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
@@ -9,25 +9,15 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
 
     CraftSkullMeta() {}
 
-    CraftSkullMeta(CraftItemStack itemstack) {
-        super(itemstack);
-        NBTTagCompound tag = itemstack.getHandle().getTag();
-        if (tag != null) {
-            if (tag.hasKey("SkullOwner")) {
-                player = tag.getString("SkullOwner");
-            }
+    CraftSkullMeta(NBTTagCompound tag) {
+        super(tag);
+        if (tag.hasKey("SkullOwner")) {
+            player = tag.getString("SkullOwner");
         }
     }
 
     boolean isEmpty() {
-        return player == null && super.isEmpty();
-    }
-
-    boolean applicableTo(ItemStack itemstack) {
-        switch(itemstack.getType()) {
-            case SKULL_ITEM: return true;
-            default: return false;
-        }
+        return !hasOwner() && super.isEmpty();
     }
 
     void applyToItem(CraftItemStack item) {
@@ -41,9 +31,20 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
         }
     }
 
+    boolean applicableTo(Material type) {
+        switch(type) {
+            case SKULL_ITEM: return true;
+            default: return false;
+        }
+    }
+
     @Override
     public CraftSkullMeta clone() {
         return (CraftSkullMeta) super.clone();
+    }
+
+    public boolean hasOwner() {
+        return player != null;
     }
 
     public String getOwner() {
@@ -72,7 +73,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
         }
         CraftSkullMeta other = (CraftSkullMeta) object;
 
-        if (!player.equals(other.player)) {
+        if (this.player == null ? other.player != null : !this.player.equals(other.player)) {
             return false;
         }
 

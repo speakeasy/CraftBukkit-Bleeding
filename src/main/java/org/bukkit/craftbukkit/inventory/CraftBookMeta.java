@@ -6,7 +6,7 @@ import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
 import org.apache.commons.lang.Validate;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 import org.bukkit.inventory.meta.BookMeta;
 
 public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
@@ -16,11 +16,8 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     CraftBookMeta() {}
 
-    // Build meta based off handle
-    CraftBookMeta(CraftItemStack itemstack) {
-        super(itemstack);
-
-        NBTTagCompound tag = itemstack.getHandle().getTag();
+    CraftBookMeta(NBTTagCompound tag) {
+        super(tag);
         if (tag.hasKey("title")) {
             this.title = tag.getString("title");
         }
@@ -40,12 +37,40 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
+    void applyToItem(CraftItemStack item) {
+        super.applyToItem(item);
+
+        NBTTagCompound itemData = item.getHandle().getTag();
+        if (this.title == null) {
+            itemData.remove("title");
+        } else {
+            itemData.setString("title", this.title);
+        }
+
+        if (this.author == null) {
+            itemData.remove("author");
+        } else {
+            itemData.setString("author", this.author);
+        }
+
+        if (pages.isEmpty()) {
+            itemData.remove("pages");
+        } else {
+            NBTTagList itemPages = new NBTTagList("pages");
+            for (int i = 1; i < pages.size() + 1; i++) {
+                itemPages.add(new NBTTagString(String.valueOf(i), pages.get(i - 1)));
+            }
+            itemData.set("pages", itemPages);
+        }
+    }
+
+    @Override
     boolean isEmpty() {
         return title == null && author == null && pages.isEmpty() && super.isEmpty();
     }
 
-    boolean applicableTo(ItemStack itemstack) {
-        switch(itemstack.getType()) {
+    boolean applicableTo(Material type) {
+        switch(type) {
             case BOOK:
             case BOOK_AND_QUILL: return true;
             default: return false;
@@ -125,21 +150,6 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         return meta;
     }
 
-    @Override
-    void applyToItem(CraftItemStack item) {
-        super.applyToItem(item);
-
-        NBTTagCompound itemData = item.getHandle().getTag();
-        itemData.setString("title", this.title);
-        itemData.setString("author", this.author);
-
-        NBTTagList itemPages = new NBTTagList("pages");
-        for (int i = 1; i < pages.size() + 1; i++) {
-            itemPages.add(new NBTTagString(String.valueOf(i), pages.get(i - 1)));
-        }
-        itemData.set("pages", itemPages);
-    }
-
 
 
     public boolean equals(Object object) {
@@ -151,6 +161,18 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
         CraftBookMeta objectMeta = (CraftBookMeta) object;
 
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (this.title == null ? objectMeta.title != null : !this.title.equals(objectMeta.title)) {
+            return false;
+        }
+
+        if (this.author == null ? objectMeta.author != null : !this.author.equals(objectMeta.author)) {
+            return false;
+        }
+
+        if (!this.pages.equals(objectMeta.pages)) {
+            return false;
+        }
+
+        return super.equals(object);
     }
 }

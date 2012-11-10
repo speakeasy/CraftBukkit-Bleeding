@@ -6,8 +6,8 @@ import net.minecraft.server.NBTBase;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 class CraftItemMeta implements ItemMeta {
@@ -18,10 +18,23 @@ class CraftItemMeta implements ItemMeta {
 
     CraftItemMeta() {}
 
-    CraftItemMeta(CraftItemStack itemstack) {
-        net.minecraft.server.ItemStack nmsStack = itemstack.getHandle();
+    CraftItemMeta(NBTTagCompound tag) {
+        readTag(tag);
+    }
 
-        readTag(nmsStack.tag);
+    void applyToItem(CraftItemStack item) {
+        net.minecraft.server.ItemStack nmsStack = item.getHandle();
+        NBTTagCompound itemTag = nmsStack.tag;
+
+        if (itemTag == null) {
+            itemTag = nmsStack.tag = new NBTTagCompound();
+        }
+
+        if (displayName != null) {
+            setDisplay(itemTag, new NBTTagString("Name", displayName));
+        }
+
+        // TODO: Apply enchantments
     }
 
     public CraftItemMeta clone() {
@@ -55,21 +68,6 @@ class CraftItemMeta implements ItemMeta {
         }
     }
 
-    void applyToItem(CraftItemStack item) {
-        net.minecraft.server.ItemStack nmsStack = item.getHandle();
-        NBTTagCompound itemTag = nmsStack.tag;
-
-        if (itemTag == null) {
-            itemTag = nmsStack.tag = new NBTTagCompound();
-        }
-
-        if (displayName != null) {
-            setDisplay(itemTag, new NBTTagString("Name", displayName));
-        }
-
-        // TODO: Apply enchantments
-    }
-
     void setDisplay(NBTTagCompound tag, NBTBase nbtitem) {
         NBTTagCompound display = tag.getCompound("display");
 
@@ -80,8 +78,8 @@ class CraftItemMeta implements ItemMeta {
         display.set(nbtitem.getName(), nbtitem);
     }
 
-    boolean applicableTo(ItemStack itemstack) {
-        return true;
+    boolean applicableTo(Material type) {
+        return type != Material.AIR;
     }
 
     boolean isEmpty() {
@@ -146,6 +144,9 @@ class CraftItemMeta implements ItemMeta {
 
     @Override
     public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
         if (!(object instanceof CraftItemMeta)) {
             return false;
         } else if (this.isEmpty()) {
