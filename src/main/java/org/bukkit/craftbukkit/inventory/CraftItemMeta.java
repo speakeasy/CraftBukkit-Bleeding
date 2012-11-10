@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.inventory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.server.NBTBase;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
@@ -12,63 +12,82 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 class CraftItemMeta implements ItemMeta {
     private String displayName;
-    private List<String> lore; // TODO: lore
+    private List<String> lore;
     private Map<Enchantment, Integer> enchantments; // TODO: enchantments
-    private int maxStackSize; // Scratch this
+    private int repairCost;
 
     CraftItemMeta() {}
 
     CraftItemMeta(NBTTagCompound tag) {
-        readTag(tag);
-    }
-
-    void applyToItem(NBTTagCompound itemTag) {
-        if (displayName != null) {
-            setDisplay(itemTag, new NBTTagString("Name", displayName));
-        }
-
-        // TODO: Apply enchantments
-    }
-
-    public CraftItemMeta clone() {
-        try {
-            return (CraftItemMeta) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new Error(e);
-        }
-    }
-
-    private void readTag(NBTTagCompound itemTag) {
-        if (itemTag == null) {
-            return;
-        }
-
-        if (itemTag.hasKey("display")) {
-            NBTTagCompound display = itemTag.getCompound("display");
+        if (tag.hasKey("display")) {
+            NBTTagCompound display = tag.getCompound("display");
             if (display.hasKey("Name")) {
-                setDisplayName(display.getString("Name"));
+                displayName = display.getString("Name");
             }
 
             if (display.hasKey("Lore")) {
-                // TODO: Lore
+                NBTTagList list = display.getList("Lore");
+                lore = new ArrayList<String>(list.size());
+
+                for (int index = 0; index < list.size(); index++) {
+                    String line = ((NBTTagString) list.get(index)).data;
+                    lore.add(line);
+                }
             }
         }
 
-        if (itemTag.hasKey("ench")) {
-            NBTTagList enchantments = itemTag.getList("ench");
+        if (tag.hasKey("ench")) {
+            NBTTagList enchantments = tag.getList("ench");
 
             // TODO: Enchantments
         }
+
+        if (tag.hasKey("RepairCost")) {
+            // TODO: RepairCost
+            repairCost = tag.getInt("RepairCost");
+        }
     }
 
-    void setDisplay(NBTTagCompound tag, NBTBase nbtitem) {
+    void applyToItem(NBTTagCompound itemTag) {
+        NBTTagCompound display = getDisplay(itemTag);
+
+        if (hasDisplayName()) {
+            display.setString("Name", displayName);
+        } else {
+            display.remove("Name");
+        }
+
+        if (hasLore()) {
+            NBTTagList list = display.getList("Lore");
+            for (int i = 0; i < lore.size(); i++) {
+                list.add(new NBTTagString(String.valueOf(i), lore.get(i)));
+            }
+            display.set("Lore", list);
+        } else {
+            display.remove("Lore");
+        }
+
+        if (hasEnchants()) {
+            // TODO: Apply enchantments
+        } else {
+            itemTag.remove("ench");
+        }
+
+        if (hasRepairCost()) {
+            itemTag.setInt("RepairCost", repairCost);
+        } else {
+            itemTag.remove("RepairCost");
+        }
+    }
+
+    NBTTagCompound getDisplay(NBTTagCompound tag) {
         NBTTagCompound display = tag.getCompound("display");
 
         if (!tag.hasKey("display")) {
             tag.setCompound("display", tag);
         }
 
-        display.set(nbtitem.getName(), nbtitem);
+        return display;
     }
 
     boolean applicableTo(Material type) {
@@ -93,6 +112,10 @@ class CraftItemMeta implements ItemMeta {
 
     public boolean hasLore() {
         return this.lore != null && !this.lore.isEmpty();
+    }
+
+    public boolean hasRepairCost() {
+        return repairCost > 0;
     }
 
     public boolean hasEnchant(Enchantment ench) {
@@ -121,18 +144,6 @@ class CraftItemMeta implements ItemMeta {
 
     public Map<String, Object> serialize() {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getCustomStackSize() {
-        return maxStackSize;
-    }
-
-    public void setCustomStackSize(int size) {
-        maxStackSize = size;
-    }
-
-    public boolean hasCustomStackSize() {
-        return maxStackSize > 0;
     }
 
     @Override
@@ -174,5 +185,13 @@ class CraftItemMeta implements ItemMeta {
         hash = 61 * hash + (this.enchantments != null ? this.enchantments.hashCode() : 0);
         // hash = 61 * hash + this.maxStackSize;
         return hash;
+    }
+
+    public CraftItemMeta clone() {
+        try {
+            return (CraftItemMeta) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
     }
 }

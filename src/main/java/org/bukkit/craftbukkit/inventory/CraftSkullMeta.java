@@ -11,21 +11,22 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
 
     CraftSkullMeta(NBTTagCompound tag) {
         super(tag);
+
         if (tag.hasKey("SkullOwner")) {
             player = tag.getString("SkullOwner");
         }
     }
 
-    boolean isEmpty() {
-        return !hasOwner() && super.isEmpty();
+    void applyToItem(NBTTagCompound tag) {
+        if (hasOwner()) {
+            tag.setString("SkullOwner", player);
+        } else {
+            tag.remove("SkullOwner");
+        }
     }
 
-    void applyToItem(NBTTagCompound tag) {
-        if (player == null) {
-            tag.remove("SkullOwner");
-        } else {
-            tag.setString("SkullOwner", player);
-        }
+    boolean isEmpty() {
+        return !hasOwner() && super.isEmpty();
     }
 
     boolean applicableTo(Material type) {

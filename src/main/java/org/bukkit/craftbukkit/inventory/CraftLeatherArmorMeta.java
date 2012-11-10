@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.inventory;
 
 import net.minecraft.server.NBTTagCompound;
-import net.minecraft.server.NBTTagInt;
 import org.bukkit.Material;
 
 class CraftLeatherArmorMeta extends CraftItemMeta {
     private static final int defaultColor = 10511680;
-    private int color;
+    private static int maxRGB = 16581375;
+    private int color = -1;
 
     CraftLeatherArmorMeta() {}
 
@@ -21,9 +21,10 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
     }
 
     void applyToItem(NBTTagCompound itemTag) {
-        // TODO when is color empty?
-        if (color > 0) {
-            setDisplay(itemTag, new NBTTagInt("color", color));
+        super.applyToItem(itemTag);
+
+        if (color > -1) {
+            getDisplay(itemTag).setInt("color", color);
         }
     }
 
@@ -47,6 +48,7 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
         return (CraftLeatherArmorMeta) super.clone();
     }
 
+    // TODO: How to do colors...
     public void getColor() {
     }
 
