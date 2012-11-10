@@ -60,7 +60,7 @@ class CraftItemMeta implements ItemMeta {
         NBTTagCompound itemTag = nmsStack.tag;
 
         if (itemTag == null) {
-            itemTag = new NBTTagCompound();
+            itemTag = nmsStack.tag = new NBTTagCompound();
         }
 
         if (displayName != null) {
