@@ -1,21 +1,24 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.server.EnchantmentManager;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
+
+import com.google.common.collect.ImmutableMap;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
-    protected net.minecraft.server.ItemStack item;
+    net.minecraft.server.ItemStack item;
 
     private CraftItemStack(net.minecraft.server.ItemStack item) {
         super(
@@ -77,16 +80,16 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public void setTypeId(int type) {
-        if (type == 0) {
+        if (getTypeId() == type) {
+            return;
+        } else if (type == 0) {
             item = null;
+        } else if (item == null) {
+            item = new net.minecraft.server.ItemStack(type, 1, 0);
         } else {
-            if (item == null) {
-                item = new net.minecraft.server.ItemStack(type, 1, 0);
-            } else {
-                item.id = type;
-                super.setTypeId(item.id);
-            }
+            item.id = type;
         }
+        setData(null);
     }
 
     @Override
@@ -96,10 +99,12 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public void setAmount(int amount) {
+        if (item == null) {
+            return;
+        }
         if (amount == 0) {
             item = null;
         } else {
-            super.setAmount(amount);
             item.count = amount;
         }
     }
@@ -108,7 +113,6 @@ public final class CraftItemStack extends ItemStack {
     public void setDurability(final short durability) {
         // Ignore damage if item is null
         if (item != null) {
-            super.setDurability(durability);
             item.setData(durability);
         }
     }
@@ -116,7 +120,6 @@ public final class CraftItemStack extends ItemStack {
     @Override
     public short getDurability() {
         if (item != null) {
-            super.setDurability((short) item.getData()); // sync, needed?
             return (short) item.getData();
         } else {
             return -1;
@@ -124,15 +127,47 @@ public final class CraftItemStack extends ItemStack {
     }
 
     @Override
-    public int getMaxStackSize() {
+    public int getMaxStackSize() { // TODO: Needed?
         return (item == null) ? 0 : item.getItem().getMaxStackSize();
     }
 
     @Override
     public void addUnsafeEnchantment(Enchantment ench, int level) {
-        Map<Enchantment, Integer> enchantments = getEnchantments();
-        enchantments.put(ench, level);
-        rebuildEnchantments(enchantments);
+        Validate.notNull(ench, "Cannot remove null enchantment");
+
+        if (!makeTag(item)) {
+            return;
+        }
+        NBTTagList list = getEnchantmentList(item), listCopy;
+        if (list == null) {
+            list = new NBTTagList("ench");
+            item.tag.set("ench", list);
+        }
+        int size = list.size();
+
+        for (int i = 0; i < size; i++) {
+            NBTTagCompound tag = (NBTTagCompound) list.get(i);
+            short id = tag.getShort("id");
+            if (id == ench.getId()) {
+                tag.setShort("lvl", (short) level);
+                return;
+            }
+        }
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setShort("id", (short) ench.getId());
+        tag.setShort("lvl", (short) level);
+        list.add(tag);
+    }
+
+    static boolean makeTag(net.minecraft.server.ItemStack item) {
+        if (item == null) {
+            return false;
+        }
+        if (item.tag != null) {
+            return true;
+        }
+        item.tag = new NBTTagCompound();
+        return true;
     }
 
     @Override
@@ -142,18 +177,49 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public int getEnchantmentLevel(Enchantment ench) {
-        if (item == null) return 0;
+        Validate.notNull(ench, "Cannot find null enchantment");
+        if (item == null) {
+            return 0;
+        }
         return EnchantmentManager.getEnchantmentLevel(ench.getId(), item);
     }
 
     @Override
     public int removeEnchantment(Enchantment ench) {
-        Map<Enchantment, Integer> enchantments = getEnchantments();
-        Integer previous = enchantments.remove(ench);
+        Validate.notNull(ench, "Cannot remove null enchantment");
 
-        rebuildEnchantments(enchantments);
+        NBTTagList list = getEnchantmentList(item), listCopy;
+        if (list == null) {
+            return 0;
+        }
+        int index = Integer.MIN_VALUE, size = list.size(), level;
 
-        return (previous == null) ? 0 : previous;
+        for (int i = 0; i < size; i++) {
+            short id = ((NBTTagCompound) list.get(i)).getShort("id");
+            if (id == ench.getId()) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index == Integer.MIN_VALUE) {
+            return 0;
+        }
+        if (index == 0 && size == 0) {
+            item.tag.remove("ench");
+        }
+
+        listCopy = new NBTTagList("ench");
+        level = Integer.MAX_VALUE;
+        for (int i = 0; i < size; i++) {
+            if (i == index) {
+                level = ((NBTTagCompound) list.get(i)).getShort("id");
+                continue;
+            }
+            listCopy.add(list.get(i));
+        }
+        item.tag.set("ench", listCopy);
+        return level;
     }
 
     @Override
@@ -162,11 +228,11 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static Map<Enchantment, Integer> getEnchantments(net.minecraft.server.ItemStack item) {
-        Map<Enchantment, Integer> result = new HashMap<Enchantment, Integer>();
+        ImmutableMap.Builder<Enchantment, Integer> result = ImmutableMap.builder();
         NBTTagList list = (item == null) ? null : item.getEnchantments();
 
         if (list == null) {
-            return result;
+            return result.build();
         }
 
         for (int i = 0; i < list.size(); i++) {
@@ -176,9 +242,14 @@ public final class CraftItemStack extends ItemStack {
             result.put(Enchantment.getById(id), (int) level);
         }
 
-        return result;
+        return result.build();
     }
 
+    static NBTTagList getEnchantmentList(net.minecraft.server.ItemStack item) {
+        return item == null ? null : item.getEnchantments();
+    }
+
+    @Deprecated
     private void rebuildEnchantments(Map<Enchantment, Integer> enchantments) {
         if (item == null) return;
 
@@ -239,13 +310,39 @@ public final class CraftItemStack extends ItemStack {
         return true;
     }
 
+    @Override
+    public MaterialData getData() {
+        return super.getData();
+    }
+
+    @Override
+    public void setData(MaterialData data) {
+        super.setData(data); // TODO: reset on set type
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // TODO Auto-generated method stub
+        return super.equals(obj);
+    }
+
     public static net.minecraft.server.ItemStack asNMSCopy(ItemStack original) {
         if (original == null || original.getTypeId() <= 0) {
             return null;
         } else if (original instanceof CraftItemStack) {
-            return ((CraftItemStack) original).getHandle();
+            return ((CraftItemStack) original).getHandle(); // TODO, use actual copy
         }
         return new CraftItemStack(original).getHandle();
+    }
+
+    public static net.minecraft.server.ItemStack copyNMSStack(net.minecraft.server.ItemStack original, int amount) {
+        throw new UnsupportedOperationException();
     }
 
     /**

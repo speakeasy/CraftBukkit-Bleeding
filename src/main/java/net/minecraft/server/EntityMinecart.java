@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 // CraftBukkit end
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
 public class EntityMinecart extends Entity implements IInventory {
 
@@ -185,7 +186,7 @@ public class EntityMinecart extends Entity implements IInventory {
 
                                 itemstack.count -= k;
                                 // CraftBukkit - include enchantments in the new itemstack
-                                EntityItem entityitem = new EntityItem(this.world, this.locX + (double) f, this.locY + (double) f1, this.locZ + (double) f2, new ItemStack(itemstack.id, k, itemstack.getData(), itemstack.getEnchantments()));
+                                EntityItem entityitem = new EntityItem(this.world, this.locX + (double) f, this.locY + (double) f1, this.locZ + (double) f2, CraftItemStack.copyNMSStack(itemstack, k));
                                 float f3 = 0.05F;
 
                                 entityitem.motX = (double) ((float) this.random.nextGaussian() * f3);
