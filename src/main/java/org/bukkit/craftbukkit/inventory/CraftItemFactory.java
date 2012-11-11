@@ -45,6 +45,13 @@ public final class CraftItemFactory implements ItemFactory {
                         throw new UnsupportedOperationException(this.name());
                     }
                 },
+            POTION
+                {
+                    @Override
+                    ItemMeta deserialize(Map<String, Object> map) {
+                        return new CraftPotionMeta(map);
+                    }
+                },
             UNSPECIFIC
                 {
                     @Override
@@ -124,6 +131,8 @@ public final class CraftItemFactory implements ItemFactory {
         case LEATHER_LEGGINGS:
         case LEATHER_BOOTS:
             return meta instanceof CraftLeatherArmorMeta ? meta : new CraftLeatherArmorMeta(meta);
+        case POTION:
+            return meta instanceof CraftPotionMeta ? meta : new CraftPotionMeta(meta);
         default:
             if (meta != null) {
                 if (meta.getClass() != CraftItemMeta.class) {
