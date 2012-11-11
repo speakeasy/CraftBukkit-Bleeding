@@ -48,8 +48,10 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
 
     boolean applicableTo(Material type) {
         switch(type) {
-            case SKULL_ITEM: return true;
-            default: return false;
+            case SKULL_ITEM:
+                return true;
+            default:
+                return false;
         }
     }
 
