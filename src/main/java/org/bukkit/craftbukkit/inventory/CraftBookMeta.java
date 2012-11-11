@@ -2,19 +2,34 @@ package org.bukkit.craftbukkit.inventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.google.common.collect.ImmutableMap.Builder;
+
 public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     private String title;
     private String author;
-    private List<String> pages = new ArrayList<String>();
+    private List<String> pages;
 
-    CraftBookMeta() {}
+    CraftBookMeta(CraftItemMeta meta) {
+        super(meta);
+        if (!(meta instanceof CraftBookMeta)) {
+            this.pages = new ArrayList<String>();
+            return;
+        }
+        CraftBookMeta bookMeta = (CraftBookMeta) meta;
+        this.title = bookMeta.title;
+        this.author = bookMeta.author;
+        pages = new ArrayList<String>(bookMeta.pages);
+    }
 
     CraftBookMeta(NBTTagCompound tag) {
         super(tag);
@@ -26,6 +41,8 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
             this.author = tag.getString("author");
         }
 
+        this.pages = new ArrayList<String>();
+
         if (tag.hasKey("pages")) {
             NBTTagList pages = tag.getList("pages");
             for (int i = 0; i < pages.size(); i++) {
@@ -34,6 +51,11 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
                 this.pages.add(page);
             }
         }
+    }
+
+    CraftBookMeta(Map<String, Object> map) {
+        super(map);
+        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -171,5 +193,16 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         }
 
         return super.equals(object);
+    }
+
+    @Override
+    Builder<String, Object> serialize(Builder<String, Object> builder) {
+        // TODO Auto-generated method stub
+        return super.serialize(builder);
+    }
+
+    @Override
+    CraftItemFactory.SerializableMeta.Deserializers deserializer() {
+        return CraftItemFactory.SerializableMeta.Deserializers.BOOK;
     }
 }

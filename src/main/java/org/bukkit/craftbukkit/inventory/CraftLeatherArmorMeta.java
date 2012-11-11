@@ -1,14 +1,26 @@
 package org.bukkit.craftbukkit.inventory;
 
+import java.util.Map;
+
 import net.minecraft.server.NBTTagCompound;
+
 import org.bukkit.Material;
+
+import com.google.common.collect.ImmutableMap.Builder;
 
 class CraftLeatherArmorMeta extends CraftItemMeta {
     private static final int defaultColor = 10511680;
     private static int maxRGB = 16581375;
     private int color = -1;
 
-    CraftLeatherArmorMeta() {}
+    CraftLeatherArmorMeta(CraftItemMeta meta) {
+        super(meta);
+        if (!(meta instanceof CraftLeatherArmorMeta)) {
+            return;
+        }
+        CraftLeatherArmorMeta armorMeta = (CraftLeatherArmorMeta) meta;
+        this.color = armorMeta.color;
+    }
 
     CraftLeatherArmorMeta(NBTTagCompound tag) {
         super(tag);
@@ -18,6 +30,11 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
                 color = display.getInt("color");
             }
         }
+    }
+
+    CraftLeatherArmorMeta(Map<String, Object> map) {
+        super(map);
+        // TODO Auto-generated constructor stub
     }
 
     void applyToItem(NBTTagCompound itemTag) {
@@ -38,8 +55,10 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
             case LEATHER_HELMET:
             case LEATHER_CHESTPLATE:
             case LEATHER_LEGGINGS:
-            case LEATHER_BOOTS: return true;
-            default: return false;
+            case LEATHER_BOOTS:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -53,5 +72,16 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
     }
 
     public void setColor() {
+    }
+
+    @Override
+    Builder<String, Object> serialize(Builder<String, Object> builder) {
+        // TODO Auto-generated method stub
+        return super.serialize(builder);
+    }
+
+    @Override
+    CraftItemFactory.SerializableMeta.Deserializers deserializer() {
+        return CraftItemFactory.SerializableMeta.Deserializers.LEATHER_ARMOR;
     }
 }

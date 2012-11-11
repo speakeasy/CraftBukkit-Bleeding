@@ -1,22 +1,41 @@
 package org.bukkit.craftbukkit.inventory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
+
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.google.common.collect.ImmutableMap;
+
+@DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
 class CraftItemMeta implements ItemMeta {
     private String displayName;
     private List<String> lore;
     private Map<Enchantment, Integer> enchantments; // TODO: enchantments
     private int repairCost;
 
-    CraftItemMeta() {}
+    CraftItemMeta(CraftItemMeta meta) {
+        if (meta == null) {
+            return;
+        }
+        this.displayName = meta.displayName;
+        if (meta.lore != null) {
+            this.lore = new ArrayList<String>(meta.lore);
+        }
+        if (meta.enchantments != null) {
+            this.enchantments = new HashMap<Enchantment, Integer>(meta.enchantments);
+        }
+        this.repairCost = meta.repairCost;
+    }
 
     CraftItemMeta(NBTTagCompound tag) {
         if (tag.hasKey("display")) {
@@ -46,6 +65,10 @@ class CraftItemMeta implements ItemMeta {
             // TODO: RepairCost
             repairCost = tag.getInt("RepairCost");
         }
+    }
+
+    CraftItemMeta(Map<String, Object> map) {
+        // TODO Auto-generated constructor stub
     }
 
     void applyToItem(NBTTagCompound itemTag) {
@@ -119,31 +142,27 @@ class CraftItemMeta implements ItemMeta {
     }
 
     public boolean hasEnchant(Enchantment ench) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
     public int getEnchantLevel(Enchantment ench) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
     public Map<Enchantment, Integer> getEnchants() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
     public boolean addEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
     public boolean removeEnchant(Enchantment ench) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
     public boolean hasEnchants() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Map<String, Object> serialize() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // TODO
     }
 
     @Override
@@ -193,5 +212,21 @@ class CraftItemMeta implements ItemMeta {
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }
+    }
+
+    public Map<String, Object> serialize() {
+        ImmutableMap.Builder<String, Object> map = ImmutableMap.builder();
+        map.put(CraftItemFactory.SerializableMeta.TYPE_FIELD, deserializer().name());
+        serialize(map);
+        return map.build();
+    }
+
+    ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
+        // TODO
+        return builder;
+    }
+
+    CraftItemFactory.SerializableMeta.Deserializers deserializer() {
+        return CraftItemFactory.SerializableMeta.Deserializers.UNSPECIFIC;
     }
 }
