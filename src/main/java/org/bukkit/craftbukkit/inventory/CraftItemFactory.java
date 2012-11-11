@@ -129,8 +129,6 @@ public final class CraftItemFactory implements ItemFactory {
             return meta instanceof CraftLeatherArmorMeta ? meta : new CraftLeatherArmorMeta(meta);
         case POTION:
             return meta instanceof CraftPotionMeta ? meta : new CraftPotionMeta(meta);
-        case MAP:
-            return meta instanceof CraftMapMeta ? meta : new CraftMapMeta(meta);
         default:
             if (meta != null) {
                 if (meta.getClass() != CraftItemMeta.class) {
