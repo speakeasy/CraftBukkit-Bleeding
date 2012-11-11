@@ -22,9 +22,17 @@ class CraftItemMeta implements ItemMeta {
         NAME("Name", "displayName"),
         LORE("Lore", "lore"),
         ENCHANTMENTS("ench", "enchants"),
-        REPAIR("RepairCost", "repairCost");
+        REPAIR("RepairCost", "repairCost"),
+        BOOK_TITLE("title"),
+        BOOK_AUTHOR("author"),
+        BOOK_PAGES("pages");
+
         final String nbt;
         final String bukkit;
+
+        ItemMetaKeys(String s1) {
+            this(s1, s1);
+        }
 
         ItemMetaKeys(String s1, String s2) {
             this.nbt = s1;
@@ -33,7 +41,7 @@ class CraftItemMeta implements ItemMeta {
     }
     private String displayName;
     private List<String> lore;
-    private Map<Enchantment, Integer> enchantments; // TODO: enchantments
+    private Map<Enchantment, Integer> enchantments;
     private int repairCost;
 
     CraftItemMeta(CraftItemMeta meta) {

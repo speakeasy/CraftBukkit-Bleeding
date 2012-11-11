@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,85 +18,110 @@ import com.google.common.collect.ImmutableMap.Builder;
 public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     private String title;
     private String author;
-    private List<String> pages;
+    private List<String> pages = new ArrayList<String>();
 
     CraftBookMeta(CraftItemMeta meta) {
         super(meta);
+
         if (!(meta instanceof CraftBookMeta)) {
-            this.pages = new ArrayList<String>();
             return;
         }
         CraftBookMeta bookMeta = (CraftBookMeta) meta;
         this.title = bookMeta.title;
         this.author = bookMeta.author;
-        pages = new ArrayList<String>(bookMeta.pages);
+        pages.addAll(bookMeta.pages);
     }
 
     CraftBookMeta(NBTTagCompound tag) {
         super(tag);
-        if (tag.hasKey("title")) {
-            this.title = tag.getString("title");
+
+        if (tag.hasKey(ItemMetaKeys.BOOK_TITLE.nbt)) {
+            this.title = tag.getString(ItemMetaKeys.BOOK_TITLE.nbt);
         }
 
-        if (tag.hasKey("author")) {
-            this.author = tag.getString("author");
+        if (tag.hasKey(ItemMetaKeys.BOOK_AUTHOR.nbt)) {
+            this.author = tag.getString(ItemMetaKeys.BOOK_AUTHOR.nbt);
         }
-
-        this.pages = new ArrayList<String>();
 
         if (tag.hasKey("pages")) {
             NBTTagList pages = tag.getList("pages");
+            String[] pageArray = new String[pages.size()];
+
             for (int i = 0; i < pages.size(); i++) {
                 String page = ((NBTTagString) pages.get(i)).data;
-                // filter out null and longer (> 256) pages? (Even though it's done by MC and this implementation?)
-                this.pages.add(page);
+                pageArray[i] = page;
             }
+
+            addPage(pageArray);
         }
     }
 
     CraftBookMeta(Map<String, Object> map) {
         super(map);
-        // TODO Auto-generated constructor stub
+
+        if (map.containsKey(ItemMetaKeys.BOOK_AUTHOR.bukkit)) {
+            this.author = (String) map.get(ItemMetaKeys.BOOK_AUTHOR.bukkit);
+        }
+
+        if (map.containsKey(ItemMetaKeys.BOOK_TITLE.bukkit)) {
+            this.title = (String) map.get(ItemMetaKeys.BOOK_TITLE.bukkit);
+        }
+
+        if (map.containsKey(ItemMetaKeys.BOOK_PAGES.bukkit)) {
+            this.pages.addAll((List<String>) map.get(ItemMetaKeys.BOOK_PAGES.bukkit));
+        }
     }
 
     @Override
     void applyToItem(NBTTagCompound itemData) {
-        if (this.title == null) {
-            itemData.remove("title");
+        if (hasTitle()) {
+            itemData.setString(ItemMetaKeys.BOOK_TITLE.nbt, this.title);
         } else {
-            itemData.setString("title", this.title);
+            itemData.remove(ItemMetaKeys.BOOK_TITLE.nbt);
         }
 
-        if (this.author == null) {
-            itemData.remove("author");
+        if (hasAuthor()) {
+            itemData.setString(ItemMetaKeys.BOOK_AUTHOR.nbt, this.author);
         } else {
-            itemData.setString("author", this.author);
+            itemData.remove(ItemMetaKeys.BOOK_AUTHOR.nbt);
         }
 
-        if (pages.isEmpty()) {
-            itemData.remove("pages");
-        } else {
-            NBTTagList itemPages = new NBTTagList("pages");
+        if (hasPages()) {
+            NBTTagList itemPages = new NBTTagList(ItemMetaKeys.BOOK_PAGES.nbt);
             for (int i = 1; i < pages.size() + 1; i++) {
                 itemPages.add(new NBTTagString(String.valueOf(i), pages.get(i - 1)));
             }
-            itemData.set("pages", itemPages);
+            itemData.set(ItemMetaKeys.BOOK_PAGES.nbt, itemPages);
+        } else {
+            itemData.remove(ItemMetaKeys.BOOK_PAGES.nbt);
         }
     }
 
     @Override
     boolean isEmpty() {
-        return title == null && author == null && pages.isEmpty() && super.isEmpty();
+        return !(hasPages() || hasAuthor() || hasTitle()) && super.isEmpty();
     }
 
     boolean applicableTo(Material type) {
-        switch(type) {
-            case BOOK:
-            case BOOK_AND_QUILL:
-                return true;
-            default:
-                return false;
+        switch (type) {
+        case BOOK:
+        case BOOK_AND_QUILL:
+            return true;
+        default:
+            return false;
         }
+    }
+
+    boolean hasAuthor() {
+        return author != null;
+    }
+
+    boolean hasTitle() {
+        return title != null;
+    }
+
+    boolean hasPages() {
+        return !pages.isEmpty();
     }
 
     public String getTitle() {
@@ -156,8 +182,17 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         return pages.size();
     }
 
-    public String[] getPages() {
-        return pages.toArray(new String[pages.size()]);
+    public List<String> getPages() {
+        return ImmutableList.copyOf(pages);
+    }
+
+    public void setPages(List<String> pages) {
+        this.pages.clear();
+        if (pages == null) {
+            return;
+        }
+
+        addPage(pages.toArray(new String[pages.size()]));
     }
 
     private boolean isValidPage(int page) {
@@ -171,8 +206,6 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         return meta;
     }
 
-
-
     public boolean equals(Object object) {
         if (!super.equals(object)) {
             return false;
@@ -182,11 +215,11 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
         CraftBookMeta objectMeta = (CraftBookMeta) object;
 
-        if (this.title == null ? objectMeta.title != null : !this.title.equals(objectMeta.title)) {
+        if (!hasTitle() ? objectMeta.title != null : !this.title.equals(objectMeta.title)) {
             return false;
         }
 
-        if (this.author == null ? objectMeta.author != null : !this.author.equals(objectMeta.author)) {
+        if (!hasAuthor() ? objectMeta.author != null : !this.author.equals(objectMeta.author)) {
             return false;
         }
 
@@ -199,8 +232,21 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
-        // TODO Auto-generated method stub
-        return super.serialize(builder);
+        super.serialize(builder);
+
+        if (hasTitle()) {
+            builder.put(ItemMetaKeys.BOOK_TITLE.bukkit, title);
+        }
+
+        if (hasAuthor()) {
+            builder.put(ItemMetaKeys.BOOK_AUTHOR.bukkit, author);
+        }
+
+        if (hasPages()) {
+            builder.put(ItemMetaKeys.BOOK_PAGES.bukkit, pages);
+        }
+
+        return builder;
     }
 
     @Override
