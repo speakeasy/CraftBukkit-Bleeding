@@ -53,7 +53,7 @@ public final class CraftItemFactory implements ItemFactory {
                 CraftItemMeta deserialize(Map<String, Object> map) {
                     return new CraftItemMeta(map);
                 }
-            },;
+            };
 
             abstract ItemMeta deserialize(Map<String, Object> map);
         }
