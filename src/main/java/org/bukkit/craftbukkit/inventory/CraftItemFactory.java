@@ -83,14 +83,14 @@ public final class CraftItemFactory implements ItemFactory {
 
     private CraftItemFactory() {}
 
-    public boolean isValidMeta(ItemMeta meta, ItemStack itemstack) {
+    public boolean isApplicable(ItemMeta meta, ItemStack itemstack) {
         if (itemstack == null) {
             return false;
         }
-        return isValidMeta(meta, itemstack.getType());
+        return isApplicable(meta, itemstack.getType());
     }
 
-    public boolean isValidMeta(ItemMeta meta, Material type) {
+    public boolean isApplicable(ItemMeta meta, Material type) {
         if (type == null || meta == null) {
             return false;
         }

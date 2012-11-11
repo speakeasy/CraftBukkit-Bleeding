@@ -324,7 +324,7 @@ public final class CraftItemStack extends ItemStack {
             item.tag = null;
             return true;
         }
-        if (!CraftItemFactory.instance().isValidMeta(itemMeta, getType(item))) {
+        if (!CraftItemFactory.instance().isApplicable(itemMeta, getType(item))) {
             return false;
         }
 
