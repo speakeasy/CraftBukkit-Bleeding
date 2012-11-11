@@ -176,7 +176,7 @@ public final class CraftItemFactory implements ItemFactory {
     public ItemMeta asMetaFor(ItemMeta meta, Material material) {
         Validate.notNull(material, "Material cannot be null");
         if (!(meta instanceof CraftItemMeta)) {
-            throw new IllegalArgumentException("Meta of " + (meta == null ? meta.getClass().toString() : "null") + " not created by " + CraftItemFactory.class.getName());
+            throw new IllegalArgumentException("Meta of " + (meta != null ? meta.getClass().toString() : "null") + " not created by " + CraftItemFactory.class.getName());
         }
         return getItemMeta(material, (CraftItemMeta) meta);
     }

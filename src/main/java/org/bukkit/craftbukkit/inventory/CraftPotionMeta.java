@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
-    private List<PotionEffect> customEffects = new ArrayList<PotionEffect>();
+    private List<PotionEffect> customEffects;
 
     CraftPotionMeta(CraftItemMeta meta) {
         super(meta);
@@ -29,6 +30,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     CraftPotionMeta(NBTTagCompound tag) {
         super(tag);
 
+        customEffects = new ArrayList<PotionEffect>();
         if (tag.hasKey("CustomPotionEffects")) {
             NBTTagList list = tag.getList("CustomPotionEffects");
             int length = list.size();
@@ -45,6 +47,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
 
     CraftPotionMeta(Map<String, Object> map) {
         super(map);
+        customEffects = new ArrayList<PotionEffect>();
         // TODO Auto-generated constructor stub
     }
 
@@ -98,6 +101,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     public boolean addCustomEffect(PotionEffect effect, boolean overwrite) {
+        Validate.notNull(effect, "Potion effect must not be null");
         int index = indexOfEffect(effect.getType());
         if (index != -1) {
             if (overwrite) {
@@ -117,6 +121,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     public boolean removeCustomEffect(PotionEffectType type) {
+        Validate.notNull(type, "Potion effect type must not be null");
         boolean changed = false;
         Iterator<PotionEffect> iterator = customEffects.iterator();
         while (iterator.hasNext()) {
@@ -130,10 +135,12 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     public boolean hasCustomEffect(PotionEffectType type) {
+        Validate.notNull(type, "Potion effect type must not be null");
         return indexOfEffect(type) == -1;
     }
 
     public boolean setMainEffect(PotionEffectType type) {
+        Validate.notNull(type, "Potion effect type must not be null");
         int index = indexOfEffect(type);
         if (index == -1 || index == 0) {
             return false;
