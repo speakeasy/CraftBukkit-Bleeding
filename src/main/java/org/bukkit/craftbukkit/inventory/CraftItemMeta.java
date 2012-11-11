@@ -58,7 +58,15 @@ class CraftItemMeta implements ItemMeta {
         if (tag.hasKey("ench")) {
             NBTTagList enchantments = tag.getList("ench");
 
-            // TODO: Enchantments
+            int length = enchantments.size();
+            for (int i = 0; i < length; i++) {
+                NBTTagCompound enchantData = (NBTTagCompound) enchantments.get(i);
+                int id = enchantData.getShort("id");
+                Enchantment enchant = Enchantment.getById(id);
+                if (enchant != null) {
+                    this.enchantments.put(enchant, (int) enchantData.getShort("lvl"));
+                }
+            }
         }
 
         if (tag.hasKey("RepairCost")) {
@@ -91,7 +99,14 @@ class CraftItemMeta implements ItemMeta {
         }
 
         if (hasEnchants()) {
-            // TODO: Apply enchantments
+            NBTTagList enchants = new NBTTagList();
+            for (Map.Entry<Enchantment, Integer> enchant : enchantments.entrySet()) {
+                NBTTagCompound enchantData = new NBTTagCompound();
+                enchantData.setShort("id", (short) enchant.getKey().getId());
+                enchantData.setShort("lvl", (short) (int) enchant.getValue());
+                enchants.add(enchantData);
+            }
+            itemTag.set("ench", enchants);
         } else {
             itemTag.remove("ench");
         }
@@ -142,27 +157,36 @@ class CraftItemMeta implements ItemMeta {
     }
 
     public boolean hasEnchant(Enchantment ench) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO
+        return enchantments.containsKey(ench);
     }
 
     public int getEnchantLevel(Enchantment ench) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO
+        Integer level = enchantments.get(ench);
+        if (level == null) {
+            return 0;
+        }
+        return level;
     }
 
     public Map<Enchantment, Integer> getEnchants() {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO
+        return ImmutableMap.copyOf(enchantments);
     }
 
     public boolean addEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO
+        // TODO  && ench.getItemTarget().includes( ... ? ... )
+        if (ignoreRestrictions || level >= ench.getStartLevel() && level <= ench.getMaxLevel()) {
+            Integer old = enchantments.put(ench, level);
+            return old == null || old != level;
+        }
+        return false;
     }
 
     public boolean removeEnchant(Enchantment ench) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO
+        return enchantments.remove(ench) != null;
     }
 
     public boolean hasEnchants() {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO
+        return !enchantments.isEmpty();
     }
 
     @Override
