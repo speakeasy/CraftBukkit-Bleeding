@@ -63,9 +63,13 @@ public final class CraftItemFactory implements ItemFactory {
             Validate.notNull(map, "Cannot deserialize null map");
             Object typeObject = map.get(TYPE_FIELD);
             Validate.notNull(typeObject, TYPE_FIELD + " cannot be null");
-            Validate.isTrue(typeObject instanceof String, TYPE_FIELD + '(' + typeObject + ") is not valid");
+            if (!(typeObject instanceof String)) {
+                throw new IllegalArgumentException(TYPE_FIELD + '(' + typeObject + ") is not valid");
+            }
             Deserializers deserializer = Deserializers.valueOf(typeObject.toString());
-            Validate.notNull(deserializer, typeObject + " is not a valid" + TYPE_FIELD);
+            if (deserializer == null) {
+                throw new IllegalArgumentException(typeObject + " is not a valid " + TYPE_FIELD);
+            }
 
             return deserializer.deserialize(map);
         }
