@@ -17,7 +17,14 @@ import java.util.Map;
 class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     private List<PotionEffect> customEffects = new ArrayList<PotionEffect>();
 
-    CraftPotionMeta() {}
+    CraftPotionMeta(CraftItemMeta meta) {
+        super(meta);
+        if (!(meta instanceof CraftPotionMeta)) {
+            return;
+        }
+        CraftPotionMeta potionMeta = (CraftPotionMeta) meta;
+        this.customEffects = new ArrayList<PotionEffect>(potionMeta.customEffects);
+    }
 
     CraftPotionMeta(NBTTagCompound tag) {
         super(tag);
@@ -34,6 +41,11 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
                 customEffects.add(new PotionEffect(type, amp, duration, ambient));
             }
         }
+    }
+
+    CraftPotionMeta(Map<String, Object> map) {
+        super(map);
+        // TODO Auto-generated constructor stub
     }
 
     @Override
