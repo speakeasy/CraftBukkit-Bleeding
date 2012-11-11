@@ -108,6 +108,8 @@ public final class CraftItemFactory implements ItemFactory {
 
     private ItemMeta getItemMeta(Material material, CraftItemMeta meta) {
         switch (material) {
+        case AIR:
+            return null;
         case WRITTEN_BOOK:
         case BOOK_AND_QUILL:
             return meta instanceof CraftBookMeta ? meta : new CraftBookMeta(meta);
