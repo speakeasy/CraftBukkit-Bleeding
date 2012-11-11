@@ -15,56 +15,51 @@ public final class CraftItemFactory implements ItemFactory {
     @SerializableAs("ItemMeta")
     static class SerializableMeta implements ConfigurationSerializable {
         static final String TYPE_FIELD = "meta-type";
+
         enum Deserializers {
-            BOOK
-                {
-                    @Override
-                    CraftBookMeta deserialize(Map<String, Object> map) {
-                        return new CraftBookMeta(map);
-                    }
-                },
-            SKULL
-                {
-                    @Override
-                    CraftSkullMeta deserialize(Map<String, Object> map) {
-                        return new CraftSkullMeta(map);
-                    }
-                },
-            LEATHER_ARMOR
-                {
-                    @Override
-                    CraftLeatherArmorMeta deserialize(Map<String, Object> map) {
-                        return new CraftLeatherArmorMeta(map);
-                    }
-                },
-            MAP
-                {
-                    @Override
-                    ItemMeta deserialize(Map<String, Object> map) {
-                        // TODO
-                        throw new UnsupportedOperationException(this.name());
-                    }
-                },
-            POTION
-                {
-                    @Override
-                    ItemMeta deserialize(Map<String, Object> map) {
-                        return new CraftPotionMeta(map);
-                    }
-                },
-            UNSPECIFIC
-                {
-                    @Override
-                    CraftItemMeta deserialize(Map<String, Object> map) {
-                        return new CraftItemMeta(map);
-                    }
-                },
-            ;
+            BOOK {
+                @Override
+                CraftBookMeta deserialize(Map<String, Object> map) {
+                    return new CraftBookMeta(map);
+                }
+            },
+            SKULL {
+                @Override
+                CraftSkullMeta deserialize(Map<String, Object> map) {
+                    return new CraftSkullMeta(map);
+                }
+            },
+            LEATHER_ARMOR {
+                @Override
+                CraftLeatherArmorMeta deserialize(Map<String, Object> map) {
+                    return new CraftLeatherArmorMeta(map);
+                }
+            },
+            MAP {
+                @Override
+                ItemMeta deserialize(Map<String, Object> map) {
+                    // TODO
+                    throw new UnsupportedOperationException(this.name());
+                }
+            },
+            POTION {
+                @Override
+                ItemMeta deserialize(Map<String, Object> map) {
+                    return new CraftPotionMeta(map);
+                }
+            },
+            UNSPECIFIC {
+                @Override
+                CraftItemMeta deserialize(Map<String, Object> map) {
+                    return new CraftItemMeta(map);
+                }
+            },;
 
             abstract ItemMeta deserialize(Map<String, Object> map);
         }
 
-        private SerializableMeta() {}
+        private SerializableMeta() {
+        }
 
         public ItemMeta deserialize(Map<String, Object> map) {
             Validate.notNull(map, "Cannot deserialize null map");
@@ -85,14 +80,15 @@ public final class CraftItemFactory implements ItemFactory {
             throw new AssertionError();
         }
     }
-
     private static final CraftItemFactory instance;
+
     static {
         instance = new CraftItemFactory();
         ConfigurationSerialization.registerClass(SerializableMeta.class);
     }
 
-    private CraftItemFactory() {}
+    private CraftItemFactory() {
+    }
 
     public boolean isApplicable(ItemMeta meta, ItemStack itemstack) {
         if (itemstack == null) {

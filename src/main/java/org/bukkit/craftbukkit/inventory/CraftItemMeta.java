@@ -18,6 +18,19 @@ import com.google.common.collect.ImmutableMap;
 
 @DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
 class CraftItemMeta implements ItemMeta {
+    enum ItemMetaKeys {
+        NAME("Name", "displayName"),
+        LORE("Lore", "lore"),
+        ENCHANTMENTS("ench", "enchants"),
+        REPAIR("RepairCost", "repairCost");
+        final String nbt;
+        final String bukkit;
+
+        ItemMetaKeys(String s1, String s2) {
+            this.nbt = s1;
+            this.bukkit = s2;
+        }
+    }
     private String displayName;
     private List<String> lore;
     private Map<Enchantment, Integer> enchantments; // TODO: enchantments
@@ -27,25 +40,30 @@ class CraftItemMeta implements ItemMeta {
         if (meta == null) {
             return;
         }
+
         this.displayName = meta.displayName;
+
         if (meta.lore != null) {
             this.lore = new ArrayList<String>(meta.lore);
         }
+
         if (meta.enchantments != null) {
             this.enchantments = new HashMap<Enchantment, Integer>(meta.enchantments);
         }
+
         this.repairCost = meta.repairCost;
     }
 
     CraftItemMeta(NBTTagCompound tag) {
         if (tag.hasKey("display")) {
             NBTTagCompound display = tag.getCompound("display");
-            if (display.hasKey("Name")) {
-                displayName = display.getString("Name");
+
+            if (display.hasKey(ItemMetaKeys.NAME.nbt)) {
+                displayName = display.getString(ItemMetaKeys.NAME.nbt);
             }
 
-            if (display.hasKey("Lore")) {
-                NBTTagList list = display.getList("Lore");
+            if (display.hasKey(ItemMetaKeys.LORE.nbt)) {
+                NBTTagList list = display.getList(ItemMetaKeys.LORE.nbt);
                 lore = new ArrayList<String>(list.size());
 
                 for (int index = 0; index < list.size(); index++) {
@@ -55,66 +73,93 @@ class CraftItemMeta implements ItemMeta {
             }
         }
 
-        if (tag.hasKey("ench")) {
-            NBTTagList enchantments = tag.getList("ench");
+        if (tag.hasKey(ItemMetaKeys.ENCHANTMENTS.nbt)) {
+            NBTTagList ench = tag.getList(ItemMetaKeys.ENCHANTMENTS.nbt);
+            enchantments = new HashMap<Enchantment, Integer>(ench.size());
 
-            int length = enchantments.size();
-            for (int i = 0; i < length; i++) {
-                NBTTagCompound enchantData = (NBTTagCompound) enchantments.get(i);
-                int id = enchantData.getShort("id");
-                Enchantment enchant = Enchantment.getById(id);
-                if (enchant != null) {
-                    this.enchantments.put(enchant, (int) enchantData.getShort("lvl"));
-                }
+            for (int i = 0; i < ench.size(); i++) {
+                short id = ((NBTTagCompound) ench.get(i)).getShort("id");
+                short level = ((NBTTagCompound) ench.get(i)).getShort("lvl");
+
+                enchantments.put(Enchantment.getById(id), (int) level);
             }
         }
 
-        if (tag.hasKey("RepairCost")) {
-            // TODO: RepairCost
-            repairCost = tag.getInt("RepairCost");
+        if (tag.hasKey(ItemMetaKeys.REPAIR.nbt)) {
+            repairCost = tag.getInt(ItemMetaKeys.REPAIR.nbt);
         }
     }
 
     CraftItemMeta(Map<String, Object> map) {
-        // TODO Auto-generated constructor stub
+        if (map.containsKey(ItemMetaKeys.NAME.bukkit)) {
+            displayName = String.valueOf(map.get(ItemMetaKeys.NAME.bukkit));
+        }
+
+        if (map.containsKey(ItemMetaKeys.LORE.bukkit)) {
+            lore = (List<String>) map.get(ItemMetaKeys.LORE.bukkit);
+        }
+
+        if (map.containsKey(ItemMetaKeys.ENCHANTMENTS.bukkit)) {
+            Object raw = map.get(ItemMetaKeys.ENCHANTMENTS.bukkit);
+
+            if (raw instanceof Map) {
+                Map<?, ?> ench = (Map<?, ?>) raw;
+
+                for (Map.Entry<?, ?> entry : ench.entrySet()) {
+                    Enchantment enchantment = Enchantment.getByName(entry.getKey().toString());
+
+                    if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
+                        addEnchant(enchantment, (Integer) entry.getValue());
+                    }
+                }
+            }
+        }
+
+        if (map.containsKey(ItemMetaKeys.REPAIR.bukkit)) {
+            repairCost = (Integer) map.get(ItemMetaKeys.REPAIR.bukkit);
+        }
     }
 
     void applyToItem(NBTTagCompound itemTag) {
         NBTTagCompound display = getDisplay(itemTag);
 
         if (hasDisplayName()) {
-            display.setString("Name", displayName);
+            display.setString(ItemMetaKeys.NAME.nbt, displayName);
         } else {
-            display.remove("Name");
+            display.remove(ItemMetaKeys.NAME.nbt);
         }
 
         if (hasLore()) {
-            NBTTagList list = display.getList("Lore");
+            NBTTagList list = new NBTTagList(ItemMetaKeys.LORE.nbt);
             for (int i = 0; i < lore.size(); i++) {
                 list.add(new NBTTagString(String.valueOf(i), lore.get(i)));
             }
-            display.set("Lore", list);
+            display.set(ItemMetaKeys.LORE.nbt, list);
         } else {
-            display.remove("Lore");
+            display.remove(ItemMetaKeys.LORE.nbt);
         }
 
         if (hasEnchants()) {
-            NBTTagList enchants = new NBTTagList();
-            for (Map.Entry<Enchantment, Integer> enchant : enchantments.entrySet()) {
-                NBTTagCompound enchantData = new NBTTagCompound();
-                enchantData.setShort("id", (short) enchant.getKey().getId());
-                enchantData.setShort("lvl", (short) (int) enchant.getValue());
-                enchants.add(enchantData);
+            NBTTagList list = new NBTTagList(ItemMetaKeys.ENCHANTMENTS.nbt);
+
+            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                NBTTagCompound subtag = new NBTTagCompound();
+
+                subtag.setShort("id", (short) entry.getKey().getId());
+                subtag.setShort("lvl", (short) (int) entry.getValue());
+
+                list.add(subtag);
             }
-            itemTag.set("ench", enchants);
+
+            itemTag.set(ItemMetaKeys.ENCHANTMENTS.nbt, list);
         } else {
-            itemTag.remove("ench");
+            itemTag.remove(ItemMetaKeys.ENCHANTMENTS.nbt);
         }
 
         if (hasRepairCost()) {
-            itemTag.setInt("RepairCost", repairCost);
+            itemTag.setInt(ItemMetaKeys.REPAIR.nbt, repairCost);
         } else {
-            itemTag.remove("RepairCost");
+            itemTag.remove(ItemMetaKeys.REPAIR.nbt);
         }
     }
 
@@ -179,6 +224,10 @@ class CraftItemMeta implements ItemMeta {
             return old == null || old != level;
         }
         return false;
+    }
+
+    private void addEnchant(Enchantment ench, int level) {
+        addEnchant(ench, level, true);
     }
 
     public boolean removeEnchant(Enchantment ench) {
@@ -246,7 +295,22 @@ class CraftItemMeta implements ItemMeta {
     }
 
     ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
-        // TODO
+        if (hasDisplayName()) {
+            builder.put(ItemMetaKeys.NAME.bukkit, displayName);
+        }
+
+        if (hasLore()) {
+            builder.put(ItemMetaKeys.LORE.bukkit, lore);
+        }
+
+        if (hasEnchants()) {
+            builder.put(ItemMetaKeys.ENCHANTMENTS.bukkit, enchantments);
+        }
+
+        if (hasRepairCost()) {
+            builder.put(ItemMetaKeys.REPAIR.bukkit, repairCost);
+        }
+
         return builder;
     }
 
