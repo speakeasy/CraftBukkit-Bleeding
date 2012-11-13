@@ -16,6 +16,10 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.google.common.collect.ImmutableMap.Builder;
 
 public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
+    static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
+    static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
+    static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");
+
     private String title;
     private String author;
     private List<String> pages = new ArrayList<String>();
@@ -35,12 +39,12 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     CraftBookMeta(NBTTagCompound tag) {
         super(tag);
 
-        if (tag.hasKey(ItemMetaKeys.BOOK_TITLE.nbt)) {
-            this.title = tag.getString(ItemMetaKeys.BOOK_TITLE.nbt);
+        if (tag.hasKey(BOOK_TITLE.NBT)) {
+            this.title = tag.getString(BOOK_TITLE.NBT);
         }
 
-        if (tag.hasKey(ItemMetaKeys.BOOK_AUTHOR.nbt)) {
-            this.author = tag.getString(ItemMetaKeys.BOOK_AUTHOR.nbt);
+        if (tag.hasKey(BOOK_AUTHOR.NBT)) {
+            this.author = tag.getString(BOOK_AUTHOR.NBT);
         }
 
         if (tag.hasKey("pages")) {
@@ -59,41 +63,41 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     CraftBookMeta(Map<String, Object> map) {
         super(map);
 
-        if (map.containsKey(ItemMetaKeys.BOOK_AUTHOR.bukkit)) {
-            this.author = (String) map.get(ItemMetaKeys.BOOK_AUTHOR.bukkit);
+        if (map.containsKey(BOOK_AUTHOR.BUKKIT)) {
+            this.author = (String) map.get(BOOK_AUTHOR.BUKKIT);
         }
 
-        if (map.containsKey(ItemMetaKeys.BOOK_TITLE.bukkit)) {
-            this.title = (String) map.get(ItemMetaKeys.BOOK_TITLE.bukkit);
+        if (map.containsKey(BOOK_TITLE.BUKKIT)) {
+            this.title = (String) map.get(BOOK_TITLE.BUKKIT);
         }
 
-        if (map.containsKey(ItemMetaKeys.BOOK_PAGES.bukkit)) {
-            this.pages.addAll((List<String>) map.get(ItemMetaKeys.BOOK_PAGES.bukkit));
+        if (map.containsKey(BOOK_PAGES.BUKKIT)) {
+            this.pages.addAll((List<String>) map.get(BOOK_PAGES.BUKKIT));
         }
     }
 
     @Override
     void applyToItem(NBTTagCompound itemData) {
         if (hasTitle()) {
-            itemData.setString(ItemMetaKeys.BOOK_TITLE.nbt, this.title);
+            itemData.setString(BOOK_TITLE.NBT, this.title);
         } else {
-            itemData.remove(ItemMetaKeys.BOOK_TITLE.nbt);
+            itemData.remove(BOOK_TITLE.NBT);
         }
 
         if (hasAuthor()) {
-            itemData.setString(ItemMetaKeys.BOOK_AUTHOR.nbt, this.author);
+            itemData.setString(BOOK_AUTHOR.NBT, this.author);
         } else {
-            itemData.remove(ItemMetaKeys.BOOK_AUTHOR.nbt);
+            itemData.remove(BOOK_AUTHOR.NBT);
         }
 
         if (hasPages()) {
-            NBTTagList itemPages = new NBTTagList(ItemMetaKeys.BOOK_PAGES.nbt);
+            NBTTagList itemPages = new NBTTagList(BOOK_PAGES.NBT);
             for (int i = 1; i < pages.size() + 1; i++) {
                 itemPages.add(new NBTTagString(String.valueOf(i), pages.get(i - 1)));
             }
-            itemData.set(ItemMetaKeys.BOOK_PAGES.nbt, itemPages);
+            itemData.set(BOOK_PAGES.NBT, itemPages);
         } else {
-            itemData.remove(ItemMetaKeys.BOOK_PAGES.nbt);
+            itemData.remove(BOOK_PAGES.NBT);
         }
     }
 
@@ -235,15 +239,15 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         super.serialize(builder);
 
         if (hasTitle()) {
-            builder.put(ItemMetaKeys.BOOK_TITLE.bukkit, title);
+            builder.put(BOOK_TITLE.BUKKIT, title);
         }
 
         if (hasAuthor()) {
-            builder.put(ItemMetaKeys.BOOK_AUTHOR.bukkit, author);
+            builder.put(BOOK_AUTHOR.BUKKIT, author);
         }
 
         if (hasPages()) {
-            builder.put(ItemMetaKeys.BOOK_PAGES.bukkit, pages);
+            builder.put(BOOK_PAGES.BUKKIT, pages);
         }
 
         return builder;

@@ -18,27 +18,25 @@ import com.google.common.collect.ImmutableMap;
 
 @DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
 class CraftItemMeta implements ItemMeta {
-    enum ItemMetaKeys {
-        NAME("Name", "displayName"),
-        LORE("Lore", "lore"),
-        ENCHANTMENTS("ench", "enchants"),
-        REPAIR("RepairCost", "repairCost"),
-        BOOK_TITLE("title"),
-        BOOK_AUTHOR("author"),
-        BOOK_PAGES("pages");
+    static class ItemMetaKey {
+        final String BUKKIT;
+        final String NBT;
 
-        final String nbt;
-        final String bukkit;
-
-        ItemMetaKeys(String s1) {
-            this(s1, s1);
+        ItemMetaKey(final String both) {
+            this(both, both);
         }
 
-        ItemMetaKeys(String s1, String s2) {
-            this.nbt = s1;
-            this.bukkit = s2;
+        ItemMetaKey(final String nbt, final String bukkit) {
+            this.NBT = nbt;
+            this.BUKKIT = bukkit;
         }
     }
+
+    static final ItemMetaKey NAME = new ItemMetaKey("Name", "displayName");
+    static final ItemMetaKey LORE = new ItemMetaKey("Lore", "lore");
+    static final ItemMetaKey ENCHANTMENTS = new ItemMetaKey("ench", "enchants");
+    static final ItemMetaKey REPAIR = new ItemMetaKey("RepairCost", "repairCost");
+
     private String displayName;
     private List<String> lore;
     private Map<Enchantment, Integer> enchantments;
@@ -66,12 +64,12 @@ class CraftItemMeta implements ItemMeta {
         if (tag.hasKey("display")) {
             NBTTagCompound display = tag.getCompound("display");
 
-            if (display.hasKey(ItemMetaKeys.NAME.nbt)) {
-                displayName = display.getString(ItemMetaKeys.NAME.nbt);
+            if (display.hasKey(NAME.NBT)) {
+                displayName = display.getString(NAME.NBT);
             }
 
-            if (display.hasKey(ItemMetaKeys.LORE.nbt)) {
-                NBTTagList list = display.getList(ItemMetaKeys.LORE.nbt);
+            if (display.hasKey(LORE.NBT)) {
+                NBTTagList list = display.getList(LORE.NBT);
                 lore = new ArrayList<String>(list.size());
 
                 for (int index = 0; index < list.size(); index++) {
@@ -81,8 +79,8 @@ class CraftItemMeta implements ItemMeta {
             }
         }
 
-        if (tag.hasKey(ItemMetaKeys.ENCHANTMENTS.nbt)) {
-            NBTTagList ench = tag.getList(ItemMetaKeys.ENCHANTMENTS.nbt);
+        if (tag.hasKey(ENCHANTMENTS.NBT)) {
+            NBTTagList ench = tag.getList(ENCHANTMENTS.NBT);
             enchantments = new HashMap<Enchantment, Integer>(ench.size());
 
             for (int i = 0; i < ench.size(); i++) {
@@ -93,22 +91,22 @@ class CraftItemMeta implements ItemMeta {
             }
         }
 
-        if (tag.hasKey(ItemMetaKeys.REPAIR.nbt)) {
-            repairCost = tag.getInt(ItemMetaKeys.REPAIR.nbt);
+        if (tag.hasKey(REPAIR.NBT)) {
+            repairCost = tag.getInt(REPAIR.NBT);
         }
     }
 
     CraftItemMeta(Map<String, Object> map) {
-        if (map.containsKey(ItemMetaKeys.NAME.bukkit)) {
-            displayName = String.valueOf(map.get(ItemMetaKeys.NAME.bukkit));
+        if (map.containsKey(NAME.BUKKIT)) {
+            displayName = String.valueOf(map.get(NAME.BUKKIT));
         }
 
-        if (map.containsKey(ItemMetaKeys.LORE.bukkit)) {
-            lore = (List<String>) map.get(ItemMetaKeys.LORE.bukkit);
+        if (map.containsKey(LORE.BUKKIT)) {
+            lore = (List<String>) map.get(LORE.BUKKIT);
         }
 
-        if (map.containsKey(ItemMetaKeys.ENCHANTMENTS.bukkit)) {
-            Object raw = map.get(ItemMetaKeys.ENCHANTMENTS.bukkit);
+        if (map.containsKey(ENCHANTMENTS.BUKKIT)) {
+            Object raw = map.get(ENCHANTMENTS.BUKKIT);
 
             if (raw instanceof Map) {
                 Map<?, ?> ench = (Map<?, ?>) raw;
@@ -123,8 +121,8 @@ class CraftItemMeta implements ItemMeta {
             }
         }
 
-        if (map.containsKey(ItemMetaKeys.REPAIR.bukkit)) {
-            repairCost = (Integer) map.get(ItemMetaKeys.REPAIR.bukkit);
+        if (map.containsKey(REPAIR.BUKKIT)) {
+            repairCost = (Integer) map.get(REPAIR.BUKKIT);
         }
     }
 
@@ -132,23 +130,23 @@ class CraftItemMeta implements ItemMeta {
         NBTTagCompound display = getDisplay(itemTag);
 
         if (hasDisplayName()) {
-            display.setString(ItemMetaKeys.NAME.nbt, displayName);
+            display.setString(NAME.NBT, displayName);
         } else {
-            display.remove(ItemMetaKeys.NAME.nbt);
+            display.remove(NAME.NBT);
         }
 
         if (hasLore()) {
-            NBTTagList list = new NBTTagList(ItemMetaKeys.LORE.nbt);
+            NBTTagList list = new NBTTagList(LORE.NBT);
             for (int i = 0; i < lore.size(); i++) {
                 list.add(new NBTTagString(String.valueOf(i), lore.get(i)));
             }
-            display.set(ItemMetaKeys.LORE.nbt, list);
+            display.set(LORE.NBT, list);
         } else {
-            display.remove(ItemMetaKeys.LORE.nbt);
+            display.remove(LORE.NBT);
         }
 
         if (hasEnchants()) {
-            NBTTagList list = new NBTTagList(ItemMetaKeys.ENCHANTMENTS.nbt);
+            NBTTagList list = new NBTTagList(ENCHANTMENTS.NBT);
 
             for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
                 NBTTagCompound subtag = new NBTTagCompound();
@@ -159,15 +157,15 @@ class CraftItemMeta implements ItemMeta {
                 list.add(subtag);
             }
 
-            itemTag.set(ItemMetaKeys.ENCHANTMENTS.nbt, list);
+            itemTag.set(ENCHANTMENTS.NBT, list);
         } else {
-            itemTag.remove(ItemMetaKeys.ENCHANTMENTS.nbt);
+            itemTag.remove(ENCHANTMENTS.NBT);
         }
 
         if (hasRepairCost()) {
-            itemTag.setInt(ItemMetaKeys.REPAIR.nbt, repairCost);
+            itemTag.setInt(REPAIR.NBT, repairCost);
         } else {
-            itemTag.remove(ItemMetaKeys.REPAIR.nbt);
+            itemTag.remove(REPAIR.NBT);
         }
     }
 
@@ -304,19 +302,19 @@ class CraftItemMeta implements ItemMeta {
 
     ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         if (hasDisplayName()) {
-            builder.put(ItemMetaKeys.NAME.bukkit, displayName);
+            builder.put(NAME.BUKKIT, displayName);
         }
 
         if (hasLore()) {
-            builder.put(ItemMetaKeys.LORE.bukkit, lore);
+            builder.put(LORE.BUKKIT, lore);
         }
 
         if (hasEnchants()) {
-            builder.put(ItemMetaKeys.ENCHANTMENTS.bukkit, enchantments);
+            builder.put(ENCHANTMENTS.BUKKIT, enchantments);
         }
 
         if (hasRepairCost()) {
-            builder.put(ItemMetaKeys.REPAIR.bukkit, repairCost);
+            builder.put(REPAIR.BUKKIT, repairCost);
         }
 
         return builder;
