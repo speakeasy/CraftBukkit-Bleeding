@@ -53,6 +53,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
 
     @Override
     void applyToItem(NBTTagCompound tag) {
+        super.applyToItem(tag);
         if (hasCustomEffects()) {
             NBTTagList effectList = new NBTTagList();
             tag.set("CustomPotionEffects", effectList);
