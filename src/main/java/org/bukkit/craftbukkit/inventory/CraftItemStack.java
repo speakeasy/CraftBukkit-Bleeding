@@ -301,6 +301,8 @@ public final class CraftItemStack extends ItemStack {
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
                 return new CraftLeatherArmorMeta(item.tag);
+            case POTION:
+                return new CraftPotionMeta(item.tag);
             default:
                 return new CraftItemMeta(item.tag);
         }
