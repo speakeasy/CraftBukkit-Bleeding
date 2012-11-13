@@ -264,8 +264,8 @@ class CraftItemMeta implements ItemMeta {
      */
     boolean equalsCommon(CraftItemMeta that) {
         return (this.displayName == that.displayName || (this.displayName != null && this.displayName.equals(that.displayName)))
-                && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
-                && (this.hasLore() ? that.hasLore() && this.lore.equals(that.lore) : !that.hasLore())
+                && (this.hasEnchants() ? this.enchantments.equals(that.enchantments) : !that.hasEnchants())
+                && (this.hasLore() ? this.lore.equals(that.lore) : !that.hasLore())
                 && this.repairCost == that.repairCost;
     }
 

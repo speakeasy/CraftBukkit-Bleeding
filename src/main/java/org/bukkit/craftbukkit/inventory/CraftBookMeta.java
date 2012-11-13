@@ -241,7 +241,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
             return (this.title == that.title || (this.title != null && this.title.equals(that.title)))
                     && (this.author == that.author || (this.author != null && this.author.equals(that.author)))
-                    && (hasPages() ? that.hasPages() && this.pages.equals(that.pages) : !that.hasPages());
+                    && (hasPages() ? this.pages.equals(that.pages) : !that.hasPages());
         }
         return true;
     }
