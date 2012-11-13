@@ -11,6 +11,7 @@ import net.minecraft.server.NBTTagString;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.craftbukkit.inventory.CraftItemFactory.SerializableMeta;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,10 +33,10 @@ class CraftItemMeta implements ItemMeta {
         }
     }
 
-    static final ItemMetaKey NAME = new ItemMetaKey("Name", "displayName");
+    static final ItemMetaKey NAME = new ItemMetaKey("Name", "display-name");
     static final ItemMetaKey LORE = new ItemMetaKey("Lore", "lore");
     static final ItemMetaKey ENCHANTMENTS = new ItemMetaKey("ench", "enchants");
-    static final ItemMetaKey REPAIR = new ItemMetaKey("RepairCost", "repairCost");
+    static final ItemMetaKey REPAIR = new ItemMetaKey("RepairCost", "repair-cost");
 
     private String displayName;
     private List<String> lore;
@@ -97,9 +98,7 @@ class CraftItemMeta implements ItemMeta {
     }
 
     CraftItemMeta(Map<String, Object> map) {
-        if (map.containsKey(NAME.BUKKIT)) {
-            displayName = String.valueOf(map.get(NAME.BUKKIT));
-        }
+        setDisplayName(SerializableMeta.getString(map, NAME.BUKKIT, true));
 
         if (map.containsKey(LORE.BUKKIT)) {
             lore = (List<String>) map.get(LORE.BUKKIT);
@@ -246,32 +245,36 @@ class CraftItemMeta implements ItemMeta {
 
     @Override
     public boolean equals(Object object) {
-        if (this == object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
             return true;
         }
         if (!(object instanceof CraftItemMeta)) {
             return false;
-        } else if (this.isEmpty()) {
-            return ((CraftItemMeta) object).isEmpty();
         }
+        return CraftItemFactory.instance().equals(this, (ItemMeta) object);
+    }
 
-        CraftItemMeta objectMeta = (CraftItemMeta) object;
+    /**
+     * This method is almost as weird as notUncommon.
+     * Only return false if your common internals are unequal.
+     * Checking your own internals is redundant if you are not common, as notUncommon is meant for checking those 'not common' variables.
+     */
+    boolean equalsCommon(CraftItemMeta that) {
+        return (this.displayName == that.displayName || (this.displayName != null && this.displayName.equals(that.displayName)))
+                && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
+                && (this.hasLore() ? that.hasLore() && this.lore.equals(that.lore) : !that.hasLore())
+                && this.repairCost == that.repairCost;
+    }
 
-        // Do the display names equal?
-        if ((this.hasDisplayName() && !objectMeta.hasDisplayName()) || (this.hasDisplayName() && !this.getDisplayName().equals(objectMeta.getDisplayName()))) {
-            return false;
-        }
-
-        // Do the enchants equal?
-        if ((this.hasEnchants() && !objectMeta.hasEnchants()) || (this.hasEnchants() && !this.getEnchants().equals(objectMeta.getEnchants()))) {
-            return false;
-        }
-
-        // Does lore match?
-        if ((this.hasLore() && !objectMeta.hasLore())) {
-            return false;
-        }
-
+    /**
+     * This method is a bit weird...
+     * Return true if you are a common class OR your uncommon parts are empty.
+     * Empty uncommon parts implies the NBT data would be equivalent if both were applied to an item
+     */
+    boolean notUncommon(CraftItemMeta meta) {
         return true;
     }
 
@@ -281,7 +284,7 @@ class CraftItemMeta implements ItemMeta {
         hash = 61 * hash + (this.displayName != null ? this.displayName.hashCode() : 0);
         hash = 61 * hash + (this.lore != null ? this.lore.hashCode() : 0);
         hash = 61 * hash + (this.enchantments != null ? this.enchantments.hashCode() : 0);
-        // hash = 61 * hash + this.maxStackSize;
+        hash = 61 * hash + this.repairCost;
         return hash;
     }
 

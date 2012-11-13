@@ -63,14 +63,12 @@ public final class CraftItemFactory implements ItemFactory {
 
         public ItemMeta deserialize(Map<String, Object> map) {
             Validate.notNull(map, "Cannot deserialize null map");
-            Object typeObject = map.get(TYPE_FIELD);
-            Validate.notNull(typeObject, TYPE_FIELD + " cannot be null");
-            if (!(typeObject instanceof String)) {
-                throw new IllegalArgumentException(TYPE_FIELD + '(' + typeObject + ") is not valid");
-            }
-            Deserializers deserializer = Deserializers.valueOf(typeObject.toString());
+
+            String type = getString(map, TYPE_FIELD, false);
+            Deserializers deserializer = Deserializers.valueOf(type);
+
             if (deserializer == null) {
-                throw new IllegalArgumentException(typeObject + " is not a valid " + TYPE_FIELD);
+                throw new IllegalArgumentException(type + " is not a valid " + TYPE_FIELD);
             }
 
             return deserializer.deserialize(map);
@@ -78,6 +76,25 @@ public final class CraftItemFactory implements ItemFactory {
 
         public Map<String, Object> serialize() {
             throw new AssertionError();
+        }
+
+        static String getString(Map<String, Object> map, String field, boolean nullable) {
+            return getObject(String.class, map, field, nullable);
+        }
+
+        static <T> T getObject(Class<T> clazz, Map<String, Object> map, String field, boolean nullable) {
+            final Object object = map.get(field);
+
+            if (clazz.isInstance(object)) {
+                return clazz.cast(object);
+            }
+            if (object == null) {
+                if (!nullable) {
+                    throw new IllegalArgumentException(field + " cannot be null");
+                }
+                return null;
+            }
+            throw new IllegalArgumentException(field + '(' + object + ") is not a valid " + clazz);
         }
     }
     private static final CraftItemFactory instance;
@@ -157,7 +174,20 @@ public final class CraftItemFactory implements ItemFactory {
             return ((CraftItemMeta) meta1).isEmpty();
         }
 
-        return meta1.equals(meta2);
+        return equals((CraftItemMeta) meta1, (CraftItemMeta) meta2);
+    }
+
+    boolean equals(CraftItemMeta meta1, CraftItemMeta meta2) {
+        /*
+         * This couldn't be done inside of the objects themselves, else force recursion.
+         * This is a fairly clean way of implementing it, by dividing the methods into purposes and letting each method perform its own function.
+         *
+         * The common and uncommon were split, as both could have variables not applicable to the other, like a skull and book.
+         * Each object needs its chance to say "hey wait a minute, we're not equal," but without the redundancy of using the 1.equals(2) && 2.equals(1) checking the 'commons' twice.
+         *
+         * Doing it this way fills all conditions of the .equals() method.
+         */
+        return meta1.equalsCommon(meta2) && meta1.notUncommon(meta2) && meta2.notUncommon(meta1);
     }
 
     public static CraftItemFactory instance() {

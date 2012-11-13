@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import net.minecraft.server.NBTTagString;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.inventory.CraftItemFactory.*;
 import org.bukkit.inventory.meta.BookMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
@@ -19,6 +21,8 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
     static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
     static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");
+    static final int MAX_PAGE_LENGTH = 256;
+    static final int MAX_TITLE_LENGTH = 16;
 
     private String title;
     private String author;
@@ -63,21 +67,19 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     CraftBookMeta(Map<String, Object> map) {
         super(map);
 
-        if (map.containsKey(BOOK_AUTHOR.BUKKIT)) {
-            this.author = (String) map.get(BOOK_AUTHOR.BUKKIT);
-        }
+        setAuthor(SerializableMeta.getString(map, BOOK_AUTHOR.BUKKIT, true));
 
-        if (map.containsKey(BOOK_TITLE.BUKKIT)) {
-            this.title = (String) map.get(BOOK_TITLE.BUKKIT);
-        }
+        setTitle(SerializableMeta.getString(map, BOOK_TITLE.BUKKIT, true));
 
-        if (map.containsKey(BOOK_PAGES.BUKKIT)) {
-            this.pages.addAll((List<String>) map.get(BOOK_PAGES.BUKKIT));
+        Collection<?> pages = SerializableMeta.getObject(Collection.class, map, BOOK_PAGES.BUKKIT, true);
+        if (pages != null) {
+            safelyAddPages(pages);
         }
     }
 
     @Override
     void applyToItem(NBTTagCompound itemData) {
+        super.applyToItem(itemData);
         if (hasTitle()) {
             itemData.setString(BOOK_TITLE.NBT, this.title);
         } else {
@@ -103,9 +105,10 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     @Override
     boolean isEmpty() {
-        return !(hasPages() || hasAuthor() || hasTitle()) && super.isEmpty();
+        return super.isEmpty() && !(hasPages() || hasAuthor() || hasTitle());
     }
 
+    @Override
     boolean applicableTo(Material type) {
         switch (type) {
         case BOOK:
@@ -136,7 +139,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         if (title == null) {
             this.title = null;
             return true;
-        } else if (title.length() > 16) {
+        } else if (title.length() > MAX_TITLE_LENGTH) {
             return false;
         }
 
@@ -158,9 +161,11 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     public boolean setPage(final int page, final String text) {
-        Validate.isTrue(isValidPage(page), "Invalid page number " + page + "/" + pages.size());
+        if (!isValidPage(page)) {
+            throw new IllegalArgumentException("Invalid page number " + page + "/" + pages.size());
+        }
 
-        pages.set(page - 1, text == null ? "" : text.length() > 256 ? text.substring(0, 256) : text);
+        pages.set(page - 1, text == null ? "" : text.length() > MAX_PAGE_LENGTH ? text.substring(0, MAX_PAGE_LENGTH) : text);
         return true;
     }
 
@@ -171,11 +176,12 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     public void addPage(final String... pages) {
+        Validate.notNull(pages, "Cannot add null pages");
         for (String page : pages) {
             if (page == null) {
                 page = "";
-            } else if (page.length() > 256) {
-                page = page.substring(0, 256);
+            } else if (page.length() > MAX_PAGE_LENGTH) {
+                page = page.substring(0, MAX_PAGE_LENGTH);
             }
 
             this.pages.add(page);
@@ -196,7 +202,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
             return;
         }
 
-        addPage(pages.toArray(new String[pages.size()]));
+        safelyAddPages(pages);
     }
 
     private boolean isValidPage(int page) {
@@ -210,28 +216,39 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         return meta;
     }
 
-    public boolean equals(Object object) {
-        if (!super.equals(object)) {
-            return false;
-        } else if (!(object instanceof CraftBookMeta)) {
+    @Override
+    public int hashCode() {
+        int original, hash = original = super.hashCode();
+        if (this.title != null) {
+            hash = 61 * hash + this.title.hashCode();
+        }
+        if (this.author != null) {
+            hash = 61 * hash + 13 * this.author.hashCode();
+        }
+        if (hasPages()) {
+            hash = 61 * hash + 17 * this.pages.hashCode();
+        }
+        return original != hash ? CraftBookMeta.class.hashCode() ^ hash : hash;
+    }
+
+    @Override
+    boolean equalsCommon(CraftItemMeta meta) {
+        if (!super.equalsCommon(meta)) {
             return false;
         }
+        if (meta instanceof CraftBookMeta) {
+            CraftBookMeta that = (CraftBookMeta) meta;
 
-        CraftBookMeta objectMeta = (CraftBookMeta) object;
-
-        if (!hasTitle() ? objectMeta.title != null : !this.title.equals(objectMeta.title)) {
-            return false;
+            return (this.title == that.title || (this.title != null && this.title.equals(that.title)))
+                    && (this.author == that.author || (this.author != null && this.author.equals(that.author)))
+                    && (hasPages() ? that.hasPages() && this.pages.equals(that.pages) : !that.hasPages());
         }
+        return true;
+    }
 
-        if (!hasAuthor() ? objectMeta.author != null : !this.author.equals(objectMeta.author)) {
-            return false;
-        }
-
-        if (!this.pages.equals(objectMeta.pages)) {
-            return false;
-        }
-
-        return super.equals(object);
+    @Override
+    boolean notUncommon(CraftItemMeta meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftBookMeta || (this.title == null && this.author == null && !hasPages()));
     }
 
     @Override
@@ -256,5 +273,25 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     @Override
     CraftItemFactory.SerializableMeta.Deserializers deserializer() {
         return CraftItemFactory.SerializableMeta.Deserializers.BOOK;
+    }
+
+    private void safelyAddPages(Collection<?> collection) {
+        for (Object object : collection) {
+            if (!(object instanceof String)) {
+                if (object != null) {
+                    throw new IllegalArgumentException(collection + " cannot contain non-string " + object.getClass().getName());
+                }
+
+                this.pages.add("");
+            } else {
+                String page = object.toString();
+
+                if (page.length() > MAX_PAGE_LENGTH) {
+                    page = page.substring(0, MAX_PAGE_LENGTH);
+                }
+
+                this.pages.add(page);
+            }
+        }
     }
 }

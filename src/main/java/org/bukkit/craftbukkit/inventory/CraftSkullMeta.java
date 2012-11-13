@@ -5,11 +5,15 @@ import java.util.Map;
 import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.inventory.CraftItemFactory.SerializableMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
 class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
+    static final ItemMetaKey SKULL_OWNER = new ItemMetaKey("SkullOwner", "skull-owner");
+    static final int MAX_OWNER_LENGTH = 16;
+
     private String player;
 
     CraftSkullMeta(CraftItemMeta meta) {
@@ -24,28 +28,32 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     CraftSkullMeta(NBTTagCompound tag) {
         super(tag);
 
-        if (tag.hasKey("SkullOwner")) {
-            player = tag.getString("SkullOwner");
+        if (tag.hasKey(SKULL_OWNER.NBT)) {
+            player = tag.getString(SKULL_OWNER.NBT);
         }
     }
 
     CraftSkullMeta(Map<String, Object> map) {
         super(map);
-        // TODO Auto-generated constructor stub
+        setOwner(SerializableMeta.getString(map, SKULL_OWNER.BUKKIT, true));
     }
 
+    @Override
     void applyToItem(NBTTagCompound tag) {
+        super.applyToItem(tag);
         if (hasOwner()) {
-            tag.setString("SkullOwner", player);
+            tag.setString(SKULL_OWNER.NBT, player);
         } else {
-            tag.remove("SkullOwner");
+            tag.remove(SKULL_OWNER.NBT);
         }
     }
 
+    @Override
     boolean isEmpty() {
-        return !hasOwner() && super.isEmpty();
+        return super.isEmpty() && !hasOwner();
     }
 
+    @Override
     boolean applicableTo(Material type) {
         switch(type) {
             case SKULL_ITEM:
@@ -69,7 +77,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     }
 
     public boolean setOwner(String name) {
-        if (name != null && name.length() > 16) {
+        if (name != null && name.length() > MAX_OWNER_LENGTH) {
             return false;
         }
         player = name;
@@ -79,28 +87,36 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 73 * hash + (player != null ? player.hashCode() : 0);
+        if (player != null) {
+            hash = 61 * hash + (player.hashCode() ^ CraftSkullMeta.class.hashCode());
+        }
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof CraftSkullMeta)) {
+    boolean equalsCommon(CraftItemMeta meta) {
+        if (!super.equalsCommon(meta)) {
             return false;
         }
-        CraftSkullMeta other = (CraftSkullMeta) object;
-
-        if (this.player == null ? other.player != null : !this.player.equals(other.player)) {
-            return false;
+        if (meta instanceof CraftSkullMeta) {
+            CraftSkullMeta that = (CraftSkullMeta) meta;
+            return this.player == that.player || (this.player != null && this.player.equals(that.player));
         }
+        return true;
+    }
 
-        return super.equals(object);
+    @Override
+    boolean notUncommon(CraftItemMeta meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || this.player == null);
     }
 
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
-        // TODO Auto-generated method stub
-        return super.serialize(builder);
+        super.serialize(builder);
+        if (this.player != null) {
+            return builder.put(SKULL_OWNER.BUKKIT, this.player);
+        }
+        return builder;
     }
 
     @Override
