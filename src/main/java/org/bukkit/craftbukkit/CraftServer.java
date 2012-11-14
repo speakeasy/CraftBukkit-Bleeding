@@ -205,8 +205,6 @@ public final class CraftServer implements Server {
 
         loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);
-
-        ChunkCompressionThread.startThread();
     }
 
     private File getConfigFile() {

@@ -25,7 +25,9 @@ public class EntityGhast extends EntityFlying implements IMonster {
     }
 
     public boolean damageEntity(DamageSource damagesource, int i) {
-        if ("fireball".equals(damagesource.l()) && damagesource.getEntity() instanceof EntityHuman) {
+        if (this.isInvulnerable()) {
+            return false;
+        } else if ("fireball".equals(damagesource.l()) && damagesource.getEntity() instanceof EntityHuman) {
             super.damageEntity(damagesource, 1000);
             ((EntityHuman) damagesource.getEntity()).a((Statistic) AchievementList.y);
             return true;
@@ -50,12 +52,12 @@ public class EntityGhast extends EntityFlying implements IMonster {
         this.texture = b0 == 1 ? "/mob/ghast_fire.png" : "/mob/ghast.png";
     }
 
-    protected void bk() {
+    protected void bn() {
         if (!this.world.isStatic && this.world.difficulty == 0) {
             this.die();
         }
 
-        this.bh();
+        this.bk();
         this.f = this.g;
         double d0 = this.c - this.locX;
         double d1 = this.d - this.locY;
@@ -127,7 +129,7 @@ public class EntityGhast extends EntityFlying implements IMonster {
             double d7 = this.target.locZ - this.locZ;
 
             this.aw = this.yaw = -((float) Math.atan2(d5, d7)) * 180.0F / 3.1415927F;
-            if (this.m(this.target)) {
+            if (this.n(this.target)) {
                 if (this.g == 10) {
                     this.world.a((EntityHuman) null, 1007, (int) this.locX, (int) this.locY, (int) this.locZ, 0);
                 }
@@ -181,15 +183,15 @@ public class EntityGhast extends EntityFlying implements IMonster {
         return true;
     }
 
-    protected String aW() {
+    protected String aY() {
         return "mob.ghast.moan";
     }
 
-    protected String aX() {
+    protected String aZ() {
         return "mob.ghast.scream";
     }
 
-    protected String aY() {
+    protected String ba() {
         return "mob.ghast.death";
     }
 
@@ -218,7 +220,7 @@ public class EntityGhast extends EntityFlying implements IMonster {
         // CraftBukkit end
     }
 
-    protected float aV() {
+    protected float aX() {
         return 10.0F;
     }
 
@@ -226,7 +228,7 @@ public class EntityGhast extends EntityFlying implements IMonster {
         return this.random.nextInt(20) == 0 && super.canSpawn() && this.world.difficulty > 0;
     }
 
-    public int bs() {
+    public int bv() {
         return 1;
     }
 }
