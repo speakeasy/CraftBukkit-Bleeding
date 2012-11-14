@@ -147,12 +147,6 @@ public final class CraftItemFactory implements ItemFactory {
         case POTION:
             return meta instanceof CraftPotionMeta ? meta : new CraftPotionMeta(meta);
         default:
-            if (meta != null) {
-                if (meta.getClass() != CraftItemMeta.class) {
-                    throw new AssertionError("Unknown item meta " + meta.getClass());
-                }
-                return meta;
-            }
             return new CraftItemMeta(meta);
         }
     }

@@ -45,6 +45,8 @@ class CraftItemMeta implements ItemMeta {
 
     CraftItemMeta(CraftItemMeta meta) {
         if (meta == null) {
+            this.enchantments = new HashMap<Enchantment, Integer>(4);
+            this.lore = new ArrayList<String>(0);
             return;
         }
 
@@ -56,6 +58,8 @@ class CraftItemMeta implements ItemMeta {
 
         if (meta.enchantments != null) {
             this.enchantments = new HashMap<Enchantment, Integer>(meta.enchantments);
+        } else {
+            this.enchantments = new HashMap<Enchantment, Integer>(4);
         }
 
         this.repairCost = meta.repairCost;
@@ -88,8 +92,10 @@ class CraftItemMeta implements ItemMeta {
                 short id = ((NBTTagCompound) ench.get(i)).getShort("id");
                 short level = ((NBTTagCompound) ench.get(i)).getShort("lvl");
 
-                enchantments.put(Enchantment.getById(id), (int) level);
+                addEnchant(Enchantment.getById(id), (int) level, true);
             }
+        } else {
+            enchantments = new HashMap<Enchantment, Integer>(4);
         }
 
         if (tag.hasKey(REPAIR.NBT)) {
@@ -104,20 +110,18 @@ class CraftItemMeta implements ItemMeta {
             lore = (List<String>) map.get(LORE.BUKKIT);
         }
 
-        if (map.containsKey(ENCHANTMENTS.BUKKIT)) {
-            Object raw = map.get(ENCHANTMENTS.BUKKIT);
+        Map<?, ?> ench = SerializableMeta.getObject(Map.class, map, ENCHANTMENTS.BUKKIT, true);
+        if (ench != null) {
+            enchantments = new HashMap<Enchantment, Integer>(ench.size());
+            for (Map.Entry<?, ?> entry : ench.entrySet()) {
+                Enchantment enchantment = Enchantment.getByName(entry.getKey().toString());
 
-            if (raw instanceof Map) {
-                Map<?, ?> ench = (Map<?, ?>) raw;
-
-                for (Map.Entry<?, ?> entry : ench.entrySet()) {
-                    Enchantment enchantment = Enchantment.getByName(entry.getKey().toString());
-
-                    if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
-                        addEnchant(enchantment, (Integer) entry.getValue());
-                    }
+                if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
+                    addEnchant(enchantment, (Integer) entry.getValue(), true);
                 }
             }
+        } else {
+            enchantments = new HashMap<Enchantment, Integer>(4);
         }
 
         if (map.containsKey(REPAIR.BUKKIT)) {
