@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.logging.Logger;
+
 import net.minecraft.server.StatisticList;
 
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
