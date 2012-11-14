@@ -66,10 +66,12 @@ public class FactoryItemMaterialTests {
         if (meta == null) {
             assertThat(material.name(), material, is(Material.AIR));
         } else {
-            for (boolean first = false; first = !first; meta = meta.clone()) {
-                assertTrue(material.name(), factory.isApplicable(meta, material));
-                assertTrue(material.name(), meta.applicableTo(material));
-            }
+            assertTrue(material.name(), factory.isApplicable(meta, material));
+            assertTrue(material.name(), meta.applicableTo(material));
+
+            meta = meta.clone();
+            assertTrue(material.name(), factory.isApplicable(meta, material));
+            assertTrue(material.name(), meta.applicableTo(material));
         }
     }
 
