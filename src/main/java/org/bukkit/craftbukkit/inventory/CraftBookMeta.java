@@ -72,9 +72,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         setTitle(SerializableMeta.getString(map, BOOK_TITLE.BUKKIT, true));
 
         Collection<?> pages = SerializableMeta.getObject(Collection.class, map, BOOK_PAGES.BUKKIT, true);
-        if (pages != null) {
-            safelyAddPages(pages);
-        }
+        safelyAddPages(pages);
     }
 
     @Override
@@ -176,7 +174,6 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     public void addPage(final String... pages) {
-        Validate.notNull(pages, "Cannot add null pages");
         for (String page : pages) {
             if (page == null) {
                 page = "";
@@ -198,10 +195,6 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     public void setPages(List<String> pages) {
         this.pages.clear();
-        if (pages == null) {
-            return;
-        }
-
         safelyAddPages(pages);
     }
 
@@ -276,6 +269,10 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     private void safelyAddPages(Collection<?> collection) {
+        if (collection == null) {
+            return;
+        }
+
         for (Object object : collection) {
             if (!(object instanceof String)) {
                 if (object != null) {

@@ -45,8 +45,6 @@ class CraftItemMeta implements ItemMeta {
 
     CraftItemMeta(CraftItemMeta meta) {
         if (meta == null) {
-            this.enchantments = new HashMap<Enchantment, Integer>(4);
-            this.lore = new ArrayList<String>(0);
             return;
         }
 
@@ -58,8 +56,6 @@ class CraftItemMeta implements ItemMeta {
 
         if (meta.enchantments != null) {
             this.enchantments = new HashMap<Enchantment, Integer>(meta.enchantments);
-        } else {
-            this.enchantments = new HashMap<Enchantment, Integer>(4);
         }
 
         this.repairCost = meta.repairCost;
@@ -92,10 +88,8 @@ class CraftItemMeta implements ItemMeta {
                 short id = ((NBTTagCompound) ench.get(i)).getShort("id");
                 short level = ((NBTTagCompound) ench.get(i)).getShort("lvl");
 
-                addEnchant(Enchantment.getById(id), (int) level, true);
+                addEnchant(Enchantment.getById(id), (int) level);
             }
-        } else {
-            enchantments = new HashMap<Enchantment, Integer>(4);
         }
 
         if (tag.hasKey(REPAIR.NBT)) {
@@ -117,11 +111,9 @@ class CraftItemMeta implements ItemMeta {
                 Enchantment enchantment = Enchantment.getByName(entry.getKey().toString());
 
                 if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
-                    addEnchant(enchantment, (Integer) entry.getValue(), true);
+                    addEnchant(enchantment, (Integer) entry.getValue());
                 }
             }
-        } else {
-            enchantments = new HashMap<Enchantment, Integer>(4);
         }
 
         if (map.containsKey(REPAIR.BUKKIT)) {
@@ -194,7 +186,7 @@ class CraftItemMeta implements ItemMeta {
         return displayName;
     }
 
-    public void setDisplayName(String name) {
+    public final void setDisplayName(String name) {
         this.displayName = name;
     }
 
@@ -211,11 +203,11 @@ class CraftItemMeta implements ItemMeta {
     }
 
     public boolean hasEnchant(Enchantment ench) {
-        return enchantments.containsKey(ench);
+        return hasEnchants() ? enchantments.containsKey(ench) : false;
     }
 
     public int getEnchantLevel(Enchantment ench) {
-        Integer level = enchantments.get(ench);
+        Integer level = hasEnchants() ? enchantments.get(ench) : null;
         if (level == null) {
             return 0;
         }
@@ -223,10 +215,14 @@ class CraftItemMeta implements ItemMeta {
     }
 
     public Map<Enchantment, Integer> getEnchants() {
-        return ImmutableMap.copyOf(enchantments);
+        return hasEnchants() ? ImmutableMap.copyOf(enchantments) : ImmutableMap.<Enchantment, Integer>of();
     }
 
     public boolean addEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
+        if (enchantments == null) {
+            enchantments = new HashMap<Enchantment, Integer>(4);
+        }
+
         // TODO  && ench.getItemTarget().includes( ... ? ... )
         if (ignoreRestrictions || level >= ench.getStartLevel() && level <= ench.getMaxLevel()) {
             Integer old = enchantments.put(ench, level);
@@ -240,11 +236,11 @@ class CraftItemMeta implements ItemMeta {
     }
 
     public boolean removeEnchant(Enchantment ench) {
-        return enchantments.remove(ench) != null;
+        return hasEnchants() ? enchantments.remove(ench) != null : false;
     }
 
     public boolean hasEnchants() {
-        return !enchantments.isEmpty();
+        return enchantments != null && !enchantments.isEmpty() ;
     }
 
     @Override
