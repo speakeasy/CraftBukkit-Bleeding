@@ -33,9 +33,10 @@ public abstract class DispenseBehaviorProjectile extends DispenseBehaviorItem {
         if (!event.getItem().equals(craftItem)) {
             itemstack.count++;
             // Chain to handler for new item
-            IDispenseBehavior idispensebehavior = (IDispenseBehavior) BlockDispenser.a.a(itemstack.getItem());
+            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
+            IDispenseBehavior idispensebehavior = (IDispenseBehavior) BlockDispenser.a.a(eventStack.getItem());
             if (idispensebehavior != IDispenseBehavior.a && idispensebehavior != this) {
-                idispensebehavior.a(isourceblock, CraftItemStack.asNMSCopy(event.getItem()));
+                idispensebehavior.a(isourceblock, eventStack);
                 return itemstack;
             }
         }
