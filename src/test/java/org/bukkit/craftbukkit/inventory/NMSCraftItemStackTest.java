@@ -6,15 +6,15 @@ import static org.hamcrest.CoreMatchers.*;
 import net.minecraft.server.Enchantment;
 import net.minecraft.server.StatisticList;
 
+import org.bukkit.DummyServer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CraftItemStackTest {
-    @Before
-    public void setUp() throws Exception {
-        StatisticList.a();
+public class NMSCraftItemStackTest {
+    static {
+        DummyServer.setup();
     }
 
     @Test
