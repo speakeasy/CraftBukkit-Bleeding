@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
@@ -41,11 +42,7 @@ public class FactoryItemMaterialTests {
         return list;
     }
 
-    final Material material;
-
-    public FactoryItemMaterialTests(Material material) {
-        this.material = material;
-    }
+    @Parameter(0) public Material material;
 
     @Test
     public void itemStack() {
@@ -53,10 +50,10 @@ public class FactoryItemMaterialTests {
         CraftItemStack craftStack = CraftItemStack.asCraftCopy(bukkitStack);
         ItemMeta meta = factory.getItemMeta(material);
         if (meta == null) {
-            assertThat(material.name(), material, is(Material.AIR));
+            assertThat(material, is(Material.AIR));
         } else {
-            assertTrue(material.name(), factory.isApplicable(meta, bukkitStack));
-            assertTrue(material.name(), factory.isApplicable(meta, craftStack));
+            assertTrue(factory.isApplicable(meta, bukkitStack));
+            assertTrue(factory.isApplicable(meta, craftStack));
         }
     }
 
@@ -64,14 +61,14 @@ public class FactoryItemMaterialTests {
     public void generalCase() {
         CraftItemMeta meta = (CraftItemMeta) factory.getItemMeta(material);
         if (meta == null) {
-            assertThat(material.name(), material, is(Material.AIR));
+            assertThat(material, is(Material.AIR));
         } else {
-            assertTrue(material.name(), factory.isApplicable(meta, material));
-            assertTrue(material.name(), meta.applicableTo(material));
+            assertTrue(factory.isApplicable(meta, material));
+            assertTrue(meta.applicableTo(material));
 
             meta = meta.clone();
-            assertTrue(material.name(), factory.isApplicable(meta, material));
-            assertTrue(material.name(), meta.applicableTo(material));
+            assertTrue(factory.isApplicable(meta, material));
+            assertTrue(meta.applicableTo(material));
         }
     }
 
@@ -79,7 +76,7 @@ public class FactoryItemMaterialTests {
     public void asMetaFor() {
         final CraftItemMeta baseMeta = (CraftItemMeta) factory.getItemMeta(material);
         if (baseMeta == null) {
-            assertThat(material.name(), material, is(Material.AIR));
+            assertThat(material, is(Material.AIR));
             return;
         }
 
@@ -113,18 +110,18 @@ public class FactoryItemMaterialTests {
         final ItemStack baseMetaStack = new ItemStack(material);
         baseMetaStack.setItemMeta(baseMeta);
 
-        assertThat(material.name(), baseMeta, is(not(sameInstance(baseMetaStack.getItemMeta()))));
+        assertThat(baseMeta, is(not(sameInstance(baseMetaStack.getItemMeta()))));
 
-        assertTrue(material.name(), factory.equals(baseMeta, null));
-        assertTrue(material.name(), factory.equals(null, baseMeta));
+        assertTrue(factory.equals(baseMeta, null));
+        assertTrue(factory.equals(null, baseMeta));
 
-        assertTrue(material.name(), factory.equals(baseMeta, baseMetaClone));
-        assertTrue(material.name(), factory.equals(baseMetaClone, baseMeta));
+        assertTrue(factory.equals(baseMeta, baseMetaClone));
+        assertTrue(factory.equals(baseMetaClone, baseMeta));
 
-        assertThat(material.name(), baseMeta, is(not(sameInstance(baseMetaClone))));
+        assertThat(baseMeta, is(not(sameInstance(baseMetaClone))));
 
-        assertThat(material.name(), baseMeta, is(baseMetaClone));
-        assertThat(material.name(), baseMetaClone, is(baseMeta));
+        assertThat(baseMeta, is(baseMetaClone));
+        assertThat(baseMetaClone, is(baseMeta));
 
         for (Material other : materials) {
             final String testName = name(material, other);
