@@ -11,7 +11,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <api.version>unknown</api.version>
-    <junit.version>4.10</junit.version>
+    <junit.version>4.11</junit.version>
   </properties>
 
   <scm>
