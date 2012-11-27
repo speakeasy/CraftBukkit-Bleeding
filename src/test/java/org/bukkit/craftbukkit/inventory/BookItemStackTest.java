@@ -14,7 +14,7 @@ public class BookItemStackTest extends ItemStackTests {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {
-        return StackProvider.compound(operaters(), "%s %s", NAME_PARAMETER, Material.BOOK, Material.BOOK_AND_QUILL);
+        return StackProvider.compound(operaters(), "%s %s", NAME_PARAMETER, Material.WRITTEN_BOOK, Material.BOOK_AND_QUILL);
     }
 
     static List<Object[]> operaters() {
