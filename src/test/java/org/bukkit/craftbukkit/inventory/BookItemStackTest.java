@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -22,17 +23,19 @@ public class BookItemStackTest extends ItemStackTests {
             new Object[] {
                 new Operater() {
                     public ItemStack operate(ItemStack cleanStack) {
-                        // TODO do BOOK stuff
+                        BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                        meta.addPage("Page 1", "Page 2");
+                        cleanStack.setItemMeta(meta);
                         return cleanStack;
                     }
                 },
                 new Operater() {
                     public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do other BOOK stuff
+                        cleanStack.setItemMeta(null);
                         return cleanStack;
                     }
                 },
-                "BOOK1"
+                "Pages vs. Null"
             },
             new Object[] {
                 new Operater() {
