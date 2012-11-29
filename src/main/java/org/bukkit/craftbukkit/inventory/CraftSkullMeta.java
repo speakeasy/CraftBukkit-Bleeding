@@ -44,7 +44,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
         if (hasOwner()) {
             tag.setString(SKULL_OWNER.NBT, player);
         } else {
-            tag.remove(SKULL_OWNER.NBT);
+            tag.o(SKULL_OWNER.NBT);
         }
     }
 

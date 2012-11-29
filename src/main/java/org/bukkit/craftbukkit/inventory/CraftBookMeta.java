@@ -81,13 +81,13 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         if (hasTitle()) {
             itemData.setString(BOOK_TITLE.NBT, this.title);
         } else {
-            itemData.remove(BOOK_TITLE.NBT);
+            itemData.o(BOOK_TITLE.NBT);
         }
 
         if (hasAuthor()) {
             itemData.setString(BOOK_AUTHOR.NBT, this.author);
         } else {
-            itemData.remove(BOOK_AUTHOR.NBT);
+            itemData.o(BOOK_AUTHOR.NBT);
         }
 
         if (hasPages()) {
@@ -97,7 +97,7 @@ public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
             }
             itemData.set(BOOK_PAGES.NBT, itemPages);
         } else {
-            itemData.remove(BOOK_PAGES.NBT);
+            itemData.o(BOOK_PAGES.NBT);
         }
     }
 

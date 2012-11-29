@@ -222,7 +222,7 @@ public final class CraftItemStack extends ItemStack {
             return 0;
         }
         if (index == 0 && size == 0) {
-            item.tag.remove("ench");
+            item.tag.o("ench");
             if (item.tag.d()) {
                 item.tag = null;
             }

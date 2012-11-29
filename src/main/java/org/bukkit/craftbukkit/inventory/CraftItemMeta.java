@@ -127,7 +127,7 @@ class CraftItemMeta implements ItemMeta {
         if (hasDisplayName()) {
             display.setString(NAME.NBT, displayName);
         } else {
-            display.remove(NAME.NBT);
+            display.o(NAME.NBT);
         }
 
         if (hasLore()) {
@@ -137,7 +137,7 @@ class CraftItemMeta implements ItemMeta {
             }
             display.set(LORE.NBT, list);
         } else {
-            display.remove(LORE.NBT);
+            display.o(LORE.NBT);
         }
 
         if (hasEnchants()) {
@@ -154,13 +154,13 @@ class CraftItemMeta implements ItemMeta {
 
             itemTag.set(ENCHANTMENTS.NBT, list);
         } else {
-            itemTag.remove(ENCHANTMENTS.NBT);
+            itemTag.o(ENCHANTMENTS.NBT);
         }
 
         if (hasRepairCost()) {
             itemTag.setInt(REPAIR.NBT, repairCost);
         } else {
-            itemTag.remove(REPAIR.NBT);
+            itemTag.o(REPAIR.NBT);
         }
     }
 

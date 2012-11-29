@@ -68,7 +68,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
                 effectList.add(effectData);
             }
         } else {
-            tag.remove("CustomPotionEffects");
+            tag.o("CustomPotionEffects");
         }
     }
 
