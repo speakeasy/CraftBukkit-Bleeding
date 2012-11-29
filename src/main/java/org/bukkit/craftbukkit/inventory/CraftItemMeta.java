@@ -168,7 +168,7 @@ class CraftItemMeta implements ItemMeta {
         NBTTagCompound display = tag.getCompound("display");
 
         if (!tag.hasKey("display")) {
-            tag.setCompound("display", tag);
+            tag.setCompound("display", display);
         }
 
         return display;
