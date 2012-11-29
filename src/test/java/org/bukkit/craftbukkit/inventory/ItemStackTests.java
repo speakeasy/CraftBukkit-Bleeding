@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bukkit.DummyServer;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -279,7 +282,35 @@ public class ItemStackTests {
     }
 
     @Test
-    public void testDeserialize() {
-        fail(); // TODO
+    public void testBukkitDeserialize() {
+        testDeserialize(new BukkitWrapper(provider), new BukkitWrapper(unequalProvider));
+    }
+
+    @Test
+    public void testCraftDeserialize() {
+        testDeserialize(new CraftWrapper(provider), new CraftWrapper(unequalProvider));
+    }
+
+    static void testDeserialize(StackWrapper provider, StackWrapper unequalProvider) {
+        final ItemStack stack = provider.stack();
+        final ItemStack unequalStack = unequalProvider.stack();
+        final YamlConfiguration configOut = new YamlConfiguration();
+
+        configOut.set("provider", stack);
+        configOut.set("unequal", unequalStack);
+
+        final String out = configOut.saveToString();
+        final YamlConfiguration configIn = new YamlConfiguration();
+
+        try {
+            configIn.loadFromString(out);
+        } catch (InvalidConfigurationException ex) {
+            throw new RuntimeException(out, ex);
+        }
+
+        assertThat(out, configIn.getItemStack("provider"), is(stack));
+        assertThat(out, configIn.getItemStack("unequal"), is(unequalStack));
+        assertThat(out, configIn.getItemStack("provider"), is(not(unequalStack)));
+        assertThat(out, configIn.getItemStack("provider"), is(not(configIn.getItemStack("unequal"))));
     }
 }

@@ -12,12 +12,14 @@ import net.minecraft.server.NBTTagString;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory.*;
 import org.bukkit.inventory.meta.BookMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
-public final class CraftBookMeta extends CraftItemMeta implements BookMeta {
+@DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
+class CraftBookMeta extends CraftItemMeta implements BookMeta {
     static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
     static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
     static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");

@@ -5,11 +5,13 @@ import java.util.Map;
 import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory.SerializableMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
+@DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
 class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     static final ItemMetaKey SKULL_OWNER = new ItemMetaKey("SkullOwner", "skull-owner");
     static final int MAX_OWNER_LENGTH = 16;

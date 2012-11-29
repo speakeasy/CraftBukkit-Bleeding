@@ -5,9 +5,11 @@ import java.util.Map;
 import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
+@DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
 class CraftLeatherArmorMeta extends CraftItemMeta {
     private static final int defaultColor = 10511680;
     private static int maxRGB = 16581375;
