@@ -209,16 +209,20 @@ public class ItemStackTests {
     static {
         DummyServer.setup();
 
-        final ItemFactory factory = CraftItemFactory.instance();
-        final Map<Class<? extends ItemMeta>, Material> possibleMaterials = new HashMap<Class<? extends ItemMeta>, Material>();
-        for (final Material material : Material.values()) {
-            final ItemMeta meta = factory.getItemMeta(material);
-            if (meta == null || possibleMaterials.containsKey(meta.getClass()))
-                continue;
-            possibleMaterials.put(meta.getClass(), material);
+        COMPOUND_MATERIALS = new Object() { // Workaround for JDK5
+            Material[] value() {
+                final ItemFactory factory = CraftItemFactory.instance();
+                final Map<Class<? extends ItemMeta>, Material> possibleMaterials = new HashMap<Class<? extends ItemMeta>, Material>();
+                for (final Material material : Material.values()) {
+                    final ItemMeta meta = factory.getItemMeta(material);
+                    if (meta == null || possibleMaterials.containsKey(meta.getClass()))
+                        continue;
+                    possibleMaterials.put(meta.getClass(), material);
 
-        }
-        COMPOUND_MATERIALS = possibleMaterials.values().toArray(new Material[possibleMaterials.size()]);
+                }
+                return possibleMaterials.values().toArray(new Material[possibleMaterials.size()]);
+            }
+        }.value();
     }
 
     @Parameter(0) public StackProvider provider;
