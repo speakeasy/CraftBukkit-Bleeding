@@ -36,6 +36,8 @@ class CraftItemMeta implements ItemMeta {
     static final ItemMetaKey NAME = new ItemMetaKey("Name", "display-name");
     static final ItemMetaKey LORE = new ItemMetaKey("Lore", "lore");
     static final ItemMetaKey ENCHANTMENTS = new ItemMetaKey("ench", "enchants");
+    static final ItemMetaKey ENCHANTMENTS_ID = new ItemMetaKey("id");
+    static final ItemMetaKey ENCHANTMENTS_LVL = new ItemMetaKey("lvl");
     static final ItemMetaKey REPAIR = new ItemMetaKey("RepairCost", "repair-cost");
 
     private String displayName;
@@ -146,8 +148,8 @@ class CraftItemMeta implements ItemMeta {
             for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
                 NBTTagCompound subtag = new NBTTagCompound();
 
-                subtag.setShort("id", (short) entry.getKey().getId());
-                subtag.setShort("lvl", (short) (int) entry.getValue());
+                subtag.setShort(ENCHANTMENTS_ID.NBT, (short) entry.getKey().getId());
+                subtag.setShort(ENCHANTMENTS_LVL.NBT, (short) (int) entry.getValue());
 
                 list.add(subtag);
             }
@@ -165,10 +167,10 @@ class CraftItemMeta implements ItemMeta {
     }
 
     NBTTagCompound getDisplay(NBTTagCompound tag) {
-        NBTTagCompound display = tag.getCompound("display");
+        NBTTagCompound display = tag.getCompound(NAME.NBT);
 
-        if (!tag.hasKey("display")) {
-            tag.setCompound("display", display);
+        if (!tag.hasKey(NAME.NBT)) {
+            tag.setCompound(NAME.NBT, display);
         }
 
         return display;
