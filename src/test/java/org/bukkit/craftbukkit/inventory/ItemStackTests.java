@@ -109,12 +109,23 @@ public class ItemStackTests {
         }
 
 
-        static List<Object[]> compound(final String format, final int nameParameter, List<Object[]>...lists) {
+        static List<Object[]> compound(final String format, final int nameParameter, final long singletonBitmask, List<Object[]>...lists) {
             final RecursiveContainer methodParams = new RecursiveContainer(format, new Object[lists.length], nameParameter, new ArrayList<Object[]>(lists.length), new ArrayList<Object[]>(), lists);
 
             recursivelyCompound(methodParams, 0);
 
-            return methodParams.out;
+            final List<Object[]> out = methodParams.out;
+
+            final int len = lists.length;
+            for (int i = 0; i < len && singletonBitmask >>> i != 0l; i++) {
+                if (((singletonBitmask >>> i) & 0x1) == 0x1) {
+                    for (Object[] objects : lists[i]) {
+                        out.add(objects);
+                    }
+                }
+            }
+
+            return out;
         }
 
         private static void recursivelyCompound(final RecursiveContainer methodParams, final int level) {
@@ -299,7 +310,7 @@ public class ItemStackTests {
         configOut.set("provider", stack);
         configOut.set("unequal", unequalStack);
 
-        final String out = configOut.saveToString();
+        final String out = '\n' + configOut.saveToString();
         final YamlConfiguration configIn = new YamlConfiguration();
 
         try {

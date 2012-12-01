@@ -19,39 +19,144 @@ public class BookItemStackTest extends ItemStackTests {
     }
 
     static List<Object[]> operaters() {
-        return Arrays.asList(
-            new Object[] {
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        BookMeta meta = (BookMeta) cleanStack.getItemMeta();
-                        meta.addPage("Page 1", "Page 2");
-                        cleanStack.setItemMeta(meta);
-                        return cleanStack;
+        return CompoundOperater.compound(
+            "%s+%s",
+            NAME_PARAMETER,
+            Long.parseLong("01", 2),
+            ItemStackLoreEnchantmentTest.operaters(),
+            CompoundOperater.compound(
+                "%s+%s",
+                NAME_PARAMETER,
+                ~0l,
+                Arrays.asList(
+                    new Object[] {
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.addPage("Page 1", "Page 2");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                cleanStack.setItemMeta(null);
+                                return cleanStack;
+                            }
+                        },
+                        "Pages vs. Null"
+                    },
+                    new Object[] {
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.addPage("Page 1", "Page 2");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                cleanStack.setItemMeta(cleanStack.getItemMeta());
+                                return cleanStack;
+                            }
+                        },
+                        "Pages vs. blank"
+                    },
+                    new Object[] {
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.addPage("Page 1", "Page 2");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.addPage("Page 2", "Page 1");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        "Pages switched"
+                    },
+                    new Object[] {
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.addPage("Page 1", "Page 2");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.addPage("Page 1");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        "Pages short"
                     }
-                },
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        cleanStack.setItemMeta(null);
-                        return cleanStack;
+                ), Arrays.asList(
+                    new Object[] {
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.setAuthor("AnAuthor");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                cleanStack.setItemMeta(null);
+                                return cleanStack;
+                            }
+                        },
+                        "Author vs. Null"
+                    },
+                    new Object[] {
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.setAuthor("AnAuthor");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                cleanStack.setItemMeta(cleanStack.getItemMeta());
+                                return cleanStack;
+                            }
+                        },
+                        "Author vs. blank"
+                    },
+                    new Object[] {
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.setAuthor("AnAuthor");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        new Operater() {
+                            public ItemStack operate(ItemStack cleanStack) {
+                                BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                                meta.setAuthor("AnotherAuthor");
+                                cleanStack.setItemMeta(meta);
+                                return cleanStack;
+                            }
+                        },
+                        "Authors"
                     }
-                },
-                "Pages vs. Null"
-            },
-            new Object[] {
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do BOOK stuff
-                        return cleanStack;
-                    }
-                },
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do other BOOK stuff
-                        return cleanStack;
-                    }
-                },
-                "BOOK2"
-            }
+                )
+            )
         );
     }
 }

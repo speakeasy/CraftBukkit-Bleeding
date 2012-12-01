@@ -15,6 +15,6 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
     }
 
     static List<Object[]> operaters() {
-        return CompoundOperater.compound("%s+%s", NAME_PARAMETER, ItemStackLoreTest.operaters(), ItemStackEnchantmentTest.operaters());
+        return CompoundOperater.compound("%s+%s", NAME_PARAMETER, 0l, ItemStackLoreTest.operaters(), ItemStackEnchantmentTest.operaters());
     }
 }
