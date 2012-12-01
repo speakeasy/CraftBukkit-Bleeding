@@ -61,7 +61,7 @@ public final class CraftItemFactory implements ItemFactory {
         private SerializableMeta() {
         }
 
-        public ItemMeta deserialize(Map<String, Object> map) {
+        public static ItemMeta deserialize(Map<String, Object> map) {
             Validate.notNull(map, "Cannot deserialize null map");
 
             String type = getString(map, TYPE_FIELD, false);
