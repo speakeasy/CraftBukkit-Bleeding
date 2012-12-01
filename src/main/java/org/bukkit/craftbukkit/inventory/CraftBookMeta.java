@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.inventory;
 
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,12 +12,13 @@ import net.minecraft.server.NBTTagString;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.inventory.CraftItemFactory.*;
+import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 
-@DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
+@DelegateDeserialization(SerializableMeta.class)
 class CraftBookMeta extends CraftItemMeta implements BookMeta {
     static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
     static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
@@ -266,8 +266,8 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    CraftItemFactory.SerializableMeta.Deserializers deserializer() {
-        return CraftItemFactory.SerializableMeta.Deserializers.BOOK;
+    SerializableMeta.Deserializers deserializer() {
+        return SerializableMeta.Deserializers.BOOK;
     }
 
     private void safelyAddPages(Collection<?> collection) {

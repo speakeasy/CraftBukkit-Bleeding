@@ -6,10 +6,11 @@ import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
-@DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
+@DelegateDeserialization(SerializableMeta.class)
 class CraftLeatherArmorMeta extends CraftItemMeta {
     private static final int defaultColor = 10511680;
     private static int maxRGB = 16581375;
@@ -83,7 +84,7 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
     }
 
     @Override
-    CraftItemFactory.SerializableMeta.Deserializers deserializer() {
-        return CraftItemFactory.SerializableMeta.Deserializers.LEATHER_ARMOR;
+    SerializableMeta.Deserializers deserializer() {
+        return SerializableMeta.Deserializers.LEATHER_ARMOR;
     }
 }

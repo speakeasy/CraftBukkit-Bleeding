@@ -9,15 +9,17 @@ import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.inventory.CraftItemFactory.SerializableMeta;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.google.common.collect.ImmutableMap;
 
-@DelegateDeserialization(CraftItemFactory.SerializableMeta.class)
+@DelegateDeserialization(CraftItemMeta.SerializableMeta.class)
 class CraftItemMeta implements ItemMeta {
     static class ItemMetaKey {
         final String BUKKIT;
@@ -30,6 +32,92 @@ class CraftItemMeta implements ItemMeta {
         ItemMetaKey(final String nbt, final String bukkit) {
             this.NBT = nbt;
             this.BUKKIT = bukkit;
+        }
+    }
+
+    @SerializableAs("ItemMeta")
+    public static class SerializableMeta implements ConfigurationSerializable {
+        static final String TYPE_FIELD = "meta-type";
+
+        enum Deserializers {
+            BOOK {
+                @Override
+                CraftBookMeta deserialize(Map<String, Object> map) {
+                    return new CraftBookMeta(map);
+                }
+            },
+            SKULL {
+                @Override
+                CraftSkullMeta deserialize(Map<String, Object> map) {
+                    return new CraftSkullMeta(map);
+                }
+            },
+            LEATHER_ARMOR {
+                @Override
+                CraftLeatherArmorMeta deserialize(Map<String, Object> map) {
+                    return new CraftLeatherArmorMeta(map);
+                }
+            },
+            MAP {
+                @Override
+                ItemMeta deserialize(Map<String, Object> map) {
+                    // TODO
+                    throw new UnsupportedOperationException(this.name());
+                }
+            },
+            POTION {
+                @Override
+                ItemMeta deserialize(Map<String, Object> map) {
+                    return new CraftPotionMeta(map);
+                }
+            },
+            UNSPECIFIC {
+                @Override
+                CraftItemMeta deserialize(Map<String, Object> map) {
+                    return new CraftItemMeta(map);
+                }
+            };
+
+            abstract ItemMeta deserialize(Map<String, Object> map);
+        }
+
+        private SerializableMeta() {
+        }
+
+        public static ItemMeta deserialize(Map<String, Object> map) {
+            Validate.notNull(map, "Cannot deserialize null map");
+
+            String type = getString(map, TYPE_FIELD, false);
+            Deserializers deserializer = Deserializers.valueOf(type);
+
+            if (deserializer == null) {
+                throw new IllegalArgumentException(type + " is not a valid " + TYPE_FIELD);
+            }
+
+            return deserializer.deserialize(map);
+        }
+
+        public Map<String, Object> serialize() {
+            throw new AssertionError();
+        }
+
+        static String getString(Map<String, Object> map, String field, boolean nullable) {
+            return getObject(String.class, map, field, nullable);
+        }
+
+        static <T> T getObject(Class<T> clazz, Map<String, Object> map, String field, boolean nullable) {
+            final Object object = map.get(field);
+
+            if (clazz.isInstance(object)) {
+                return clazz.cast(object);
+            }
+            if (object == null) {
+                if (!nullable) {
+                    throw new IllegalArgumentException(field + " cannot be null");
+                }
+                return null;
+            }
+            throw new IllegalArgumentException(field + '(' + object + ") is not a valid " + clazz);
         }
     }
 
@@ -301,7 +389,7 @@ class CraftItemMeta implements ItemMeta {
 
     public Map<String, Object> serialize() {
         ImmutableMap.Builder<String, Object> map = ImmutableMap.builder();
-        map.put(CraftItemFactory.SerializableMeta.TYPE_FIELD, deserializer().name());
+        map.put(SerializableMeta.TYPE_FIELD, deserializer().name());
         serialize(map);
         return map.build();
     }
@@ -326,7 +414,7 @@ class CraftItemMeta implements ItemMeta {
         return builder;
     }
 
-    CraftItemFactory.SerializableMeta.Deserializers deserializer() {
-        return CraftItemFactory.SerializableMeta.Deserializers.UNSPECIFIC;
+    SerializableMeta.Deserializers deserializer() {
+        return SerializableMeta.Deserializers.UNSPECIFIC;
     }
 }
