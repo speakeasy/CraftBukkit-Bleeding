@@ -40,7 +40,6 @@ public class BookItemStackTest extends ItemStackTests {
                         },
                         new Operater() {
                             public ItemStack operate(ItemStack cleanStack) {
-                                cleanStack.setItemMeta(null);
                                 return cleanStack;
                             }
                         },
@@ -113,7 +112,6 @@ public class BookItemStackTest extends ItemStackTests {
                         },
                         new Operater() {
                             public ItemStack operate(ItemStack cleanStack) {
-                                cleanStack.setItemMeta(null);
                                 return cleanStack;
                             }
                         },
