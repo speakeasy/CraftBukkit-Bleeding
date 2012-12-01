@@ -22,7 +22,7 @@ public class BookItemStackTest extends ItemStackTests {
         return CompoundOperater.compound(
             "%s+%s",
             NAME_PARAMETER,
-            Long.parseLong("01", 2),
+            Long.parseLong("10", 2),
             ItemStackLoreEnchantmentTest.operaters(),
             CompoundOperater.compound(
                 "%s+%s",
