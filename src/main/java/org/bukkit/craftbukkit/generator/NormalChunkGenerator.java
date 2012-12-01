@@ -10,6 +10,7 @@ import net.minecraft.server.EnumCreatureType;
 import net.minecraft.server.IChunkProvider;
 import net.minecraft.server.IProgressUpdate;
 import net.minecraft.server.World;
+import net.minecraft.server.WorldProvider;
 
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.generator.BlockPopulator;
@@ -80,5 +81,9 @@ public class NormalChunkGenerator extends InternalChunkGenerator {
 
     public String getName() {
         return "NormalWorldGenerator";
+    }
+
+    public int getSeaLevel() {
+        return (provider instanceof WorldProvider) ? ((WorldProvider) provider).getSeaLevel() : super.getSeaLevel();
     }
 }

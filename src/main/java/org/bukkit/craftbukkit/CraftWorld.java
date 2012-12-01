@@ -1020,7 +1020,7 @@ public class CraftWorld implements World {
     }
 
     public int getSeaLevel() {
-        return 64;
+        return (getGenerator() == null) ? world.worldProvider.getSeaLevel() : getGenerator().getSeaLevel();
     }
 
     public boolean getKeepSpawnInMemory() {
