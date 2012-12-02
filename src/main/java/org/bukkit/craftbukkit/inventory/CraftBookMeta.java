@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import joptsimple.internal.Strings;
+
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
@@ -124,11 +126,11 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     boolean hasAuthor() {
-        return author != null && !author.isEmpty();
+        return !Strings.isNullOrEmpty(author);
     }
 
     boolean hasTitle() {
-        return title != null && !author.isEmpty();
+        return !Strings.isNullOrEmpty(title);
     }
 
     boolean hasPages() {
