@@ -208,9 +208,9 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
             return false;
         }
         if (meta instanceof CraftPotionMeta) {
-            CraftPotionMeta other = (CraftPotionMeta) meta;
+            CraftPotionMeta that = (CraftPotionMeta) meta;
 
-            return this.hasCustomEffects() ? other.hasCustomEffects() && this.customEffects.equals(other.customEffects) : !other.hasCustomEffects();
+            return (this.hasCustomEffects() ? that.hasCustomEffects() && this.customEffects.equals(that.customEffects) : !that.hasCustomEffects());
         }
         return true;
     }

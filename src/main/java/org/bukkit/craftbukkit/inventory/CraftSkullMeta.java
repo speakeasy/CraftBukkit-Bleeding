@@ -103,7 +103,8 @@ final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
         }
         if (meta instanceof CraftSkullMeta) {
             CraftSkullMeta that = (CraftSkullMeta) meta;
-            return this.player == that.player || (this.player != null && this.player.equals(that.player));
+
+            return (this.hasOwner() ? that.hasOwner() && this.player.equals(that.player) : !that.hasOwner());
         }
         return true;
     }

@@ -215,10 +215,10 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     @Override
     public int hashCode() {
         int original, hash = original = super.hashCode();
-        if (this.title != null) {
+        if (hasTitle()) {
             hash = 61 * hash + this.title.hashCode();
         }
-        if (this.author != null) {
+        if (hasAuthor()) {
             hash = 61 * hash + 13 * this.author.hashCode();
         }
         if (hasPages()) {
@@ -235,9 +235,9 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         if (meta instanceof CraftBookMeta) {
             CraftBookMeta that = (CraftBookMeta) meta;
 
-            return (hasTitle() ? this.title.equals(that.title) : !that.hasTitle())
-                    && (hasAuthor() ? this.author.equals(that.author) : !that.hasAuthor())
-                    && (hasPages() ? this.pages.equals(that.pages) : !that.hasPages());
+            return (hasTitle() ? that.hasTitle() && this.title.equals(that.title) : !that.hasTitle())
+                    && (hasAuthor() ? that.hasAuthor() && this.author.equals(that.author) : !that.hasAuthor())
+                    && (hasPages() ? that.hasPages() && this.pages.equals(that.pages) : !that.hasPages());
         }
         return true;
     }

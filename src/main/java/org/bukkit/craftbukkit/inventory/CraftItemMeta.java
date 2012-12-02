@@ -363,9 +363,9 @@ class CraftItemMeta implements ItemMeta {
      * Checking your own internals is redundant if you are not common, as notUncommon is meant for checking those 'not common' variables.
      */
     boolean equalsCommon(CraftItemMeta that) {
-        return (this.displayName == that.displayName || (this.displayName != null && this.displayName.equals(that.displayName)))
-                && (this.hasEnchants() ? this.enchantments.equals(that.enchantments) : !that.hasEnchants())
-                && (this.hasLore() ? this.lore.equals(that.lore) : !that.hasLore())
+        return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
+                && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
+                && (this.hasLore() ? that.hasLore() && this.lore.equals(that.lore) : !that.hasLore())
                 && this.repairCost == that.repairCost;
     }
 
@@ -381,9 +381,9 @@ class CraftItemMeta implements ItemMeta {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 61 * hash + (this.displayName != null ? this.displayName.hashCode() : 0);
-        hash = 61 * hash + (this.lore != null ? this.lore.hashCode() : 0);
-        hash = 61 * hash + (this.enchantments != null ? this.enchantments.hashCode() : 0);
+        hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
+        hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
+        hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
         hash = 61 * hash + this.repairCost;
         return hash;
     }

@@ -81,7 +81,7 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
     }
 
     public boolean hasColor() {
-        return color > -1;
+        return color > -1; // || color != defaultColor;
     }
 
     @Override
@@ -93,6 +93,19 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
     @Override
     SerializableMeta.Deserializers deserializer() {
         return SerializableMeta.Deserializers.LEATHER_ARMOR;
+    }
+
+    @Override
+    boolean equalsCommon(CraftItemMeta meta) {
+        if (!super.equalsCommon(meta)) {
+            return false;
+        }
+        if (meta instanceof CraftLeatherArmorMeta) {
+            CraftLeatherArmorMeta that = (CraftLeatherArmorMeta) meta;
+
+            return (hasColor() ? that.hasColor() && this.color == that.color : !that.hasColor());
+        }
+        return true;
     }
 
     @Override
