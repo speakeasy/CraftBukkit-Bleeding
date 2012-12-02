@@ -333,19 +333,14 @@ public final class CraftItemStack extends ItemStack {
         }
 
         ((CraftItemMeta) itemMeta).applyToItem(tag);
-        return true;
-    }
 
-    @Override
-    public String toString() {
-        if (handle == null) {
-            return "ItemStack{AIR}";
+        if (tag.hasKey("display")) {
+            if (((NBTTagCompound) tag.get("display")).d()) {
+                tag.o("display");
+            }
         }
-        StringBuilder toString = new StringBuilder("ItemStack{").append(getType().name()).append(" x ").append(getAmount());
-        if (handle.tag != null && !handle.tag.d()) {
-            toString.append(", ").append(getItemMeta());
-        }
-        return toString.append('}').toString();
+
+        return true;
     }
 
     @Override
