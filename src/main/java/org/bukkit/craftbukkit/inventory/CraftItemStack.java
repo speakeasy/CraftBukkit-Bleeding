@@ -104,6 +104,10 @@ public final class CraftItemStack extends ItemStack {
             handle = new net.minecraft.server.ItemStack(type, 1, 0);
         } else {
             handle.id = type;
+            if (hasItemMeta()) {
+                // This will create the appropriate item meta, which will contain all the data we intend to keep
+                setItemMeta(handle, getItemMeta(handle));
+            }
         }
         setData(null);
     }
@@ -326,11 +330,8 @@ public final class CraftItemStack extends ItemStack {
             return false;
         }
 
-        NBTTagCompound tag = item.getTag();
-        if (tag == null) {
-            tag = new NBTTagCompound();
-            item.setTag(tag);
-        }
+        NBTTagCompound tag = new NBTTagCompound();
+        item.setTag(tag);
 
         ((CraftItemMeta) itemMeta).applyToItem(tag);
         return true;

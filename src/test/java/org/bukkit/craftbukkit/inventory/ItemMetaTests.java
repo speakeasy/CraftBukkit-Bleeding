@@ -94,6 +94,7 @@ public class ItemMetaTests {
 
     private void downCastTest(final String name, final ItemStack stack, final ItemStack blank) {
         assertThat(name, stack, is(not(blank)));
+        assertThat(name, stack.getItemMeta(), is(not(blank.getItemMeta())));
 
         stack.setTypeId(1);
 
