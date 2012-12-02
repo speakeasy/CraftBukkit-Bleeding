@@ -10,6 +10,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
+import net.minecraft.server.NBTTagInt;
 
 @DelegateDeserialization(SerializableMeta.class)
 final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
@@ -29,8 +30,8 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
 
     CraftLeatherArmorMeta(NBTTagCompound tag) {
         super(tag);
-        if (tag.hasKey("display")) {
-            NBTTagCompound display = tag.getCompound("display");
+        if (tag.hasKey(DISPLAY.NBT)) {
+            NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
             if (display.hasKey("color")) {
                 color = display.getInt("color");
             }
@@ -46,9 +47,9 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
         super.applyToItem(itemTag);
 
         if (hasColor()) {
-            getDisplay(itemTag).setInt("color", color);
+            setDisplay(itemTag, "color", new NBTTagInt("color", color));
         } else {
-            // remove color
+            setDisplay(itemTag, "color", null);
         }
     }
 

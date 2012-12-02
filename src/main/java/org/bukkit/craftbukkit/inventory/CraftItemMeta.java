@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.server.NBTBase;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.NBTTagList;
 import net.minecraft.server.NBTTagString;
@@ -231,12 +232,10 @@ class CraftItemMeta implements ItemMeta {
     }
 
     void applyToItem(NBTTagCompound itemTag) {
-        NBTTagCompound display = getDisplay(itemTag);
-
         if (hasDisplayName()) {
-            display.setString(NAME.NBT, displayName);
+            setDisplay(itemTag, NAME.NBT, new NBTTagString(NAME.NBT, displayName));
         } else {
-            display.o(NAME.NBT);
+            setDisplay(itemTag, NAME.NBT, null);
         }
 
         if (hasLore()) {
@@ -244,9 +243,9 @@ class CraftItemMeta implements ItemMeta {
             for (int i = 0; i < lore.size(); i++) {
                 list.add(new NBTTagString(String.valueOf(i), lore.get(i)));
             }
-            display.set(LORE.NBT, list);
+            setDisplay(itemTag, LORE.NBT, list);
         } else {
-            display.o(LORE.NBT);
+            setDisplay(itemTag, LORE.NBT, null);
         }
 
         if (hasEnchants()) {
@@ -273,14 +272,20 @@ class CraftItemMeta implements ItemMeta {
         }
     }
 
-    NBTTagCompound getDisplay(NBTTagCompound tag) {
+    void setDisplay(NBTTagCompound tag, String key, NBTBase value) {
         NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
 
-        if (!tag.hasKey(DISPLAY.NBT)) {
-            tag.setCompound(DISPLAY.NBT, display);
+        if (value == null) {
+            display.o(key);
+        } else {
+            display.set(key, value);
         }
 
-        return display;
+        if (!tag.hasKey(DISPLAY.NBT) && !display.d()) {
+            tag.setCompound(DISPLAY.NBT, display);
+        } else if (tag.hasKey(DISPLAY.NBT) && display.d()) {
+            tag.o(DISPLAY.NBT);
+        }
     }
 
     boolean applicableTo(Material type) {

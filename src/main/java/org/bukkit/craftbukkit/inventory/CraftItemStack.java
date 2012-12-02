@@ -333,13 +333,6 @@ public final class CraftItemStack extends ItemStack {
         }
 
         ((CraftItemMeta) itemMeta).applyToItem(tag);
-
-        if (tag.hasKey("display")) {
-            if (((NBTTagCompound) tag.get("display")).d()) {
-                tag.o("display");
-            }
-        }
-
         return true;
     }
 
