@@ -24,7 +24,7 @@ public class BookItemStackTest extends ItemStackTests {
         return CompoundOperater.compound(
             Joiner.on('+'),
             NAME_PARAMETER,
-            Long.parseLong("110", 2),
+            Long.parseLong("1110", 2),
             ItemStackLoreEnchantmentTest.operaters(),
             Arrays.asList(
                 new Object[] {
@@ -151,6 +151,60 @@ public class BookItemStackTest extends ItemStackTests {
                         }
                     },
                     "Authors"
+                }
+            ),
+            Arrays.asList(
+                new Object[] {
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                            meta.setTitle("Some title");
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            return cleanStack;
+                        }
+                    },
+                    "Author vs. Null"
+                },
+                new Object[] {
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                            meta.setTitle("Some title");
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            cleanStack.setItemMeta(cleanStack.getItemMeta());
+                            return cleanStack;
+                        }
+                    },
+                    "title vs. blank"
+                },
+                new Object[] {
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                            meta.setTitle("Some title");
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            BookMeta meta = (BookMeta) cleanStack.getItemMeta();
+                            meta.setTitle("Different title");
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "Titles"
                 }
             )
         );

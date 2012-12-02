@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.google.common.base.Joiner;
+
 @RunWith(Parameterized.class)
 public class LeatherItemStackTest extends ItemStackTests {
 
@@ -18,37 +20,43 @@ public class LeatherItemStackTest extends ItemStackTests {
     }
 
     static List<Object[]> operaters() {
-        return Arrays.asList(
-            new Object[] {
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        // TODO do LEATHER stuff
-                        return cleanStack;
-                    }
+        return CompoundOperater.compound(
+            Joiner.on('+'),
+            NAME_PARAMETER,
+            Long.parseLong("10", 2),
+            ItemStackLoreEnchantmentTest.operaters(),
+            Arrays.asList(
+                new Object[] {
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            // TODO do LEATHER stuff
+                            return cleanStack;
+                        }
+                    },
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            // TODO Do other LEATHER stuff
+                            return cleanStack;
+                        }
+                    },
+                    "LEATHER1"
                 },
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do other LEATHER stuff
-                        return cleanStack;
-                    }
-                },
-                "LEATHER1"
-            },
-            new Object[] {
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do LEATHER stuff
-                        return cleanStack;
-                    }
-                },
-                new Operater() {
-                    public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do other LEATHER stuff
-                        return cleanStack;
-                    }
-                },
-                "LEATHER2"
-            }
+                new Object[] {
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            // TODO Do LEATHER stuff
+                            return cleanStack;
+                        }
+                    },
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            // TODO Do other LEATHER stuff
+                            return cleanStack;
+                        }
+                    },
+                    "LEATHER2"
+                }
+            )
         );
     }
 }
