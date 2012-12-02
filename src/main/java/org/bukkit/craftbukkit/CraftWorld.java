@@ -951,17 +951,17 @@ public class CraftWorld implements World {
             }
             int dir;
             switch (face) {
-            case EAST:
+            case SOUTH:
             default:
                 dir = 0;
                 break;
-            case NORTH:
+            case WEST:
                 dir = 1;
                 break;
-            case WEST:
+            case NORTH:
                 dir = 2;
                 break;
-            case SOUTH:
+            case EAST:
                 dir = 3;
                 break;
             }
