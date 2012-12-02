@@ -105,7 +105,11 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     @Override
     boolean isEmpty() {
-        return super.isEmpty() && !(hasPages() || hasAuthor() || hasTitle());
+        return super.isEmpty() && isBookEmpty();
+    }
+
+    boolean isBookEmpty() {
+        return !(hasPages() || hasAuthor() || hasTitle());
     }
 
     @Override
@@ -120,11 +124,11 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     boolean hasAuthor() {
-        return author != null;
+        return author != null && !author.isEmpty();
     }
 
     boolean hasTitle() {
-        return title != null;
+        return title != null && !author.isEmpty();
     }
 
     boolean hasPages() {
@@ -243,7 +247,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     @Override
     boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftBookMeta || (this.title == null && this.author == null && !hasPages()));
+        return super.notUncommon(meta) && (meta instanceof CraftItemMeta || isBookEmpty());
     }
 
     @Override
