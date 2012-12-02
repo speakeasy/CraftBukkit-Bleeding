@@ -413,10 +413,11 @@ class CraftItemMeta implements ItemMeta {
 
     @Override
     public final int hashCode() {
-        return applyHash(3);
+        return applyHash();
     }
 
-    int applyHash(int hash) {
+    int applyHash() {
+        int hash = 3;
         hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
         hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
         hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);

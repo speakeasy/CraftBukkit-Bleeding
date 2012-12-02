@@ -213,9 +213,9 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    int applyHash(int hash) {
+    int applyHash() {
         final int original;
-        hash = original = super.applyHash(hash);
+        int hash = original = super.applyHash();
         if (hasTitle()) {
             hash = 61 * hash + this.title.hashCode();
         }

@@ -197,9 +197,9 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     @Override
-    int applyHash(int hash) {
+    int applyHash() {
         final int original;
-        hash = original = super.applyHash(hash);
+        int hash = original = super.applyHash();
         if (hasCustomEffects()) {
             hash = 73 * hash + customEffects.hashCode();
         }
