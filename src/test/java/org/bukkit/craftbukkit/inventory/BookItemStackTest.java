@@ -119,9 +119,7 @@ public class BookItemStackTest extends ItemStackTests {
                 new Object[] {
                     new Operater() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            BookMeta meta = (BookMeta) cleanStack.getItemMeta();
-                            meta.setAuthor("AnAuthor");
-                            cleanStack.setItemMeta(meta);
+                            cleanStack.setType(Material.STICK);
                             return cleanStack;
                         }
                     },
@@ -131,7 +129,7 @@ public class BookItemStackTest extends ItemStackTests {
                             return cleanStack;
                         }
                     },
-                    "Author vs. blank"
+                    "Stick vs. Blank book"
                 },
                 new Object[] {
                     new Operater() {
