@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.google.common.base.Joiner;
+
 @RunWith(Parameterized.class)
 public class ItemStackLoreEnchantmentTest extends ItemStackTests {
 
@@ -18,14 +20,13 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
 
     static List<Object[]> operaters() {
         return CompoundOperater.compound(
-            "%s+%s",
+            Joiner.on('+'),
             NAME_PARAMETER,
             ~0l,
             Arrays.asList(
                 new Object[] {
                     new Operater() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add Lore
                             return cleanStack;
                         }
                     },
@@ -50,22 +51,39 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
                             return cleanStack;
                         }
                     },
+                    "Lore2"
+                }
+            ),
+            Arrays.asList(
+                new Object[] {
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            // TODO Add Lore
+                            return cleanStack;
+                        }
+                    },
+                    new Operater() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            // TODO Add other lore
+                            return cleanStack;
+                        }
+                    },
                     "Name1"
                 },
                 new Object[] {
                     new Operater() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add name / lore
+                            // TODO Add name
                             return cleanStack;
                         }
                     },
                     new Operater() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add other name / lore
+                            // TODO Add other name
                             return cleanStack;
                         }
                     },
-                    "LoreAndName1"
+                    "Name2"
                 }
             ),
             Arrays.asList(
