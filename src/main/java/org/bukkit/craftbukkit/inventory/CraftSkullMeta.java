@@ -52,8 +52,8 @@ final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     }
 
     @Override
-    boolean hasUncommon() {
-        return hasOwner();
+    boolean hasExtraData() {
+        return super.hasExtraData() || hasOwner();
     }
 
     @Override
@@ -108,11 +108,6 @@ final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
             return (this.hasOwner() ? that.hasOwner() && this.player.equals(that.player) : !that.hasOwner());
         }
         return true;
-    }
-
-    @Override
-    boolean notUncommon(CraftItemMeta meta) {
-        return meta instanceof CraftSkullMeta || super.notUncommon(meta);
     }
 
     @Override

@@ -81,8 +81,8 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     @Override
-    boolean hasUncommon() {
-        return hasCustomEffects();
+    boolean hasExtraData() {
+        return super.hasExtraData() || hasCustomEffects();
     }
 
     @Override
@@ -217,10 +217,5 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
             return (this.hasCustomEffects() ? that.hasCustomEffects() && this.customEffects.equals(that.customEffects) : !that.hasCustomEffects());
         }
         return true;
-    }
-
-    @Override
-    boolean notUncommon(CraftItemMeta meta) {
-        return meta instanceof CraftPotionMeta || super.notUncommon(meta);
     }
 }

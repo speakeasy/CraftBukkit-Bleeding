@@ -54,8 +54,8 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
     }
 
     @Override
-    boolean hasUncommon() {
-        return hasColor();
+    boolean hasExtraData() {
+        return super.hasExtraData() || hasColor();
     }
 
     boolean applicableTo(Material type) {
@@ -108,10 +108,5 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
             return (hasColor() ? that.hasColor() && this.color == that.color : !that.hasColor());
         }
         return true;
-    }
-
-    @Override
-    boolean notUncommon(CraftItemMeta meta) {
-        return meta instanceof CraftPotionMeta || super.notUncommon(meta);
     }
 }

@@ -105,8 +105,8 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    boolean hasUncommon() {
-        return hasPages() || hasAuthor() || hasTitle();
+    boolean hasExtraData() {
+        return super.hasExtraData() || hasPages() || hasAuthor() || hasTitle();
     }
 
     @Override
@@ -241,11 +241,6 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
                     && (hasPages() ? that.hasPages() && this.pages.equals(that.pages) : !that.hasPages());
         }
         return true;
-    }
-
-    @Override
-    boolean notUncommon(CraftItemMeta meta) {
-        return meta instanceof CraftItemMeta || super.notUncommon(meta);
     }
 
     @Override

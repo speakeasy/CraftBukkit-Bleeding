@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableMap;
  * - Constructor(Map<String, Object> map)
  * - void applyToItem(NBTTagCompound tag)
  * - boolean applicableTo(Material type)
- * - boolean hasUncommon()
+ * - boolean hasExtraData()
  * - boolean equalsCommon(CraftItemMeta meta
  * - boolean notUncommon(CraftItemMeta meta)
  * - int applyHash(final int original)
@@ -293,14 +293,14 @@ class CraftItemMeta implements ItemMeta {
     }
 
     final boolean isEmpty() {
-        return !hasCommon() && !hasUncommon();
+        return !hasCommon() && !hasExtraData();
     }
 
     final boolean hasCommon() {
         return hasDisplayName() || hasEnchants() || hasLore();
     }
 
-    boolean hasUncommon() {
+    boolean hasExtraData() {
         return false;
     }
 
@@ -389,15 +389,6 @@ class CraftItemMeta implements ItemMeta {
                 && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
                 && (this.hasLore() ? that.hasLore() && this.lore.equals(that.lore) : !that.hasLore())
                 && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost());
-    }
-
-    /**
-     * This method is a bit weird...
-     * Return true if you are a common class OR your uncommon parts are empty.
-     * Empty uncommon parts implies the NBT data would be equivalent if both were applied to an item
-     */
-    boolean notUncommon(CraftItemMeta meta) {
-        return !hasUncommon();
     }
 
     public List<String> getLore() {
