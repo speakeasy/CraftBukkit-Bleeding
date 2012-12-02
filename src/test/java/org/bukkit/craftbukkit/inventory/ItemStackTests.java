@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,11 @@ public class ItemStackTests {
         static ItemStack cleanStack(Material material, boolean craft) {
             final ItemStack stack = new ItemStack(material);
             return craft ? CraftItemStack.asCraftCopy(stack) : stack;
+        }
+
+        @Override
+        public String toString() {
+            return material.toString();
         }
 
         /**
@@ -117,6 +123,11 @@ public class ItemStackTests {
                 operater.operate(cleanStack);
             }
             return cleanStack;
+        }
+
+        @Override
+        public String toString() {
+            return Arrays.toString(operaters);
         }
 
 
@@ -242,6 +253,11 @@ public class ItemStackTests {
         public ItemStack stack() {
             return provider.craft();
         }
+
+        @Override
+        public String toString() {
+            return "Craft " + provider;
+        }
     }
 
     static class BukkitWrapper implements StackWrapper {
@@ -253,6 +269,11 @@ public class ItemStackTests {
 
         public ItemStack stack() {
             return provider.bukkit();
+        }
+
+        @Override
+        public String toString() {
+            return "Bukkit " + provider;
         }
     }
 
@@ -267,6 +288,10 @@ public class ItemStackTests {
             return cleanStack;
         }
 
+        @Override
+        public String toString() {
+            return "NoOp " + super.toString();
+        }
     }
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
