@@ -422,16 +422,15 @@ class CraftItemMeta implements ItemMeta {
 
     @Override
     public final int hashCode() {
-        int hash = 3;
+        return applyHash(3);
+    }
+
+    int applyHash(int hash) {
         hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
         hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
         hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
         hash = 61 * hash + (hasRepairCost() ? this.repairCost : 0);
-        return applyHash(hash);
-    }
-
-    int applyHash(final int original) {
-        return original;
+        return hash;
     }
 
     public CraftItemMeta clone() {
