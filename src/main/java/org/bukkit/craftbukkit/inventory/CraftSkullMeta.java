@@ -13,7 +13,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
+final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     static final ItemMetaKey SKULL_OWNER = new ItemMetaKey("SkullOwner", "skull-owner");
     static final int MAX_OWNER_LENGTH = 16;
 

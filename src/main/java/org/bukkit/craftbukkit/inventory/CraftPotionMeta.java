@@ -19,7 +19,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 import com.google.common.collect.ImmutableList;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
+final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     private List<PotionEffect> customEffects;
 
     CraftPotionMeta(CraftItemMeta meta) {

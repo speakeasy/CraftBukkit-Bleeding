@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftBookMeta extends CraftItemMeta implements BookMeta {
+final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
     static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
     static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");

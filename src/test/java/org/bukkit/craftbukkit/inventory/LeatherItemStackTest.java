@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -29,7 +31,7 @@ public class LeatherItemStackTest extends ItemStackTests {
                 new Object[] {
                     new Operater() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO do LEATHER stuff
+                            LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
                             return cleanStack;
                         }
                     },

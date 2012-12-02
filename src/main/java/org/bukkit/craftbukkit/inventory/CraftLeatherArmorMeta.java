@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
+final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     private static final int defaultColor = 10511680;
     private static int maxRGB = 16581375;
     private int color = -1;
