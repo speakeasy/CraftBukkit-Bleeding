@@ -327,26 +327,43 @@ public class ItemStackTests {
 
     static void testInequality(StackWrapper provider, StackWrapper unequalProvider) {
         final ItemStack stack = provider.stack();
+        final ItemStack stack2 = provider.stack();
         assertThat(stack, is(stack));
+        assertThat(stack, is(not(sameInstance(stack2))));
+        assertThat(stack, is(stack2));
 
         final ItemStack unequalStack = unequalProvider.stack();
+        final ItemStack unequalStack2 = unequalProvider.stack();
         assertThat(unequalStack, is(unequalStack));
+        assertThat(unequalStack, is(not(sameInstance(unequalStack2))));
+        assertThat(unequalStack, is(unequalStack2));
 
-        assertThat(stack, is(not(sameInstance(provider.stack()))));
-        assertThat(stack, is(provider.stack()));
         assertThat(stack, is(not(unequalStack)));
+        assertThat(unequalStack, is(not(stack)));
 
-        final ItemStack newStack = new ItemStack(stack);
+        final ItemStack newStack = new ItemStack(stack2);
         assertThat(newStack, is(stack));
         assertThat(newStack, is(not(unequalStack)));
         assertThat(newStack.getItemMeta(), is(stack.getItemMeta()));
         assertThat(newStack.getItemMeta(), is(not(unequalStack.getItemMeta())));
 
-        final ItemStack craftStack = CraftItemStack.asCraftCopy(stack);
+        final ItemStack craftStack = CraftItemStack.asCraftCopy(stack2);
         assertThat(craftStack, is(stack));
         assertThat(craftStack, is(not(unequalStack)));
         assertThat(craftStack.getItemMeta(), is(stack.getItemMeta()));
         assertThat(craftStack.getItemMeta(), is(not(unequalStack.getItemMeta())));
+
+        final ItemStack newUnequalStack = new ItemStack(unequalStack2);
+        assertThat(newUnequalStack, is(unequalStack));
+        assertThat(newUnequalStack, is(not(stack)));
+        assertThat(newUnequalStack.getItemMeta(), is(unequalStack.getItemMeta()));
+        assertThat(newUnequalStack.getItemMeta(), is(not(stack.getItemMeta())));
+
+        final ItemStack newUnequalCraftStack = CraftItemStack.asCraftCopy(unequalStack2);
+        assertThat(newUnequalCraftStack, is(unequalStack));
+        assertThat(newUnequalCraftStack, is(not(stack)));
+        assertThat(newUnequalCraftStack.getItemMeta(), is(unequalStack.getItemMeta()));
+        assertThat(newUnequalCraftStack.getItemMeta(), is(not(stack.getItemMeta())));
     }
 
     @Test
