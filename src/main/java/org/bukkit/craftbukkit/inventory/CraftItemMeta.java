@@ -400,6 +400,26 @@ class CraftItemMeta implements ItemMeta {
         return !hasUncommon();
     }
 
+    public List<String> getLore() {
+        return this.lore == null ? null : new ArrayList<String>(this.lore);
+    }
+
+    public void setLore(List<String> lore) { // too tired to think if .clone is better
+        if (lore == null) {
+            this.lore = null;
+        } else {
+            this.lore = new ArrayList<String>(this.lore);
+        }
+    }
+
+    public int getRepairCost() {
+        return repairCost;
+    }
+
+    public void setRepairCost(int cost) { // TODO: Does this have limits?
+        repairCost = cost;
+    }
+
     @Override
     public final int hashCode() {
         int hash = 3;

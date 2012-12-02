@@ -120,15 +120,15 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         }
     }
 
-    boolean hasAuthor() {
+    public boolean hasAuthor() {
         return !Strings.isNullOrEmpty(author);
     }
 
-    boolean hasTitle() {
+    public boolean hasTitle() {
         return !Strings.isNullOrEmpty(title);
     }
 
-    boolean hasPages() {
+    public boolean hasPages() {
         return !pages.isEmpty();
     }
 
