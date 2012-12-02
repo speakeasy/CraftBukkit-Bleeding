@@ -9,6 +9,7 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
@@ -51,8 +52,8 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     }
 
     @Override
-    boolean isEmpty() {
-        return super.isEmpty() && !hasOwner();
+    boolean hasUncommon() {
+        return hasOwner();
     }
 
     @Override
@@ -71,7 +72,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     }
 
     public boolean hasOwner() {
-        return player != null;
+        return !Strings.isNullOrEmpty(player);
     }
 
     public String getOwner() {
@@ -109,7 +110,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
 
     @Override
     boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || this.player == null);
+        return meta instanceof CraftSkullMeta || super.notUncommon(meta);
     }
 
     @Override

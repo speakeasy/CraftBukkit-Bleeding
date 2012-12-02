@@ -54,8 +54,8 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
             this.author = tag.getString(BOOK_AUTHOR.NBT);
         }
 
-        if (tag.hasKey("pages")) {
-            NBTTagList pages = tag.getList("pages");
+        if (tag.hasKey(BOOK_PAGES.NBT)) {
+            NBTTagList pages = tag.getList(BOOK_PAGES.NBT);
             String[] pageArray = new String[pages.size()];
 
             for (int i = 0; i < pages.size(); i++) {
@@ -105,12 +105,8 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    boolean isEmpty() {
-        return super.isEmpty() && isBookEmpty();
-    }
-
-    boolean isBookEmpty() {
-        return !(hasPages() || hasAuthor() || hasTitle());
+    boolean hasUncommon() {
+        return hasPages() || hasAuthor() || hasTitle();
     }
 
     @Override
@@ -239,8 +235,8 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
         if (meta instanceof CraftBookMeta) {
             CraftBookMeta that = (CraftBookMeta) meta;
 
-            return (this.title == that.title || (this.title != null && this.title.equals(that.title)))
-                    && (this.author == that.author || (this.author != null && this.author.equals(that.author)))
+            return (hasTitle() ? this.title.equals(that.title) : !that.hasTitle())
+                    && (hasAuthor() ? this.author.equals(that.author) : !that.hasAuthor())
                     && (hasPages() ? this.pages.equals(that.pages) : !that.hasPages());
         }
         return true;
@@ -248,7 +244,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     @Override
     boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftItemMeta || isBookEmpty());
+        return meta instanceof CraftItemMeta || super.notUncommon(meta);
     }
 
     @Override

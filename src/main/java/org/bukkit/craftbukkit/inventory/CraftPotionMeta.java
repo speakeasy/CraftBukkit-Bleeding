@@ -78,8 +78,8 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     @Override
-    boolean isEmpty() {
-        return !hasCustomEffects() && super.isEmpty();
+    boolean hasUncommon() {
+        return hasCustomEffects();
     }
 
     @Override
@@ -217,6 +217,6 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
 
     @Override
     boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftPotionMeta || !hasCustomEffects());
+        return meta instanceof CraftPotionMeta || super.notUncommon(meta);
     }
 }

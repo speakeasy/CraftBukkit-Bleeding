@@ -7,11 +7,12 @@ import net.minecraft.server.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftLeatherArmorMeta extends CraftItemMeta {
+class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     private static final int defaultColor = 10511680;
     private static int maxRGB = 16581375;
     private int color = -1;
@@ -45,12 +46,14 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
 
         if (color > -1) {
             getDisplay(itemTag).setInt("color", color);
+        } else {
+            // remove color
         }
     }
 
-    // TODO
-    boolean isEmpty() {
-        return super.isEmpty();
+    @Override
+    boolean hasUncommon() {
+        return hasColor();
     }
 
     boolean applicableTo(Material type) {
@@ -77,6 +80,10 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
     public void setColor() {
     }
 
+    public boolean hasColor() {
+        return color > -1;
+    }
+
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         // TODO Auto-generated method stub
@@ -86,5 +93,10 @@ class CraftLeatherArmorMeta extends CraftItemMeta {
     @Override
     SerializableMeta.Deserializers deserializer() {
         return SerializableMeta.Deserializers.LEATHER_ARMOR;
+    }
+
+    @Override
+    boolean notUncommon(CraftItemMeta meta) {
+        return meta instanceof CraftPotionMeta || super.notUncommon(meta);
     }
 }

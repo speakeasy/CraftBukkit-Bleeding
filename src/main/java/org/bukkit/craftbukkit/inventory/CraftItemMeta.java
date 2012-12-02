@@ -17,6 +17,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 @DelegateDeserialization(CraftItemMeta.SerializableMeta.class)
@@ -269,8 +270,16 @@ class CraftItemMeta implements ItemMeta {
         return type != Material.AIR;
     }
 
-    boolean isEmpty() {
-        return !(hasDisplayName() || hasEnchants() || hasLore());
+    final boolean isEmpty() {
+        return !hasCommon() && !hasUncommon();
+    }
+
+    final boolean hasCommon() {
+        return hasDisplayName() || hasEnchants() || hasLore();
+    }
+
+    boolean hasUncommon() {
+        return false;
     }
 
     public String getDisplayName() {
@@ -282,7 +291,7 @@ class CraftItemMeta implements ItemMeta {
     }
 
     public boolean hasDisplayName() {
-        return displayName != null;
+        return !Strings.isNullOrEmpty(displayName);
     }
 
     public boolean hasLore() {
@@ -331,7 +340,7 @@ class CraftItemMeta implements ItemMeta {
     }
 
     public boolean hasEnchants() {
-        return enchantments != null && !enchantments.isEmpty() ;
+        return !(enchantments == null || enchantments.isEmpty());
     }
 
     @Override
@@ -366,7 +375,7 @@ class CraftItemMeta implements ItemMeta {
      * Empty uncommon parts implies the NBT data would be equivalent if both were applied to an item
      */
     boolean notUncommon(CraftItemMeta meta) {
-        return true;
+        return !hasUncommon();
     }
 
     @Override
