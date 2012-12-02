@@ -20,6 +20,23 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
+/*
+ * Children must include the following:
+ * - Constructor(CraftItemMeta meta)
+ * - Constructor(NBTTagCompound tag)
+ * - Constructor(Map<String, Object> map)
+ * - void applyToItem(NBTTagCompound tag)
+ * - boolean applicableTo(Material type)
+ * - boolean hasUncommon()
+ * - boolean equalsCommon(CraftItemMeta meta
+ * - boolean notUncommon(CraftItemMeta meta)
+ * - int applyHash(final int original)
+ * - public Class clone()
+ * - Builder<String, Object> serialize(Builder<String, Object> builder)
+ * - SerializableMeta.Deserializers deserializer()
+ *
+ * And of course, their own api
+ */
 @DelegateDeserialization(CraftItemMeta.SerializableMeta.class)
 class CraftItemMeta implements ItemMeta {
     static class ItemMetaKey {
@@ -379,13 +396,17 @@ class CraftItemMeta implements ItemMeta {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int hash = 3;
         hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
         hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
         hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
         hash = 61 * hash + (hasRepairCost() ? this.repairCost : 0);
-        return hash;
+        return applyHash(hash);
+    }
+
+    int applyHash(final int original) {
+        return original;
     }
 
     public CraftItemMeta clone() {

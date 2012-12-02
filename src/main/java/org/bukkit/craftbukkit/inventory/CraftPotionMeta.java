@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 
 @DelegateDeserialization(SerializableMeta.class)
 final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
+    // TODO: ItemMetaKey effects
     private List<PotionEffect> customEffects;
 
     CraftPotionMeta(CraftItemMeta meta) {
@@ -196,12 +197,12 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     @Override
-    public int hashCode() {
-        int hash = super.hashCode();
+    int applyHash(final int original) {
+        int hash = original;
         if (hasCustomEffects()) {
-            hash = 73 * hash + (customEffects.hashCode() ^ CraftPotionMeta.class.hashCode());
+            hash = 73 * hash + customEffects.hashCode();
         }
-        return hash;
+        return original != hash ? CraftPotionMeta.class.hashCode() ^ hash : hash;
     }
 
     @Override

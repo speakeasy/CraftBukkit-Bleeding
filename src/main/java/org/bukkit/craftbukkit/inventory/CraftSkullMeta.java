@@ -88,12 +88,12 @@ final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     }
 
     @Override
-    public int hashCode() {
-        int hash = super.hashCode();
-        if (player != null) {
-            hash = 61 * hash + (player.hashCode() ^ CraftSkullMeta.class.hashCode());
+    int applyHash(final int original) {
+        int hash = original;
+        if (hasOwner()) {
+            hash = 61 * hash + player.hashCode();
         }
-        return hash;
+        return original != hash ? CraftSkullMeta.class.hashCode() ^ hash : hash;
     }
 
     @Override
