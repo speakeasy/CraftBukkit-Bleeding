@@ -4,9 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.inventory.ItemStackTests.Operater;
-import org.bukkit.craftbukkit.inventory.ItemStackTests.StackProvider;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -24,32 +23,40 @@ public class SkullItemStackTest extends ItemStackTests {
             new Object[] {
                 new Operater() {
                     public ItemStack operate(ItemStack cleanStack) {
-                        // TODO do skull stuff
+                        SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
+                        meta.setOwner("Notch");
+                        cleanStack.setItemMeta(meta);
                         return cleanStack;
                     }
                 },
                 new Operater() {
                     public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do other skull stuff
+                        SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
+                        meta.setOwner("PlantAssassin");
+                        cleanStack.setItemMeta(meta);
                         return cleanStack;
                     }
                 },
-                "Skull1"
+                "Name 1 vs. Name 2"
             },
             new Object[] {
                 new Operater() {
                     public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do skull stuff
+                        SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
+                        meta.setOwner("Notch");
+                        cleanStack.setItemMeta(meta);
                         return cleanStack;
                     }
                 },
                 new Operater() {
                     public ItemStack operate(ItemStack cleanStack) {
-                        // TODO Do other skull stuff
+                        SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
+                        meta.setOwner(null);
+                        cleanStack.setItemMeta(meta);
                         return cleanStack;
                     }
                 },
-                "Skull2"
+                "Name vs. Null"
             }
         );
     }
