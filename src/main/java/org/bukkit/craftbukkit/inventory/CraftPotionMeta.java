@@ -28,7 +28,9 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
             return;
         }
         CraftPotionMeta potionMeta = (CraftPotionMeta) meta;
-        this.customEffects = new ArrayList<PotionEffect>(potionMeta.customEffects);
+        if (potionMeta.hasCustomEffects()) {
+            this.customEffects = new ArrayList<PotionEffect>(potionMeta.customEffects);
+        }
     }
 
     CraftPotionMeta(NBTTagCompound tag) {
@@ -38,7 +40,7 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
             NBTTagList list = tag.getList("CustomPotionEffects");
             int length = list.size();
             if (length > 0) {
-                customEffects = new ArrayList<PotionEffect>();
+                customEffects = new ArrayList<PotionEffect>(length);
 
                 for (int i = 0; i < length; i++) {
                     NBTTagCompound effect = (NBTTagCompound) list.get(i);
@@ -95,14 +97,14 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     @Override
     public CraftPotionMeta clone() {
         CraftPotionMeta clone = (CraftPotionMeta) super.clone();
-        if (customEffects != null) {
+        if (hasCustomEffects()) {
             clone.customEffects = new ArrayList<PotionEffect>(customEffects);
         }
         return clone;
     }
 
     public boolean hasCustomEffects() {
-        return customEffects != null && !customEffects.isEmpty();
+        return !(customEffects == null || customEffects.isEmpty());
     }
 
     public List<PotionEffect> getCustomEffects() {
@@ -140,7 +142,7 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     public boolean removeCustomEffect(PotionEffectType type) {
         Validate.notNull(type, "Potion effect type must not be null");
 
-        if (customEffects == null) {
+        if (!hasCustomEffects()) {
             return false;
         }
 
@@ -175,7 +177,7 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     private int indexOfEffect(PotionEffectType type) {
-        if (customEffects == null) {
+        if (!hasCustomEffects()) {
             return -1;
         }
 

@@ -142,11 +142,11 @@ class CraftItemMeta implements ItemMeta {
 
         this.displayName = meta.displayName;
 
-        if (meta.lore != null) {
+        if (meta.hasLore()) {
             this.lore = new ArrayList<String>(meta.lore);
         }
 
-        if (meta.enchantments != null) {
+        if (meta.hasEnchants()) {
             this.enchantments = new HashMap<Enchantment, Integer>(meta.enchantments);
         }
 
@@ -366,7 +366,7 @@ class CraftItemMeta implements ItemMeta {
         return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
                 && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
                 && (this.hasLore() ? that.hasLore() && this.lore.equals(that.lore) : !that.hasLore())
-                && this.repairCost == that.repairCost;
+                && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost());
     }
 
     /**
@@ -384,7 +384,7 @@ class CraftItemMeta implements ItemMeta {
         hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
         hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
         hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
-        hash = 61 * hash + this.repairCost;
+        hash = 61 * hash + (hasRepairCost() ? this.repairCost : 0);
         return hash;
     }
 

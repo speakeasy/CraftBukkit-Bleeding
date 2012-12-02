@@ -44,7 +44,7 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
     void applyToItem(NBTTagCompound itemTag) {
         super.applyToItem(itemTag);
 
-        if (color > -1) {
+        if (hasColor()) {
             getDisplay(itemTag).setInt("color", color);
         } else {
             // remove color
