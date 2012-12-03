@@ -81,16 +81,13 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     @Override
     void applyToItem(NBTTagCompound itemData) {
         super.applyToItem(itemData);
+
         if (hasTitle()) {
             itemData.setString(BOOK_TITLE.NBT, this.title);
-        } else {
-            itemData.o(BOOK_TITLE.NBT);
         }
 
         if (hasAuthor()) {
             itemData.setString(BOOK_AUTHOR.NBT, this.author);
-        } else {
-            itemData.o(BOOK_AUTHOR.NBT);
         }
 
         if (hasPages()) {
@@ -99,8 +96,6 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
                 itemPages.add(new NBTTagString(String.valueOf(i), pages.get(i - 1)));
             }
             itemData.set(BOOK_PAGES.NBT, itemPages);
-        } else {
-            itemData.o(BOOK_PAGES.NBT);
         }
     }
 

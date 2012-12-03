@@ -44,10 +44,9 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     @Override
     void applyToItem(NBTTagCompound tag) {
         super.applyToItem(tag);
+
         if (hasOwner()) {
             tag.setString(SKULL_OWNER.NBT, player);
-        } else {
-            tag.o(SKULL_OWNER.NBT);
         }
     }
 
@@ -118,7 +117,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
-        if (this.player != null) {
+        if (hasOwner()) {
             return builder.put(SKULL_OWNER.BUKKIT, this.player);
         }
         return builder;

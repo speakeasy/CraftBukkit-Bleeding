@@ -75,8 +75,6 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
                 effectData.setBoolean("Ambient", effect.isAmbient());
                 effectList.add(effectData);
             }
-        } else {
-            tag.o("CustomPotionEffects");
         }
     }
 
@@ -111,9 +109,8 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     public List<PotionEffect> getCustomEffects() {
         if (hasCustomEffects()) {
             return ImmutableList.copyOf(customEffects);
-        } else {
-            return ImmutableList.of();
         }
+        return ImmutableList.of();
     }
 
     public boolean addCustomEffect(PotionEffect effect, boolean overwrite) {
