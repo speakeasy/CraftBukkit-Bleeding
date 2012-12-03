@@ -19,7 +19,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 import com.google.common.collect.ImmutableList;
 
 @DelegateDeserialization(SerializableMeta.class)
-final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
+class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     // TODO: ItemMetaKey effects
     private List<PotionEffect> customEffects;
 
@@ -81,8 +81,8 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     @Override
-    boolean hasExtraData() {
-        return super.hasExtraData() || hasCustomEffects();
+    boolean isEmpty() {
+        return super.isEmpty() && !hasCustomEffects();
     }
 
     @Override
@@ -217,5 +217,10 @@ final class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
             return (this.hasCustomEffects() ? that.hasCustomEffects() && this.customEffects.equals(that.customEffects) : !that.hasCustomEffects());
         }
         return true;
+    }
+
+    @Override
+    boolean notUncommon(CraftItemMeta meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftPotionMeta || !hasCustomEffects());
     }
 }

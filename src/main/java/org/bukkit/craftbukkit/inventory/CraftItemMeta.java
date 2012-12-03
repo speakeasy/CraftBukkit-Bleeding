@@ -30,15 +30,11 @@ import com.google.common.collect.ImmutableMap;
  * - Constructor(Map<String, Object> map)
  * - void applyToItem(NBTTagCompound tag)
  * - boolean applicableTo(Material type)
- * - boolean hasExtraData()
- * - boolean equalsCommon(CraftItemMeta meta
- * - boolean notUncommon(CraftItemMeta meta)
+ * // TODO Equality methods 
  * - int applyHash(final int original)
  * - public Class clone()
  * - Builder<String, Object> serialize(Builder<String, Object> builder)
  * - SerializableMeta.Deserializers deserializer()
- *
- * And of course, their own api
  */
 @DelegateDeserialization(CraftItemMeta.SerializableMeta.class)
 class CraftItemMeta implements ItemMeta, Repairable {
@@ -236,8 +232,6 @@ class CraftItemMeta implements ItemMeta, Repairable {
     void applyToItem(NBTTagCompound itemTag) {
         if (hasDisplayName()) {
             setDisplay(itemTag, NAME.NBT, new NBTTagString(NAME.NBT, displayName));
-        } else {
-            setDisplay(itemTag, NAME.NBT, null);
         }
 
         if (hasLore()) {
@@ -246,8 +240,6 @@ class CraftItemMeta implements ItemMeta, Repairable {
                 list.add(new NBTTagString(String.valueOf(i), lore.get(i)));
             }
             setDisplay(itemTag, LORE.NBT, list);
-        } else {
-            setDisplay(itemTag, LORE.NBT, null);
         }
 
         if (hasEnchants()) {
@@ -263,47 +255,30 @@ class CraftItemMeta implements ItemMeta, Repairable {
             }
 
             itemTag.set(ENCHANTMENTS.NBT, list);
-        } else {
-            itemTag.o(ENCHANTMENTS.NBT);
         }
 
         if (hasRepairCost()) {
             itemTag.setInt(REPAIR.NBT, repairCost);
-        } else {
-            itemTag.o(REPAIR.NBT);
         }
     }
 
     void setDisplay(NBTTagCompound tag, String key, NBTBase value) {
         NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
-
-        if (value == null) {
-            display.o(key);
-        } else {
-            display.set(key, value);
-        }
-
-        if (!tag.hasKey(DISPLAY.NBT) && !display.d()) {
+        
+        if (display == null) {
+            display = new NBTTagCompound(DISPLAY.NBT);
             tag.setCompound(DISPLAY.NBT, display);
-        } else if (tag.hasKey(DISPLAY.NBT) && display.d()) {
-            tag.o(DISPLAY.NBT);
         }
+
+        display.set(key, value);
     }
 
     boolean applicableTo(Material type) {
         return type != Material.AIR;
     }
 
-    final boolean isEmpty() {
-        return !hasCommon() && !hasExtraData();
-    }
-
-    final boolean hasCommon() {
-        return hasDisplayName() || hasEnchants() || hasLore();
-    }
-
-    boolean hasExtraData() {
-        return false;
+    boolean isEmpty() {
+        return !(hasDisplayName() || hasEnchants() || hasLore());
     }
 
     public String getDisplayName() {
@@ -367,6 +342,26 @@ class CraftItemMeta implements ItemMeta, Repairable {
         return !(enchantments == null || enchantments.isEmpty());
     }
 
+    public List<String> getLore() {
+        return this.lore == null ? null : new ArrayList<String>(this.lore);
+    }
+
+    public void setLore(List<String> lore) { // too tired to think if .clone is better
+        if (lore == null) {
+            this.lore = null;
+        } else {
+            this.lore = new ArrayList<String>(this.lore);
+        }
+    }
+
+    public int getRepairCost() {
+        return repairCost;
+    }
+
+    public void setRepairCost(int cost) { // TODO: Does this have limits?
+        repairCost = cost;
+    }
+
     @Override
     public final boolean equals(Object object) {
         if (object == null) {
@@ -393,24 +388,13 @@ class CraftItemMeta implements ItemMeta, Repairable {
                 && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost());
     }
 
-    public List<String> getLore() {
-        return this.lore == null ? null : new ArrayList<String>(this.lore);
-    }
-
-    public void setLore(List<String> lore) { // too tired to think if .clone is better
-        if (lore == null) {
-            this.lore = null;
-        } else {
-            this.lore = new ArrayList<String>(this.lore);
-        }
-    }
-
-    public int getRepairCost() {
-        return repairCost;
-    }
-
-    public void setRepairCost(int cost) { // TODO: Does this have limits?
-        repairCost = cost;
+    /**
+     * This method is a bit weird...
+     * Return true if you are a common class OR your uncommon parts are empty.
+     * Empty uncommon parts implies the NBT data would be equivalent if both were applied to an item
+     */
+    boolean notUncommon(CraftItemMeta meta) {
+        return true;
     }
 
     @Override

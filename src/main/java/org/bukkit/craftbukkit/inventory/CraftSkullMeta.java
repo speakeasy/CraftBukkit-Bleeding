@@ -13,7 +13,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
+class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     static final ItemMetaKey SKULL_OWNER = new ItemMetaKey("SkullOwner", "skull-owner");
     static final int MAX_OWNER_LENGTH = 16;
 
@@ -52,8 +52,8 @@ final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
     }
 
     @Override
-    boolean hasExtraData() {
-        return super.hasExtraData() || hasOwner();
+    boolean isEmpty() {
+        return super.isEmpty() && !hasOwner();
     }
 
     @Override
@@ -108,6 +108,11 @@ final class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
             return (this.hasOwner() ? that.hasOwner() && this.player.equals(that.player) : !that.hasOwner());
         }
         return true;
+    }
+
+    @Override
+    boolean notUncommon(CraftItemMeta meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || !this.hasOwner());
     }
 
     @Override

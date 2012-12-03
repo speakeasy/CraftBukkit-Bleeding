@@ -86,7 +86,7 @@ public final class CraftItemFactory implements ItemFactory {
     }
 
     boolean equals(CraftItemMeta meta1, CraftItemMeta meta2) {
-        /* (This needs updating)
+        /*
          * This couldn't be done inside of the objects themselves, else force recursion.
          * This is a fairly clean way of implementing it, by dividing the methods into purposes and letting each method perform its own function.
          *
@@ -95,7 +95,7 @@ public final class CraftItemFactory implements ItemFactory {
          *
          * Doing it this way fills all conditions of the .equals() method.
          */
-        return meta1.equalsCommon(meta2) && (meta1.getClass() == meta2.getClass() || !(meta1.hasExtraData() || meta2.hasExtraData()));
+        return meta1.equalsCommon(meta2) && meta1.notUncommon(meta2) && meta2.notUncommon(meta1);
     }
 
     public static CraftItemFactory instance() {

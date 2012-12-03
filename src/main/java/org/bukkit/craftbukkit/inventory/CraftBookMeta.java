@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-final class CraftBookMeta extends CraftItemMeta implements BookMeta {
+class CraftBookMeta extends CraftItemMeta implements BookMeta {
     static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
     static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
     static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");
@@ -105,8 +105,12 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    boolean hasExtraData() {
-        return super.hasExtraData() || hasPages() || hasAuthor() || hasTitle();
+    boolean isEmpty() {
+        return super.isEmpty() && isBookEmpty();
+    }
+
+    boolean isBookEmpty() {
+        return !(hasPages() || hasAuthor() || hasTitle());
     }
 
     @Override
@@ -161,13 +165,13 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
         return pages.get(page - 1);
     }
 
-    public boolean setPage(final int page, final String text) {
+    public void setPage(final int page, final String text) {
         if (!isValidPage(page)) {
             throw new IllegalArgumentException("Invalid page number " + page + "/" + pages.size());
         }
 
         pages.set(page - 1, text == null ? "" : text.length() > MAX_PAGE_LENGTH ? text.substring(0, MAX_PAGE_LENGTH) : text);
-        return true;
+        return;
     }
 
     public void setPages(final String... pages) {
@@ -241,6 +245,11 @@ final class CraftBookMeta extends CraftItemMeta implements BookMeta {
                     && (hasPages() ? that.hasPages() && this.pages.equals(that.pages) : !that.hasPages());
         }
         return true;
+    }
+
+    @Override
+    boolean notUncommon(CraftItemMeta meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftItemMeta || isBookEmpty());
     }
 
     @Override

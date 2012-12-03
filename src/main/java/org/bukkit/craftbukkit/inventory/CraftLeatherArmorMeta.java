@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import net.minecraft.server.NBTTagInt;
 
 @DelegateDeserialization(SerializableMeta.class)
-final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
+class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     static final ItemMetaKey COLOR = new ItemMetaKey("color");
     private Color color = DEFAULT_LEATHER_COLOR;
 
@@ -55,8 +55,8 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
     }
 
     @Override
-    boolean hasExtraData() {
-        return super.hasExtraData() || hasColor();
+    boolean isEmpty() {
+        return super.isEmpty() && !hasColor();
     }
 
     boolean applicableTo(Material type) {
@@ -115,5 +115,10 @@ final class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorM
             return color.equals(that.color);
         }
         return true;
+    }
+
+    @Override
+    boolean notUncommon(CraftItemMeta meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || !this.hasColor());
     }
 }
