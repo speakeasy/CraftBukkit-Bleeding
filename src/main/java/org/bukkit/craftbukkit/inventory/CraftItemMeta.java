@@ -367,7 +367,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public final boolean equals(Object object) {
         if (object == null) {
             return false;
         }
@@ -447,11 +447,11 @@ class CraftItemMeta implements ItemMeta, Repairable {
         }
 
         if (hasLore()) {
-            builder.put(LORE.BUKKIT, lore);
+            builder.put(LORE.BUKKIT, ImmutableList.copyOf(lore));
         }
 
         if (hasEnchants()) {
-            builder.put(ENCHANTMENTS.BUKKIT, enchantments);
+            builder.put(ENCHANTMENTS.BUKKIT, ImmutableMap.copyOf(enchantments));
         }
 
         if (hasRepairCost()) {
