@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -356,7 +357,12 @@ class CraftItemMeta implements ItemMeta, Repairable {
         if (lore == null) {
             this.lore = null;
         } else {
-            this.lore = new ArrayList<String>(this.lore);
+            if (this.lore == null) {
+                safelyAdd(lore, this.lore = new ArrayList<String>(lore.size()), Integer.MAX_VALUE);
+            } else {
+                this.lore.clear();
+                safelyAdd(lore, this.lore, Integer.MAX_VALUE);
+            }
         }
     }
 
@@ -454,5 +460,29 @@ class CraftItemMeta implements ItemMeta, Repairable {
 
     SerializableMeta.Deserializers deserializer() {
         return SerializableMeta.Deserializers.UNSPECIFIC;
+    }
+
+    static void safelyAdd(Collection<?> addFrom, Collection<String> addTo, int maxItemLength) {
+        if (addFrom == null) {
+            return;
+        }
+
+        for (Object object : addFrom) {
+            if (!(object instanceof String)) {
+                if (object != null) {
+                    throw new IllegalArgumentException(addFrom + " cannot contain non-string " + object.getClass().getName());
+                }
+
+                addTo.add("");
+            } else {
+                String page = object.toString();
+
+                if (page.length() > maxItemLength) {
+                    page = page.substring(0, maxItemLength);
+                }
+
+                addTo.add(page);
+            }
+        }
     }
 }

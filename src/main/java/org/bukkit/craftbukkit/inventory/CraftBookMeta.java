@@ -75,7 +75,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
         setTitle(SerializableMeta.getString(map, BOOK_TITLE.BUKKIT, true));
 
         Collection<?> pages = SerializableMeta.getObject(Collection.class, map, BOOK_PAGES.BUKKIT, true);
-        safelyAddPages(pages);
+        CraftItemMeta.safelyAdd(pages, this.pages, MAX_PAGE_LENGTH);
     }
 
     @Override
@@ -197,7 +197,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     public void setPages(List<String> pages) {
         this.pages.clear();
-        safelyAddPages(pages);
+        CraftItemMeta.safelyAdd(pages, this.pages, MAX_PAGE_LENGTH);
     }
 
     private boolean isValidPage(int page) {
@@ -269,29 +269,5 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     @Override
     SerializableMeta.Deserializers deserializer() {
         return SerializableMeta.Deserializers.BOOK;
-    }
-
-    private void safelyAddPages(Collection<?> collection) {
-        if (collection == null) {
-            return;
-        }
-
-        for (Object object : collection) {
-            if (!(object instanceof String)) {
-                if (object != null) {
-                    throw new IllegalArgumentException(collection + " cannot contain non-string " + object.getClass().getName());
-                }
-
-                this.pages.add("");
-            } else {
-                String page = object.toString();
-
-                if (page.length() > MAX_PAGE_LENGTH) {
-                    page = page.substring(0, MAX_PAGE_LENGTH);
-                }
-
-                this.pages.add(page);
-            }
-        }
     }
 }
