@@ -17,10 +17,15 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
-    // TODO: ItemMetaKey effects
+    static final ItemMetaKey AMPLIFIER = new ItemMetaKey("Amplifier", "amplifier");
+    static final ItemMetaKey AMBIENT = new ItemMetaKey("Ambient", "ambient");
+    static final ItemMetaKey DURATION = new ItemMetaKey("Duration", "duration");
+    static final ItemMetaKey POTION_EFFECTS = new ItemMetaKey("CustomPotionEffects", "custom-effects");
+    static final ItemMetaKey ID = new ItemMetaKey("ID", "potion-id");
     private List<PotionEffect> customEffects;
 
     CraftPotionMeta(CraftItemMeta meta) {
@@ -37,18 +42,18 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     CraftPotionMeta(NBTTagCompound tag) {
         super(tag);
 
-        if (tag.hasKey("CustomPotionEffects")) {
-            NBTTagList list = tag.getList("CustomPotionEffects");
+        if (tag.hasKey(POTION_EFFECTS.NBT)) {
+            NBTTagList list = tag.getList(POTION_EFFECTS.NBT);
             int length = list.size();
             if (length > 0) {
                 customEffects = new ArrayList<PotionEffect>(length);
 
                 for (int i = 0; i < length; i++) {
                     NBTTagCompound effect = (NBTTagCompound) list.get(i);
-                    PotionEffectType type = PotionEffectType.getById(effect.getByte("Id"));
-                    int amp = effect.getByte("Amplifier");
-                    int duration = effect.getInt("Duration");
-                    boolean ambient = effect.getBoolean("Ambient");
+                    PotionEffectType type = PotionEffectType.getById(effect.getByte(ID.NBT));
+                    int amp = effect.getByte(AMPLIFIER.NBT);
+                    int duration = effect.getInt(DURATION.NBT);
+                    boolean ambient = effect.getBoolean(AMBIENT.NBT);
                     customEffects.add(new PotionEffect(type, amp, duration, ambient));
                 }
             }
@@ -65,14 +70,14 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
         super.applyToItem(tag);
         if (hasCustomEffects()) {
             NBTTagList effectList = new NBTTagList();
-            tag.set("CustomPotionEffects", effectList);
+            tag.set(POTION_EFFECTS.NBT, effectList);
 
             for (PotionEffect effect : customEffects) {
                 NBTTagCompound effectData = new NBTTagCompound();
-                effectData.setByte("Id", (byte) effect.getType().getId());
-                effectData.setByte("Amplifier", (byte) effect.getAmplifier());
-                effectData.setInt("Duration", effect.getDuration());
-                effectData.setBoolean("Ambient", effect.isAmbient());
+                effectData.setByte(ID.NBT, (byte) effect.getType().getId());
+                effectData.setByte(AMPLIFIER.NBT, (byte) effect.getAmplifier());
+                effectData.setInt(DURATION.NBT, effect.getDuration());
+                effectData.setBoolean(AMBIENT.NBT, effect.isAmbient());
                 effectList.add(effectData);
             }
         }
@@ -219,5 +224,17 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     @Override
     boolean notUncommon(CraftItemMeta meta) {
         return super.notUncommon(meta) && (meta instanceof CraftPotionMeta || !hasCustomEffects());
+    }
+
+    @Override
+    Builder<String, Object> serialize(Builder<String, Object> builder) {
+        super.serialize(builder);
+        // TODO
+        return builder;
+    }
+
+    @Override
+    SerializableMeta.Deserializers deserializer() {
+        return SerializableMeta.Deserializers.POTION;
     }
 }
