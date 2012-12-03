@@ -203,7 +203,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
                 short id = ((NBTTagCompound) ench.get(i)).getShort(ENCHANTMENTS_ID.NBT);
                 short level = ((NBTTagCompound) ench.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
 
-                addEnchant(Enchantment.getById(id), (int) level);
+                addEnchant(Enchantment.getById(id), (int) level, true);
             }
         }
 
@@ -226,7 +226,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
                 Enchantment enchantment = Enchantment.getByName(entry.getKey().toString());
 
                 if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
-                    addEnchant(enchantment, (Integer) entry.getValue());
+                    addEnchant(enchantment, (Integer) entry.getValue(), true);
                 }
             }
         }
@@ -337,10 +337,6 @@ class CraftItemMeta implements ItemMeta, Repairable {
         return false;
     }
 
-    private void addEnchant(Enchantment ench, int level) {
-        addEnchant(ench, level, true);
-    }
-
     public boolean removeEnchant(Enchantment ench) {
         return hasEnchants() ? enchantments.remove(ench) != null : false;
     }
@@ -431,7 +427,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         }
     }
 
-    public Map<String, Object> serialize() {
+    public final Map<String, Object> serialize() {
         ImmutableMap.Builder<String, Object> map = ImmutableMap.builder();
         map.put(SerializableMeta.TYPE_FIELD, deserializer().name());
         serialize(map);
