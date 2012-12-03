@@ -17,6 +17,7 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Repairable;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -39,7 +40,7 @@ import com.google.common.collect.ImmutableMap;
  * And of course, their own api
  */
 @DelegateDeserialization(CraftItemMeta.SerializableMeta.class)
-class CraftItemMeta implements ItemMeta {
+class CraftItemMeta implements ItemMeta, Repairable {
     static class ItemMetaKey {
         final String BUKKIT;
         final String NBT;
