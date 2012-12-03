@@ -23,18 +23,24 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-/*
+/**
  * Children must include the following:
- * - Constructor(CraftItemMeta meta)
- * - Constructor(NBTTagCompound tag)
- * - Constructor(Map<String, Object> map)
- * - void applyToItem(NBTTagCompound tag)
- * - boolean applicableTo(Material type)
- * // TODO Equality methods 
- * - int applyHash(final int original)
- * - public Class clone()
- * - Builder<String, Object> serialize(Builder<String, Object> builder)
- * - SerializableMeta.Deserializers deserializer()
+ *
+ * <li> Constructor(CraftItemMeta meta)
+ * <li> Constructor(NBTTagCompound tag)
+ * <li> Constructor(Map<String, Object> map)
+ * <br><br>
+ * <li> void applyToItem(NBTTagCompound tag)
+ * <li> boolean applicableTo(Material type)
+ * <br><br>
+ * <li> boolean notUncommon(CraftItemMeta meta)
+ * <li> boolean equalsCommon(CraftItemMeta meta)
+ * <br><br>
+ * <li> int applyHash(final int original)
+ * <li> public Class clone()
+ * <br><br>
+ * <li> Builder<String, Object> serialize(Builder<String, Object> builder)
+ * <li> SerializableMeta.Deserializers deserializer()
  */
 @DelegateDeserialization(CraftItemMeta.SerializableMeta.class)
 class CraftItemMeta implements ItemMeta, Repairable {
@@ -264,7 +270,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
 
     void setDisplay(NBTTagCompound tag, String key, NBTBase value) {
         NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
-        
+
         if (display == null) {
             display = new NBTTagCompound(DISPLAY.NBT);
             tag.setCompound(DISPLAY.NBT, display);
