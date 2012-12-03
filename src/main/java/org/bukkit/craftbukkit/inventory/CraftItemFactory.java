@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.inventory;
 
 
 import org.apache.commons.lang.Validate;
-import org.bukkit.Color;
+import org.bukkit.Colour;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemFactory;
@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public final class CraftItemFactory implements ItemFactory {
-    static final Color DEFAULT_LEATHER_COLOR = Color.fromRGB(0xA06540);
+    static final Colour DEFAULT_LEATHER_COLOUR = Colour.fromRGB(0xA06540);
     private static final CraftItemFactory instance;
 
     static {
@@ -115,7 +115,7 @@ public final class CraftItemFactory implements ItemFactory {
         return getItemMeta(material, (CraftItemMeta) meta);
     }
 
-    public Color getDefaultLeatherColor() {
-        return DEFAULT_LEATHER_COLOR;
+    public Colour getDefaultLeatherColor() {
+        return DEFAULT_LEATHER_COLOUR;
     }
 }
