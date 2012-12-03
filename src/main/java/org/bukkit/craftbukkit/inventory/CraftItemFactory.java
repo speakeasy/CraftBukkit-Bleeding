@@ -93,7 +93,7 @@ public final class CraftItemFactory implements ItemFactory {
          *
          * Doing it this way fills all conditions of the .equals() method.
          */
-        return meta1.equalsCommon(meta2) && (meta1.getClass() == meta2.getClass() ? true : !meta1.hasExtraData() && !meta2.hasExtraData());
+        return meta1.equalsCommon(meta2) && (meta1.getClass() == meta2.getClass() || !(meta1.hasExtraData() || meta2.hasExtraData()));
     }
 
     public static CraftItemFactory instance() {
