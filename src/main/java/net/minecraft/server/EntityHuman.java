@@ -1017,7 +1017,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
                 bed = this.world.getWorld().getBlockAt(player.getLocation());
             }
 
-            PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed);
+            PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, flag2);
             this.world.getServer().getPluginManager().callEvent(event);
         }
         // CraftBukkit end
