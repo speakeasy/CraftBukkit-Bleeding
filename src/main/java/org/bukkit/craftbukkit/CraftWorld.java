@@ -1229,4 +1229,36 @@ public class CraftWorld implements World {
     public boolean isGameRule(String rule) {
         return getHandle().getGameRules().e(rule);
     }
+
+    public int getBlockType(Location location) {
+        return world.getTypeId(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public byte getBlockDataAt(Location location) {
+        return (byte) world.getData(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public void setBlockData(Location location, byte data, boolean update) {
+        if (update) {
+            world.setData(location.getBlockX(), location.getBlockY(), location.getBlockZ(), data);
+        } else {
+            world.setRawData(location.getBlockX(), location.getBlockY(), location.getBlockZ(), data);
+        }
+    }
+
+    public void setBlockTypeId(Location location, int type, boolean update) {
+        if (update) {
+            world.setTypeId(location.getBlockX(), location.getBlockY(), location.getBlockZ(), type);
+        } else {
+            world.setRawTypeId(location.getBlockX(), location.getBlockY(), location.getBlockZ(), type);
+        }
+    }
+
+    public void setBlockTypeIdAndData(Location location, int type, byte data, boolean update) {
+        if (update) {
+            world.setTypeIdAndData(location.getBlockX(), location.getBlockY(), location.getBlockZ(), type, data);
+        } else {
+            world.setRawTypeIdAndData(location.getBlockX(), location.getBlockY(), location.getBlockZ(), type, data);
+        }
+    }
 }
