@@ -88,6 +88,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         return getHandle().sleepTicks;
     }
 
+    public void wakeUp() {
+        // do not force sleep timer reset, update world sleep status, do not change spawn
+        getHandle().a(false, true, false);
+    }
+
     public boolean isOp() {
         return op;
     }
