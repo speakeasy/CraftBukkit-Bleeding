@@ -104,6 +104,13 @@
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>4.1</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.avaje</groupId>
@@ -248,6 +255,10 @@
                 <relocation>
                   <pattern>com.google.gson</pattern>
                   <shadedPattern>org.bukkit.craftbukkit.libs.com.google.gson</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.objectweb.asm</pattern>
+                  <shadedPattern>org.bukkit.craftbukkit.libs.org.objectweb.asm</shadedPattern>
                 </relocation>
                 <!-- These contain native libraries, and cannot be properly relocated
                 <relocation>

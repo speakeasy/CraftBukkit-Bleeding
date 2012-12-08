@@ -131,6 +131,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapMaker;
 
 import jline.console.ConsoleReader;
+import org.bukkit.craftbukkit.util.PluginChecker;
 
 public final class CraftServer implements Server {
     private final String serverName = "CraftBukkit";
@@ -224,6 +225,7 @@ public final class CraftServer implements Server {
         File pluginFolder = (File) console.options.valueOf("plugins");
 
         if (pluginFolder.exists()) {
+            PluginChecker.checkFolder(pluginFolder);
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
             for (Plugin plugin : plugins) {
                 try {
