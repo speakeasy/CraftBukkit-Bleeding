@@ -47,6 +47,9 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
     public int newLevel = 0;
     public int newTotalExp = 0;
     public boolean keepLevel = false;
+    public int logoutCooldownTicks = 0;
+    public int maxLogoutCooldownTicks = 0;
+    public boolean onCooldown = false;
     // CraftBukkit end
 
     public EntityPlayer(MinecraftServer minecraftserver, World world, String s, ItemInWorldManager iteminworldmanager) {
@@ -137,6 +140,21 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         this.itemInWorldManager.a();
         --this.invulnerableTicks;
         this.activeContainer.b();
+
+        // CraftBukkit start
+        if (this.logoutCooldownTicks > 0) {
+            this.logoutCooldownTicks--;
+        } else if (this.onCooldown && this.logoutCooldownTicks == 0) {
+            String quitMessage = this.server.getServerConfigurationManager().disconnect(this);
+            if ((quitMessage != null) && (quitMessage.length() > 0)) {
+                this.server.getServerConfigurationManager().sendAll(new Packet3Chat(quitMessage));
+            }
+        }
+
+        if (this.onCooldown) {
+            this.g();
+        }
+        // CraftBukkit end
 
         while (!this.removeQueue.isEmpty()) {
             int i = Math.min(this.removeQueue.size(), 127);
@@ -274,6 +292,15 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
 
         // Update effects on player death
         this.updateEffects = true;
+
+        // Stop cooldown on death
+        if (this.onCooldown) {
+            this.logoutCooldownTicks = 0;
+            String quitMessage = this.server.getServerConfigurationManager().disconnect(this);
+            if ((quitMessage != null) && (quitMessage.length() > 0)) {
+                this.server.getServerConfigurationManager().sendAll(new Packet3Chat(quitMessage));
+            }
+        }
         // CraftBukkit end
     }
 
@@ -399,7 +426,13 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         this.netServerHandler.a(this.locX, this.locY, this.locZ, this.yaw, this.pitch);
     }
 
-    protected void a(double d0, boolean flag) {}
+    // CraftBukkit start - pass to super when on cooldown to handle fall damage
+    protected void a(double d0, boolean flag) {
+        if (this.onCooldown) {
+            super.a(d0, flag);
+        }
+    }
+    // CraftBukkit end
 
     public void b(double d0, boolean flag) {
         super.a(d0, flag);

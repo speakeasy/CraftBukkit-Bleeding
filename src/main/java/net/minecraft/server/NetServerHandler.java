@@ -137,7 +137,7 @@ public class NetServerHandler extends NetHandler {
     }
 
     public void disconnect(String s) {
-        if (!this.disconnected) {
+        if (!this.disconnected || this.player.onCooldown) { // CraftBukkit - added cooldown check
             // CraftBukkit start
             String leaveMessage = "\u00A7e" + this.player.name + " left the game.";
 
@@ -165,6 +165,10 @@ public class NetServerHandler extends NetHandler {
                 this.minecraftServer.getServerConfigurationManager().sendAll(new Packet3Chat(leaveMessage));
             }
             getPlayer().disconnect(s);
+
+            // Set logout cooldown time to zero so kicks don't count against a player
+            this.player.logoutCooldownTicks = 0;
+            this.player.maxLogoutCooldownTicks = 0;
             // CraftBukkit end
 
             this.minecraftServer.getServerConfigurationManager().disconnect(this.player);

@@ -119,8 +119,20 @@ public class NetLoginHandler extends NetHandler {
     public void a(Packet1Login packet1login) {}
 
     public void d() {
-        // CraftBukkit start
-        EntityPlayer s = this.server.getServerConfigurationManager().attemptLogin(this, this.h, this.hostname);
+        // CraftBukkit start - reuse existing entity if on cooldown
+        EntityPlayer s = null;
+
+        for (int i = 0; i < this.server.getServerConfigurationManager().players.size(); i++) {
+            EntityPlayer entity = (EntityPlayer) this.server.getServerConfigurationManager().players.get(i);
+            if (entity.name.equalsIgnoreCase(this.h.trim()) && entity.onCooldown) {
+                s = entity;
+                break;
+            }
+        }
+
+        if (s == null) {
+            s = this.server.getServerConfigurationManager().attemptLogin(this, this.h, this.hostname);
+        }
 
         if (s == null) {
             return;

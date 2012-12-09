@@ -662,6 +662,22 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return !hiddenPlayers.containsKey(player.getName());
     }
 
+    public int getLogoutCooldownTicks() {
+        return getHandle().maxLogoutCooldownTicks;
+    }
+
+    public void setLogoutCooldownTicks(int ticks) {
+        if (ticks < 0) {
+            ticks = 0;
+        }
+
+        getHandle().maxLogoutCooldownTicks = ticks;
+    }
+
+    public boolean onCooldown() {
+        return getHandle().onCooldown;
+    }
+
     public Map<String, Object> serialize() {
         Map<String, Object> result = new LinkedHashMap<String, Object>();
 

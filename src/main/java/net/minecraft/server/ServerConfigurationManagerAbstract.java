@@ -18,10 +18,12 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDisconnectEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerReconnectEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.Bukkit;
@@ -61,7 +63,12 @@ public abstract class ServerConfigurationManagerAbstract {
     }
 
     public void a(INetworkManager inetworkmanager, EntityPlayer entityplayer) {
-        this.a(entityplayer);
+        // CraftBukkit start - only load player data if not on cooldown
+        if (!entityplayer.onCooldown) {
+            this.a(entityplayer);
+        }
+        // CraftBukkit end
+
         entityplayer.spawnIn(this.server.getWorldServer(entityplayer.dimension));
         entityplayer.itemInWorldManager.a((WorldServer) entityplayer.world);
         String s = "local";
@@ -91,7 +98,7 @@ public abstract class ServerConfigurationManagerAbstract {
         netserverhandler.sendPacket(new Packet202Abilities(entityplayer.abilities));
         this.b(entityplayer, worldserver);
         // this.sendAll(new Packet3Chat("\u00A7e" + entityplayer.name + " joined the game.")); // CraftBukkit - handled in event
-        this.c(entityplayer);
+        // this.c(entityplayer); // CraftBukkit - handled below during offline check
         netserverhandler.a(entityplayer.locX, entityplayer.locY, entityplayer.locZ, entityplayer.yaw, entityplayer.pitch);
         this.server.ae().a(netserverhandler);
         netserverhandler.sendPacket(new Packet4UpdateTime(worldserver.getTime(), worldserver.getDayTime()));
@@ -107,7 +114,26 @@ public abstract class ServerConfigurationManagerAbstract {
             netserverhandler.sendPacket(new Packet41MobEffect(entityplayer.id, mobeffect));
         }
 
-        entityplayer.syncInventory();
+        // CraftBukkit start - resync with ghost if on cooldown, otherwise add to world normally
+        if (entityplayer.onCooldown) {
+            PlayerReconnectEvent reconnectEvent = new PlayerReconnectEvent(entityplayer.getBukkitEntity());
+            this.cserver.getPluginManager().callEvent(reconnectEvent);
+            entityplayer.onCooldown = false;
+            this.moveToWorld(entityplayer, entityplayer.dimension, false, entityplayer.getBukkitEntity().getLocation());
+
+            // Update client user list
+            for (int i = 0; i < this.players.size(); ++i) {
+                EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
+
+                if (entityplayer.getBukkitEntity().canSee(entityplayer1.getBukkitEntity())) {
+                    entityplayer.netServerHandler.sendPacket(new Packet201PlayerInfo(entityplayer1.listName, true, entityplayer1.ping));
+                }
+            }
+        } else {
+            this.c(entityplayer);
+            entityplayer.syncInventory();
+        }
+        // CraftBukkit end
     }
 
     public void setPlayerFileData(WorldServer[] aworldserver) {
@@ -198,7 +224,27 @@ public abstract class ServerConfigurationManagerAbstract {
     }
 
     public String disconnect(EntityPlayer entityplayer) { // CraftBukkit - return string
-        if (entityplayer.netServerHandler.disconnected) return null; // CraftBukkit - exploitsies fix
+        if (entityplayer.netServerHandler.disconnected && !entityplayer.onCooldown) return null; // CraftBukkit - exploitsies fix
+        // CraftBukkit start - add logout cooldown handling
+        if (!entityplayer.onCooldown) {
+            // eject a rider and eject from vehicle, if any
+            if (entityplayer.passenger != null) {
+                entityplayer.passenger.setPassengerOf(null);
+            }
+            if (entityplayer.vehicle != null) {
+                entityplayer.setPassengerOf(null);
+            }
+
+            PlayerDisconnectEvent disconnectEvent = new PlayerDisconnectEvent(this.cserver.getPlayer(entityplayer));
+            this.cserver.getPluginManager().callEvent(disconnectEvent);
+            entityplayer.onCooldown = true;
+            entityplayer.logoutCooldownTicks = entityplayer.maxLogoutCooldownTicks;
+        }
+
+        if (entityplayer.logoutCooldownTicks != 0) {
+            return null;
+        }
+        // CraftBukkit end
 
         // CraftBukkit start - quitting must be before we do final save of data, in case plugins need to modify it
         PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(entityplayer), "\u00A7e" + entityplayer.name + " left the game.");
