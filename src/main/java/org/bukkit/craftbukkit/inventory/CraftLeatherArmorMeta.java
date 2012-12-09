@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.minecraft.server.NBTTagCompound;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -82,6 +83,34 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
 
     public void setColor(Color color) {
         this.color = color == null ? DEFAULT_LEATHER_COLOR : color;
+    }
+
+    public void dyeColor(Color... colors) {
+        Validate.notNull(color);
+
+        Color currentColor = getColor();
+
+        int totalRed = currentColor.getRed();
+        int totalGreen = currentColor.getGreen();
+        int totalBlue = currentColor.getBlue();
+        int totalMax = Math.max(Math.max(currentColor.getRed(), currentColor.getGreen()), currentColor.getBlue());
+        for (Color color : colors) {
+            Validate.notNull(color);
+            totalRed += color.getRed();
+            totalGreen += color.getGreen();
+            totalBlue += color.getBlue();
+            totalMax += Math.max(Math.max(color.getRed(), color.getGreen()), color.getBlue());
+        }
+
+        int averageRed = totalRed / (colors.length + 1);
+        int averageGreen = totalGreen / (colors.length + 1);
+        int averageBlue = totalBlue / (colors.length + 1);
+        int averageMax = totalMax / (colors.length + 1);
+
+        int maximumOfAverages = Math.max(Math.max(averageRed, averageGreen), averageBlue);
+        int gainFactor = averageMax / maximumOfAverages;
+
+        setColor(Color.fromRGB((averageRed * gainFactor), (averageGreen * gainFactor), (averageBlue * gainFactor)));
     }
 
     boolean hasColor() {
