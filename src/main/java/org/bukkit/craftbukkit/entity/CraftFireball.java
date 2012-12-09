@@ -65,4 +65,21 @@ public class CraftFireball extends AbstractProjectile implements Fireball {
     public EntityType getType() {
         return EntityType.UNKNOWN;
     }
+
+    public int getAge() {
+        return getHandle().j;
+    }
+
+    public void setAge(int age) {
+        getHandle().j = age;
+    }
+
+    public int getExpiration() {
+        return getHandle().expiration;
+    }
+
+    public void setExpiration(int expiration) {
+        getHandle().expiration = expiration;
+    }
+
 }

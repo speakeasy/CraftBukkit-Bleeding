@@ -6,13 +6,14 @@ import org.bukkit.event.entity.ProjectileHitEvent; // CraftBukkit
 
 public abstract class EntityFireball extends Entity {
 
+    public int expiration = 600; // CraftBukkit
     private int e = -1;
     private int f = -1;
     private int g = -1;
     private int h = 0;
     private boolean i = false;
     public EntityLiving shooter;
-    private int j;
+    public int j; // CraftBukkit - private -> public
     private int as = 0;
     public double dirX;
     public double dirY;
@@ -74,7 +75,7 @@ public abstract class EntityFireball extends Entity {
 
                 if (i == this.h) {
                     ++this.j;
-                    if (this.j == 600) {
+                    if (this.j >= expiration) { // CraftBukkit
                         this.die();
                     }
 

@@ -7,6 +7,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 public class EntityExperienceOrb extends Entity {
 
+    public int expiration = 6000; // CraftBukkit
     public int a;
     public int b = 0;
     public int c;
@@ -109,7 +110,7 @@ public class EntityExperienceOrb extends Entity {
 
         ++this.a;
         ++this.b;
-        if (this.b >= 6000) {
+        if (this.b >= expiration) { // CraftBukkit
             this.die();
         }
     }

@@ -45,4 +45,21 @@ public class CraftItem extends CraftEntity implements Item {
     public EntityType getType() {
         return EntityType.DROPPED_ITEM;
     }
+
+    public int getAge() {
+        return item.age;
+    }
+
+    public void setAge(int age) {
+        item.age = age;
+    }
+
+    public int getExpiration() {
+        return item.expiration;
+    }
+
+    public void setExpiration(int expiration) {
+        item.expiration = expiration;
+    }
+
 }

@@ -37,4 +37,21 @@ public abstract class CraftProjectile extends AbstractProjectile implements Proj
     public String toString() {
         return "CraftProjectile";
     }
+
+    public int getAge() {
+        return getHandle().i;
+    }
+
+    public void setAge(int age) {
+        getHandle().i = age;
+    }
+
+    public int getExpiration() {
+        return getHandle().expiration;
+    }
+
+    public void setExpiration(int expiration) {
+        getHandle().expiration = expiration;
+    }
+
 }

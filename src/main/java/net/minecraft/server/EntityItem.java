@@ -6,6 +6,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent; // CraftBukkit
 
 public class EntityItem extends Entity {
 
+    public int expiration = 6000; // CraftBukkit
     public ItemStack itemStack;
     public int age = 0;
     public int pickupDelay;
@@ -95,8 +96,8 @@ public class EntityItem extends Entity {
         }
 
         ++this.age;
-        if (!this.world.isStatic && this.age >= 6000) {
-            // CraftBukkit start
+        // CraftBukkit start
+        if (!this.world.isStatic && this.age >= expiration) {
             if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
                 this.age = 0;
                 return;

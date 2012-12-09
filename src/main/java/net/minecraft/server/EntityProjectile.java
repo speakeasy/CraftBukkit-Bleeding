@@ -6,6 +6,7 @@ import org.bukkit.event.entity.ProjectileHitEvent; // CraftBukkit
 
 public abstract class EntityProjectile extends Entity implements IProjectile {
 
+    public int expiration = 1200; // CraftBukkit
     private int blockX = -1;
     private int blockY = -1;
     private int blockZ = -1;
@@ -14,7 +15,7 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
     public int shake = 0;
     public EntityLiving shooter; // CraftBukkit - private -> public
     public String shooterName = null; // CraftBukkit - private -> public
-    private int i;
+    public int i; // CraftBukkit - private -> public
     private int j = 0;
 
     public EntityProjectile(World world) {
@@ -94,7 +95,7 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
 
             if (i == this.inBlockId) {
                 ++this.i;
-                if (this.i == 1200) {
+                if (this.i >= expiration) { // CraftBukkit
                     this.die();
                 }
 

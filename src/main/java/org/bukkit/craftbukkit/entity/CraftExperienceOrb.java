@@ -31,4 +31,21 @@ public class CraftExperienceOrb extends CraftEntity implements ExperienceOrb {
     public EntityType getType() {
         return EntityType.EXPERIENCE_ORB;
     }
+
+    public int getAge() {
+        return getHandle().b;
+    }
+
+    public void setAge(int age) {
+        getHandle().b = age;
+    }
+
+    public int getExpiration() {
+        return getHandle().expiration;
+    }
+
+    public void setExpiration(int expiration) {
+        getHandle().expiration = expiration;
+    }
+
 }

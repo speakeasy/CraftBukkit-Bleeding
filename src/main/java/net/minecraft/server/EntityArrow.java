@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 
 public class EntityArrow extends Entity implements IProjectile {
 
+    public int expiration = 1200; // CraftBukkit
     private int d = -1;
     private int e = -1;
     private int f = -1;
@@ -20,7 +21,7 @@ public class EntityArrow extends Entity implements IProjectile {
     public int fromPlayer = 0;
     public int shake = 0;
     public Entity shooter;
-    private int j;
+    public int j; // CraftBukkit - private > public
     private int as = 0;
     private double damage = 2.0D;
     private int au;
@@ -140,7 +141,7 @@ public class EntityArrow extends Entity implements IProjectile {
 
             if (j == this.g && k == this.h) {
                 ++this.j;
-                if (this.j == 1200) {
+                if (this.j >= expiration) { // CraftBukkit
                     this.die();
                 }
             } else {

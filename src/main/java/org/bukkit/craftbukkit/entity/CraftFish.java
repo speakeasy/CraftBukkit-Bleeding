@@ -40,4 +40,21 @@ public class CraftFish extends AbstractProjectile implements Fish {
     public EntityType getType() {
         return EntityType.FISHING_HOOK;
     }
+
+    public int getAge() {
+        return getHandle().i;
+    }
+
+    public void setAge(int age) {
+        getHandle().i = age;
+    }
+
+    public int getExpiration() {
+        return getHandle().expiration;
+    }
+
+    public void setExpiration(int expiration) {
+        getHandle().expiration = expiration;
+    }
+
 }

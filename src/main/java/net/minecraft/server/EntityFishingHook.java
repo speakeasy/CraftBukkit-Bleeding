@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 
 public class EntityFishingHook extends Entity {
 
+    public int expiration = 1200; // CraftBukkit
     private int d = -1;
     private int e = -1;
     private int f = -1;
@@ -16,7 +17,7 @@ public class EntityFishingHook extends Entity {
     private boolean h = false;
     public int a = 0;
     public EntityHuman owner;
-    private int i;
+    public int i; // CraftBukkit - private -> public
     private int j = 0;
     private int as = 0;
     public Entity hooked = null;
@@ -121,7 +122,7 @@ public class EntityFishingHook extends Entity {
 
                 if (i == this.g) {
                     ++this.i;
-                    if (this.i == 1200) {
+                    if (this.i >= expiration) { // CraftBukkit
                         this.die();
                     }
 
