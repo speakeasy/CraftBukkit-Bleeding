@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,24 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
 
     CraftPotionMeta(Map<String, Object> map) {
         super(map);
-        // TODO Auto-generated constructor stub
+
+        List rawEffectList = SerializableMeta.getObject(List.class, map, POTION_EFFECTS.BUKKIT, true);
+        if (rawEffectList == null) {
+            return;
+        }
+
+        for (Object obj : rawEffectList) {
+            if (!(obj instanceof Map)) {
+                throw new IllegalArgumentException("Object in effect list is not valid. " + obj.getClass());
+            }
+            Map fieldMap = (Map) obj;
+            final PotionEffectType type = PotionEffectType.getById(SerializableMeta.getObject(Integer.class, fieldMap, ID.BUKKIT, false));
+            final int amp = SerializableMeta.getObject(Byte.class, fieldMap, AMPLIFIER.BUKKIT, false);
+            final int duration = SerializableMeta.getObject(Integer.class, fieldMap, DURATION.BUKKIT, false);
+            final boolean ambient = SerializableMeta.getObject(Boolean.class, fieldMap, AMBIENT.BUKKIT, false);
+            PotionEffect effect = new PotionEffect(type, amp, duration, ambient);
+            addCustomEffect(effect, true);
+        }
     }
 
     @Override
@@ -229,7 +247,21 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
-        // TODO
+
+        if (hasCustomEffects()) {
+            final List<Map<String, Object>> effectsMap = new ArrayList<Map<String, Object>>(customEffects.size());
+            for (int i = 0; i < customEffects.size(); i++) {
+                PotionEffect effect = customEffects.get(i);
+                Map<String, Object> fieldMap = new HashMap<String, Object>(4);
+                fieldMap.put(AMPLIFIER.BUKKIT, effect.getAmplifier());
+                fieldMap.put(DURATION.BUKKIT, effect.getDuration());
+                fieldMap.put(AMBIENT.BUKKIT, effect.isAmbient());
+                fieldMap.put(ID.BUKKIT, effect.getType().getId());
+                effectsMap.add(fieldMap);
+            }
+            builder.put(POTION_EFFECTS.BUKKIT, effectsMap);
+        }
+
         return builder;
     }
 
