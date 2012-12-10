@@ -168,7 +168,7 @@ public class BookItemStackTest extends ItemStackTests {
                             return cleanStack;
                         }
                     },
-                    "Author vs. Null"
+                    "Title vs. Null"
                 },
                 new Object[] {
                     new Operator() {
