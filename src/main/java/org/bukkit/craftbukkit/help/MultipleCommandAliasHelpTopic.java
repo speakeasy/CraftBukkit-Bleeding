@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.help;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -27,6 +28,7 @@ public class MultipleCommandAliasHelpTopic extends HelpTopic {
             }
             sb.append("/");
             sb.append(alias.getCommands()[i].getLabel());
+            sb.append(" ").append(ChatColor.GRAY).append((alias.getArguments()[i] != null ? StringUtils.join(alias.getArguments()[i], ' ') : ""));
         }
         shortText = sb.toString();
 
