@@ -25,6 +25,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
     static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");
     static final int MAX_PAGE_LENGTH = 256;
+    static final int MAX_TITLE_LENGTH = Short.MAX_VALUE * 2 + 1;
 
     private String title;
     private String author;
@@ -138,6 +139,8 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
         if (title == null) {
             this.title = null;
             return true;
+        } else if (title.length() > MAX_TITLE_LENGTH) {
+            return false;
         }
 
         this.title = title;
