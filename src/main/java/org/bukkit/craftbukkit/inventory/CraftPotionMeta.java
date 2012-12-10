@@ -27,6 +27,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     static final ItemMetaKey DURATION = new ItemMetaKey("Duration", "duration");
     static final ItemMetaKey POTION_EFFECTS = new ItemMetaKey("CustomPotionEffects", "custom-effects");
     static final ItemMetaKey ID = new ItemMetaKey("ID", "potion-id");
+
     private List<PotionEffect> customEffects;
 
     CraftPotionMeta(CraftItemMeta meta) {
@@ -103,7 +104,11 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
 
     @Override
     boolean isEmpty() {
-        return super.isEmpty() && !hasCustomEffects();
+        return super.isEmpty() && isPotionEmpty();
+    }
+
+    boolean isPotionEmpty() {
+        return !(hasCustomEffects());
     }
 
     @Override
@@ -241,7 +246,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
 
     @Override
     boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftPotionMeta || !hasCustomEffects());
+        return super.notUncommon(meta) && (meta instanceof CraftPotionMeta || isPotionEmpty());
     }
 
     @Override

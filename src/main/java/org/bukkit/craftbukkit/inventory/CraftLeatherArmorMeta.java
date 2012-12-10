@@ -19,8 +19,8 @@ import com.google.common.collect.ImmutableMap.Builder;
 @DelegateDeserialization(SerializableMeta.class)
 class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     static final ItemMetaKey COLOR = new ItemMetaKey("color");
-    private Color color = DEFAULT_LEATHER_COLOR;
 
+    private Color color = DEFAULT_LEATHER_COLOR;
 
     CraftLeatherArmorMeta(CraftItemMeta meta) {
         super(meta);
@@ -57,7 +57,11 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
 
     @Override
     boolean isEmpty() {
-        return super.isEmpty() && !hasColor();
+        return super.isEmpty() && isLeatherArmorEmpty();
+    }
+
+    boolean isLeatherArmorEmpty() {
+        return !(hasColor());
     }
 
     boolean applicableTo(Material type) {
@@ -149,6 +153,15 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
 
     @Override
     boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || !this.hasColor());
+        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || isLeatherArmorEmpty());
+    }
+
+    int applyHash() {
+        final int original;
+        int hash = original = super.applyHash();
+        if (hasColor()) {
+            // TODO
+        }
+        return original != hash ? CraftSkullMeta.class.hashCode() ^ hash : hash;
     }
 }

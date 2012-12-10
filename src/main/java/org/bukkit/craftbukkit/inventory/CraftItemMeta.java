@@ -36,8 +36,11 @@ import com.google.common.collect.ImmutableMap;
  * <br><br>
  * <li> boolean notUncommon(CraftItemMeta meta)
  * <li> boolean equalsCommon(CraftItemMeta meta)
+ * <br><br?
+ * <li> boolean isEmpty()
+ * <li> boolean is{Type}Empty()
  * <br><br>
- * <li> int applyHash(final int original)
+ * <li> int applyHash()
  * <li> public Class clone()
  * <br><br>
  * <li> Builder<String, Object> serialize(Builder<String, Object> builder)

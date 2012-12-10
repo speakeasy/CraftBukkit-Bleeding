@@ -166,7 +166,6 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
         }
 
         pages.set(page - 1, text == null ? "" : text.length() > MAX_PAGE_LENGTH ? text.substring(0, MAX_PAGE_LENGTH) : text);
-        return;
     }
 
     public void setPages(final String... pages) {

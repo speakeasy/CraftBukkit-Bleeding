@@ -52,7 +52,11 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
 
     @Override
     boolean isEmpty() {
-        return super.isEmpty() && !hasOwner();
+        return super.isEmpty() && isSkullEmpty();
+    }
+
+    boolean isSkullEmpty() {
+        return !(hasOwner());
     }
 
     @Override
@@ -111,7 +115,7 @@ class CraftSkullMeta extends CraftItemMeta implements SkullMeta {
 
     @Override
     boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || !this.hasOwner());
+        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || isSkullEmpty());
     }
 
     @Override
