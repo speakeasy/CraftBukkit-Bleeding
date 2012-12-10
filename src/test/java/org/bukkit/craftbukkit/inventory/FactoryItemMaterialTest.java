@@ -18,7 +18,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class FactoryItemMaterialTests {
+public class FactoryItemMaterialTest {
     static final ItemFactory factory = CraftItemFactory.instance();
     static final StringBuilder buffer = new StringBuilder();
     static final Material[] materials = Material.values();
