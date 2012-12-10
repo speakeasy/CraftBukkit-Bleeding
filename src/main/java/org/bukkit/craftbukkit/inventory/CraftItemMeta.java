@@ -23,6 +23,7 @@ import org.bukkit.inventory.meta.Repairable;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.bukkit.craftbukkit.Overridden;
 
 /**
  * Children must include the following:
@@ -239,6 +240,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         }
     }
 
+    @Overridden
     void applyToItem(NBTTagCompound itemTag) {
         if (hasDisplayName()) {
             setDisplay(itemTag, NAME.NBT, new NBTTagString(NAME.NBT, displayName));
@@ -283,10 +285,12 @@ class CraftItemMeta implements ItemMeta, Repairable {
         display.set(key, value);
     }
 
+    @Overridden
     boolean applicableTo(Material type) {
         return type != Material.AIR;
     }
 
+    @Overridden
     boolean isEmpty() {
         return !(hasDisplayName() || hasEnchants() || hasLore());
     }
@@ -392,6 +396,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
      * Only return false if your common internals are unequal.
      * Checking your own internals is redundant if you are not common, as notUncommon is meant for checking those 'not common' variables.
      */
+    @Overridden
     boolean equalsCommon(CraftItemMeta that) {
         return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
                 && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
@@ -404,6 +409,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
      * Return true if you are a common class OR your uncommon parts are empty.
      * Empty uncommon parts implies the NBT data would be equivalent if both were applied to an item
      */
+    @Overridden
     boolean notUncommon(CraftItemMeta meta) {
         return true;
     }
@@ -413,6 +419,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         return applyHash();
     }
 
+    @Overridden
     int applyHash() {
         int hash = 3;
         hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
@@ -422,6 +429,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         return hash;
     }
 
+    @Overridden
     public CraftItemMeta clone() {
         try {
             return (CraftItemMeta) super.clone();
@@ -437,6 +445,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         return map.build();
     }
 
+    @Overridden
     ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         if (hasDisplayName()) {
             builder.put(NAME.BUKKIT, displayName);
@@ -457,6 +466,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         return builder;
     }
 
+    @Overridden
     SerializableMeta.Deserializers deserializer() {
         return SerializableMeta.Deserializers.UNSPECIFIC;
     }
