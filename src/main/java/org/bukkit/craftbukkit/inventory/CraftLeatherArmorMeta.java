@@ -5,6 +5,7 @@ import static org.bukkit.craftbukkit.inventory.CraftItemFactory.DEFAULT_LEATHER_
 import java.util.Map;
 
 import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.NBTTagInt;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
@@ -14,7 +15,6 @@ import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
-import net.minecraft.server.NBTTagInt;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
@@ -86,7 +86,9 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     }
 
     public void dyeColor(Color... colors) {
-        Validate.notNull(color);
+        // TODO: Justification to not be in Color
+        // TODO: wtf does this even do? Specifically; there are no javadocs
+        Validate.noNullElements(colors, "Color cannot be null");
 
         Color currentColor = getColor();
 
@@ -95,7 +97,6 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
         int totalBlue = currentColor.getBlue();
         int totalMax = Math.max(Math.max(currentColor.getRed(), currentColor.getGreen()), currentColor.getBlue());
         for (Color color : colors) {
-            Validate.notNull(color);
             totalRed += color.getRed();
             totalGreen += color.getGreen();
             totalBlue += color.getBlue();

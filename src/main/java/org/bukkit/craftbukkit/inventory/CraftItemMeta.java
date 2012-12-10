@@ -125,11 +125,11 @@ class CraftItemMeta implements ItemMeta, Repairable {
             throw new AssertionError();
         }
 
-        static String getString(Map<String, Object> map, String field, boolean nullable) {
+        static String getString(Map<?, ?> map, Object field, boolean nullable) {
             return getObject(String.class, map, field, nullable);
         }
 
-        static <T> T getObject(Class<T> clazz, Map<String, Object> map, String field, boolean nullable) {
+        static <T> T getObject(Class<T> clazz, Map<?, ?> map, Object field, boolean nullable) {
             final Object object = map.get(field);
 
             if (clazz.isInstance(object)) {
@@ -141,7 +141,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
                 }
                 return null;
             }
-            throw new IllegalArgumentException(field + '(' + object + ") is not a valid " + clazz);
+            throw new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz);
         }
     }
 

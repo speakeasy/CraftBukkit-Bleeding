@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
@@ -64,7 +64,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     CraftPotionMeta(Map<String, Object> map) {
         super(map);
 
-        List rawEffectList = SerializableMeta.getObject(List.class, map, POTION_EFFECTS.BUKKIT, true);
+        List<?> rawEffectList = SerializableMeta.getObject(List.class, map, POTION_EFFECTS.BUKKIT, true);
         if (rawEffectList == null) {
             return;
         }
@@ -73,9 +73,9 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
             if (!(obj instanceof Map)) {
                 throw new IllegalArgumentException("Object in effect list is not valid. " + obj.getClass());
             }
-            Map fieldMap = (Map) obj;
+            Map<?,?> fieldMap = (Map<?,?>) obj;
             final PotionEffectType type = PotionEffectType.getById(SerializableMeta.getObject(Integer.class, fieldMap, ID.BUKKIT, false));
-            final int amp = SerializableMeta.getObject(Byte.class, fieldMap, AMPLIFIER.BUKKIT, false);
+            final int amp = SerializableMeta.getObject(Integer.class, fieldMap, AMPLIFIER.BUKKIT, false);
             final int duration = SerializableMeta.getObject(Integer.class, fieldMap, DURATION.BUKKIT, false);
             final boolean ambient = SerializableMeta.getObject(Boolean.class, fieldMap, AMBIENT.BUKKIT, false);
             PotionEffect effect = new PotionEffect(type, amp, duration, ambient);
@@ -249,17 +249,18 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
         super.serialize(builder);
 
         if (hasCustomEffects()) {
-            final List<Map<String, Object>> effectsMap = new ArrayList<Map<String, Object>>(customEffects.size());
-            for (int i = 0; i < customEffects.size(); i++) {
-                PotionEffect effect = customEffects.get(i);
-                Map<String, Object> fieldMap = new HashMap<String, Object>(4);
-                fieldMap.put(AMPLIFIER.BUKKIT, effect.getAmplifier());
-                fieldMap.put(DURATION.BUKKIT, effect.getDuration());
-                fieldMap.put(AMBIENT.BUKKIT, effect.isAmbient());
-                fieldMap.put(ID.BUKKIT, effect.getType().getId());
-                effectsMap.add(fieldMap);
+            final ImmutableList.Builder<Map<String, Object>> effectsMapList = ImmutableList.builder();
+            for (final PotionEffect effect : customEffects) {
+                effectsMapList.add(
+                    ImmutableMap.<String, Object>of(
+                        AMPLIFIER.BUKKIT, effect.getAmplifier(),
+                        DURATION.BUKKIT, effect.getDuration(),
+                        AMBIENT.BUKKIT, effect.isAmbient(),
+                        ID.BUKKIT, effect.getType().getId()
+                    )
+                );
             }
-            builder.put(POTION_EFFECTS.BUKKIT, effectsMap);
+            builder.put(POTION_EFFECTS.BUKKIT, effectsMapList.build());
         }
 
         return builder;
