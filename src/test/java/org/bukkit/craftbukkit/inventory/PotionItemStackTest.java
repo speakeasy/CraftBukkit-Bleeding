@@ -19,19 +19,19 @@ public class PotionItemStackTest extends ItemStackTests {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {
-        return StackProvider.compound(operaters(), "%s %s", NAME_PARAMETER, Material.POTION);
+        return StackProvider.compound(operators(), "%s %s", NAME_PARAMETER, Material.POTION);
     }
 
-    static List<Object[]> operaters() {
+    static List<Object[]> operators() {
         return Arrays.asList(
             new Object[] {
-                new Operater() {
+                new Operator() {
                     public ItemStack operate(ItemStack cleanStack) {
                         // TODO do POTION stuff
                         return cleanStack;
                     }
                 },
-                new Operater() {
+                new Operator() {
                     public ItemStack operate(ItemStack cleanStack) {
                         // TODO Do other POTION stuff
                         return cleanStack;
@@ -40,13 +40,13 @@ public class PotionItemStackTest extends ItemStackTests {
                 "NoChange"
             },
             new Object[] {
-                new Operater() {
+                new Operator() {
                     public ItemStack operate(ItemStack cleanStack) {
                         // TODO Do POTION stuff
                         return cleanStack;
                     }
                 },
-                new Operater() {
+                new Operator() {
                     public ItemStack operate(ItemStack cleanStack) {
                         // TODO Do other POTION stuff
                         return cleanStack;

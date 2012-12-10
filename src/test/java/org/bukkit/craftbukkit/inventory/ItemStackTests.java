@@ -56,7 +56,7 @@ public class ItemStackTests {
 
         /**
          * For each item in parameterList, it will apply nameFormat at nameIndex.
-         * For each item in parameterList for each item in materials, it will create a stack provider at each array index that contains an Operater.
+         * For each item in parameterList for each item in materials, it will create a stack provider at each array index that contains an Operator.
          *
          * @param parameterList
          * @param nameFormat
@@ -72,12 +72,12 @@ public class ItemStackTests {
                     final Object[] paramsOut = params.clone();
                     for (int i = 0; i < len; i++) {
                         final Object param = paramsOut[i];
-                        if (param instanceof Operater) {
-                            final Operater operater = (Operater) param;
+                        if (param instanceof Operator) {
+                            final Operator operator = (Operator) param;
                             paramsOut[i] = new StackProvider(material) {
                                 @Override
                                 ItemStack operate(ItemStack cleanStack) {
-                                    return operater.operate(cleanStack);
+                                    return operator.operate(cleanStack);
                                 }
                             };
                         }
@@ -90,11 +90,11 @@ public class ItemStackTests {
         }
     }
 
-    interface Operater {
+    interface Operator {
         ItemStack operate(ItemStack cleanStack);
     }
 
-    static class CompoundOperater implements Operater {
+    static class CompoundOperator implements Operator {
         static class RecursiveContainer {
             final Joiner joiner;
             final Object[] strings;
@@ -112,22 +112,22 @@ public class ItemStackTests {
                 this.lists = lists;
             }
         }
-        final Operater[] operaters;
+        final Operator[] operators;
 
-        CompoundOperater(Operater...operaters) {
-            this.operaters = operaters;
+        CompoundOperator(Operator...operators) {
+            this.operators = operators;
         }
 
         public ItemStack operate(ItemStack cleanStack) {
-            for (Operater operater : operaters) {
-                operater.operate(cleanStack);
+            for (Operator operator : operators) {
+                operator.operate(cleanStack);
             }
             return cleanStack;
         }
 
         @Override
         public String toString() {
-            return Arrays.toString(operaters);
+            return Arrays.toString(operators);
         }
 
 
@@ -167,10 +167,10 @@ public class ItemStackTests {
                             // Iterate over each parameter
                             if (i == nameParameter) {
                                 toOut[i] = joiner.join(toOut[i], singleton[i]);
-                            } else if (toOut[i] instanceof Operater) {
-                                final Operater op1 = (Operater) toOut[i];
-                                final Operater op2 = (Operater) singleton[i];
-                                toOut[i] = new Operater() {
+                            } else if (toOut[i] instanceof Operator) {
+                                final Operator op1 = (Operator) toOut[i];
+                                final Operator op2 = (Operator) singleton[i];
+                                toOut[i] = new Operator() {
                                     public ItemStack operate(final ItemStack cleanStack) {
                                         return op2.operate(op1.operate(cleanStack));
                                     }
@@ -207,13 +207,13 @@ public class ItemStackTests {
                 for (int i = 0; i < len; i++) {
                     final Object firstParam = firstParams[i];
 
-                    if (firstParam instanceof Operater) {
-                        final Operater[] operaters = new Operater[stackSize];
+                    if (firstParam instanceof Operator) {
+                        final Operator[] operators = new Operator[stackSize];
                         for (int j = 0; j < stackSize; j++) {
-                            operaters[j] = (Operater) stack.get(j)[i];
+                            operators[j] = (Operator) stack.get(j)[i];
                         }
 
-                        params[i] = new CompoundOperater(operaters);
+                        params[i] = new CompoundOperator(operators);
                     } else if (i == methodParams.nameParameter) {
                         final Object[] strings = methodParams.strings;
                         for (int j = 0; j < stackSize; j++) {

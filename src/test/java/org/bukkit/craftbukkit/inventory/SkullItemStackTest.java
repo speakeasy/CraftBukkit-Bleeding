@@ -17,18 +17,18 @@ public class SkullItemStackTest extends ItemStackTests {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {
-        return StackProvider.compound(operaters(), "%s %s", NAME_PARAMETER, Material.SKULL_ITEM);
+        return StackProvider.compound(operators(), "%s %s", NAME_PARAMETER, Material.SKULL_ITEM);
     }
 
-    static List<Object[]> operaters() {
-        return CompoundOperater.compound(
+    static List<Object[]> operators() {
+        return CompoundOperator.compound(
             Joiner.on('+'),
             NAME_PARAMETER,
             Long.parseLong("10", 2),
-            ItemStackLoreEnchantmentTest.operaters(),
+            ItemStackLoreEnchantmentTest.operators(),
             Arrays.asList(
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
                             meta.setOwner("Notch");
@@ -36,7 +36,7 @@ public class SkullItemStackTest extends ItemStackTests {
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
                             meta.setOwner("Dinnerbone");
@@ -47,7 +47,7 @@ public class SkullItemStackTest extends ItemStackTests {
                     "Name 1 vs. Name 2"
                 },
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
                             meta.setOwner("Notch");
@@ -55,7 +55,7 @@ public class SkullItemStackTest extends ItemStackTests {
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
                             meta.setOwner(null);
@@ -66,7 +66,7 @@ public class SkullItemStackTest extends ItemStackTests {
                     "Name vs. Null"
                 },
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
                             meta.setOwner("Notch");
@@ -74,7 +74,7 @@ public class SkullItemStackTest extends ItemStackTests {
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             return cleanStack;
                         }

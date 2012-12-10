@@ -18,24 +18,24 @@ public class LeatherItemStackTest extends ItemStackTests {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {
-        return StackProvider.compound(operaters(), "%s %s", NAME_PARAMETER, Material.LEATHER_BOOTS, Material.LEATHER_CHESTPLATE, Material.LEATHER_HELMET, Material.LEATHER_LEGGINGS);
+        return StackProvider.compound(operators(), "%s %s", NAME_PARAMETER, Material.LEATHER_BOOTS, Material.LEATHER_CHESTPLATE, Material.LEATHER_HELMET, Material.LEATHER_LEGGINGS);
     }
 
-    static List<Object[]> operaters() {
-        return CompoundOperater.compound(
+    static List<Object[]> operators() {
+        return CompoundOperator.compound(
             Joiner.on('+'),
             NAME_PARAMETER,
             Long.parseLong("10", 2),
-            ItemStackLoreEnchantmentTest.operaters(),
+            ItemStackLoreEnchantmentTest.operators(),
             Arrays.asList(
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Do other LEATHER stuff
                             return cleanStack;
@@ -44,13 +44,13 @@ public class LeatherItemStackTest extends ItemStackTests {
                     "LEATHER1"
                 },
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Do LEATHER stuff
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Do other LEATHER stuff
                             return cleanStack;

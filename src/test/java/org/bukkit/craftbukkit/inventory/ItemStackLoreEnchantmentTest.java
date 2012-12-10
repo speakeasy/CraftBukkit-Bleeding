@@ -15,22 +15,22 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {
-        return StackProvider.compound(operaters(), "%s %s", NAME_PARAMETER, ItemStackTests.COMPOUND_MATERIALS);
+        return StackProvider.compound(operators(), "%s %s", NAME_PARAMETER, ItemStackTests.COMPOUND_MATERIALS);
     }
 
-    static List<Object[]> operaters() {
-        return CompoundOperater.compound(
+    static List<Object[]> operators() {
+        return CompoundOperator.compound(
             Joiner.on('+'),
             NAME_PARAMETER,
             ~0l,
             Arrays.asList(
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add other lore
                             return cleanStack;
@@ -39,13 +39,13 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
                     "Lore1"
                 },
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add name
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add other name
                             return cleanStack;
@@ -56,13 +56,13 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
             ),
             Arrays.asList(
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add Lore
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add other lore
                             return cleanStack;
@@ -71,13 +71,13 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
                     "Name1"
                 },
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add name
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add other name
                             return cleanStack;
@@ -88,13 +88,13 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
             ),
             Arrays.asList(
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add enchantment
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add other enchantment
                             return cleanStack;
@@ -103,13 +103,13 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTests {
                     "Enchant1"
                 },
                 new Object[] {
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add enchantment
                             return cleanStack;
                         }
                     },
-                    new Operater() {
+                    new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             // TODO Add other enchantment
                             return cleanStack;
