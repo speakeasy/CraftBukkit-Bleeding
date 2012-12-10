@@ -87,7 +87,7 @@ public abstract class EntityLiving extends Entity {
     public boolean bp = false;
     public int bq = 0;
     protected boolean canPickUpLoot = false;
-    private boolean persistent = false;
+    public boolean persistent = !this.bj(); // CraftBukkit - private -> public, change value
     protected int bs;
     protected double bt;
     protected double bu;
@@ -1087,6 +1087,7 @@ public abstract class EntityLiving extends Entity {
         nbttagcompound.setShort("AttackTime", (short) this.attackTicks);
         nbttagcompound.setBoolean("CanPickUpLoot", this.canPickUpLoot);
         nbttagcompound.setBoolean("PersistenceRequired", this.persistent);
+        nbttagcompound.setBoolean("Bukkit.PersistenceUpdated", true); // CraftBukkit
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.equipment.length; ++i) {
@@ -1134,7 +1135,15 @@ public abstract class EntityLiving extends Entity {
         this.deathTicks = nbttagcompound.getShort("DeathTime");
         this.attackTicks = nbttagcompound.getShort("AttackTime");
         this.canPickUpLoot = nbttagcompound.getBoolean("CanPickUpLoot");
-        this.persistent = nbttagcompound.getBoolean("PersistenceRequired");
+        // CraftBukkit start - if persistence is false only use it if it was set after we started using it
+        boolean data = nbttagcompound.getBoolean("PersistenceRequired");
+        if (nbttagcompound.hasKey("Bukkit.PersistenceUpdated") || data) {
+            this.persistent = data;
+        } else {
+            this.persistent = !this.bj();
+        }
+        // CraftBukkit end
+
         NBTTagList nbttaglist;
         int i;
 
@@ -1394,17 +1403,21 @@ public abstract class EntityLiving extends Entity {
                 double d2 = entityhuman.locZ - this.locZ;
                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
-                if (this.bj() && d3 > 16384.0D) {
+                if (d3 > 16384.0D) { // CraftBukkit - remove this.bj() check
                     this.die();
                 }
 
-                if (this.bA > 600 && this.random.nextInt(800) == 0 && d3 > 1024.0D && this.bj()) {
+                if (this.bA > 600 && this.random.nextInt(800) == 0 && d3 > 1024.0D) { // CraftBukkit - remove this.bj() check
                     this.die();
                 } else if (d3 < 1024.0D) {
                     this.bA = 0;
                 }
             }
+        // CraftBukkit start
+        } else {
+            this.bA = 0;
         }
+        // CraftBukkit end
     }
 
     protected void bl() {

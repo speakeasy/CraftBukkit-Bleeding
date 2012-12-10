@@ -68,6 +68,7 @@ public class CraftEventFactory {
 
         if (world.getHandle().dimension != 0) return true;
         if (spawnSize <= 0) return true;
+        if (((CraftServer) Bukkit.getServer()).getHandle().getOPs().isEmpty()) return true;
         if (player.isOp()) return true;
 
         ChunkCoordinates chunkcoordinates = worldServer.getSpawn();
@@ -452,7 +453,7 @@ public class CraftEventFactory {
     }
 
     public static EntityChangeBlockEvent callEntityChangeBlockEvent(org.bukkit.entity.Entity entity, Block block, Material material, int data) {
-        EntityChangeBlockEvent event = new EntityChangeBlockEvent((LivingEntity) entity, block, material, (byte) data);
+        EntityChangeBlockEvent event = new EntityChangeBlockEvent(entity, block, material, (byte) data);
         entity.getServer().getPluginManager().callEvent(event);
         return event;
     }

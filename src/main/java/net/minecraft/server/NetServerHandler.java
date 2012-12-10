@@ -142,7 +142,10 @@ public class NetServerHandler extends NetHandler {
             String leaveMessage = "\u00A7e" + this.player.name + " left the game.";
 
             PlayerKickEvent event = new PlayerKickEvent(this.server.getPlayer(this.player), s, leaveMessage);
-            this.server.getPluginManager().callEvent(event);
+
+            if (this.server.getServer().isRunning()) {
+                this.server.getPluginManager().callEvent(event);
+            }
 
             if (event.isCancelled()) {
                 // Do not kick the player
@@ -850,7 +853,7 @@ public class NetServerHandler extends NetHandler {
                 }
 
                 // CraftBukkit start
-                if (this.player.getChatFlags() == 1) {
+                if (this.player.getChatFlags() == 1 && !s.startsWith("/")) {
                     this.sendPacket(new Packet3Chat("Cannot send chat message."));
                     return;
                 }

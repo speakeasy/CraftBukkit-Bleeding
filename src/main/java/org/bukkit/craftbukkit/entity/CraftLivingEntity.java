@@ -11,15 +11,17 @@ import net.minecraft.server.EntityArrow;
 import net.minecraft.server.EntityEgg;
 import net.minecraft.server.EntityEnderDragon;
 import net.minecraft.server.EntityEnderPearl;
-import net.minecraft.server.EntityFireball;
 import net.minecraft.server.EntityLargeFireball;
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntitySmallFireball;
 import net.minecraft.server.EntitySnowball;
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.EntityWitherSkull;
 import net.minecraft.server.MobEffect;
 import net.minecraft.server.MobEffectList;
 import net.minecraft.server.Packet42RemoveMobEffect;
+
+import org.apache.commons.lang.Validate;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -37,13 +39,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
-
-import org.apache.commons.lang.Validate;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public CraftLivingEntity(final CraftServer server, final EntityLiving entity) {
@@ -277,17 +277,18 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         } else if (Arrow.class.isAssignableFrom(projectile)) {
             launch = new EntityArrow(world, getHandle(), 1);
         } else if (Fireball.class.isAssignableFrom(projectile)) {
-            if (SmallFireball.class.isAssignableFrom(projectile)) {
-                launch = new EntitySmallFireball(world);
-            } else {
-                launch = new EntityLargeFireball(world);
-            }
-
             Location location = getEyeLocation();
             Vector direction = location.getDirection().multiply(10);
 
+            if (SmallFireball.class.isAssignableFrom(projectile)) {
+                launch = new EntitySmallFireball(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
+            } else if (WitherSkull.class.isAssignableFrom(projectile)) {
+                launch = new EntityWitherSkull(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
+            } else {
+                launch = new EntityLargeFireball(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
+            }
+
             launch.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-            ((EntityFireball) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
         }
 
         Validate.notNull(launch, "Projectile not supported");
@@ -302,5 +303,13 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     public boolean hasLineOfSight(Entity other) {
         return getHandle().aA().canSee(((CraftEntity) other).getHandle()); // az should be getEntitySenses
+    }
+
+    public boolean getRemoveWhenFarAway() {
+        return !getHandle().persistent;
+    }
+
+    public void setRemoveWhenFarAway(boolean remove) {
+        getHandle().persistent = !remove;
     }
 }
