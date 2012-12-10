@@ -8,19 +8,18 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.bukkit.craftbukkit.potion.CraftPotionBrewer;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.minecraft.server.MobEffectList;
 
 public class PotionTest {
-
-    @BeforeClass
-    public static void setUp() {
+    static {
         Potion.setPotionBrewer(new CraftPotionBrewer());
         MobEffectList.BLINDNESS.getClass();
         PotionEffectType.stopAcceptingRegistrations();
     }
+
+    public static void init() {};
 
     @Test
     public void getEffects() {

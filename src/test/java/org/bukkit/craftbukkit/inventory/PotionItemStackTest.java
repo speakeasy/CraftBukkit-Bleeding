@@ -5,12 +5,17 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class PotionItemStackTest extends ItemStackTests {
+    static {
+        PotionTest.init();
+    }
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {
@@ -32,7 +37,7 @@ public class PotionItemStackTest extends ItemStackTests {
                         return cleanStack;
                     }
                 },
-                "POTION1"
+                "NoChange"
             },
             new Object[] {
                 new Operater() {
