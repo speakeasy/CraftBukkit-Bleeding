@@ -156,6 +156,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
         if (this.getGameRules().getBoolean("doMobSpawning") && (this.allowMonsters || this.allowAnimals) && (this instanceof WorldServer && this.players.size() > 0)) {
             SpawnerCreature.spawnEntities(this, this.allowMonsters && (this.ticksPerMonsterSpawns != 0 && time % this.ticksPerMonsterSpawns == 0L), this.allowAnimals && (this.ticksPerAnimalSpawns != 0 && time % this.ticksPerAnimalSpawns == 0L), this.worldData.getTime() % 400L == 0L);
         }
+        this.getWorld().processChunkGC();
         // CraftBukkit end
         this.methodProfiler.c("chunkSource");
         this.chunkProvider.unloadChunks();

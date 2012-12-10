@@ -58,6 +58,8 @@ public class CraftWorld implements World {
     private int animalSpawn = -1;
     private int waterAnimalSpawn = -1;
     private int ambientSpawn = -1;
+    private int loadCnt = 0;
+    private int chunkGCTickCount;
 
     private static final Random rand = new Random();
 
@@ -66,6 +68,10 @@ public class CraftWorld implements World {
         this.generator = gen;
 
         environment = env;
+
+        if(this.server.chunkGCPeriod > 0) {
+            chunkGCTickCount = rand.nextInt(this.server.chunkGCPeriod);
+        }
     }
 
     public Block getBlockAt(int x, int y, int z) {
@@ -226,6 +232,7 @@ public class CraftWorld implements World {
     }
 
     public boolean loadChunk(int x, int z, boolean generate) {
+        this.loadCnt++;
         if (generate) {
             // Use the default variant of loadChunk when generate == true.
             return world.chunkProviderServer.getChunkAt(x, z) != null;
@@ -1231,5 +1238,27 @@ public class CraftWorld implements World {
 
     public boolean isGameRule(String rule) {
         return getHandle().getGameRules().e(rule);
+    }
+    
+    public void processChunkGC() {
+        chunkGCTickCount++;
+        if (((this.server.chunkGCLoadThresh > 0) && (loadCnt >= this.server.chunkGCLoadThresh)) ||
+                ((this.server.chunkGCPeriod > 0) && (chunkGCTickCount >= this.server.chunkGCPeriod))) {        
+            chunkGCTickCount = 0;
+            loadCnt = 0;
+            ChunkProviderServer cps = this.world.chunkProviderServer;
+            java.util.Iterator<net.minecraft.server.Chunk> iter = cps.chunks.values().iterator();
+            while (iter.hasNext()) {
+                net.minecraft.server.Chunk c = iter.next();
+                /* If in use, skip it */
+                if (this.isChunkInUse(c.x, c.z)) {
+                    continue;
+                }
+                if (cps.unloadQueue.contains(c.x, c.z)) { /* Already unloading? */
+                    continue;
+                }
+                cps.queueUnload(c.x,  c.z); /* Add unload request */
+            }
+        }
     }
 }
