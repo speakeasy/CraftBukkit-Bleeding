@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.inventory;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +61,7 @@ public class ItemMetaOverrideTest {
     @Parameter(2) public String name;
 
     @Test
-    public void testClass() {
-        try {
-            clazz.getDeclaredMethod(method.getName(), method.getParameterTypes());
-        } catch (Exception ex) {
-            fail();
-        }
+    public void testClass() throws Throwable {
+        clazz.getDeclaredMethod(method.getName(), method.getParameterTypes());
     }
 }

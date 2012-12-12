@@ -430,6 +430,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
     }
 
     @Overridden
+    @Override
     public CraftItemMeta clone() {
         try {
             return (CraftItemMeta) super.clone();
