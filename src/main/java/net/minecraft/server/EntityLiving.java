@@ -82,11 +82,11 @@ public abstract class EntityLiving extends Entity {
     private ChunkCoordinates bP = new ChunkCoordinates(0, 0, 0);
     private float bQ = -1.0F;
     private ItemStack[] equipment = new ItemStack[5];
-    protected float[] dropChances = new float[5];
+    public float[] dropChances = new float[5]; // CraftBukkit - protected -> public
     private ItemStack[] bS = new ItemStack[5];
     public boolean bp = false;
     public int bq = 0;
-    protected boolean canPickUpLoot = false;
+    public boolean canPickUpLoot = false; // CraftBukkit - protected -> public
     public boolean persistent = !this.bj(); // CraftBukkit - private -> public, change value
     protected int bs;
     protected double bt;
@@ -1087,7 +1087,6 @@ public abstract class EntityLiving extends Entity {
         nbttagcompound.setShort("AttackTime", (short) this.attackTicks);
         nbttagcompound.setBoolean("CanPickUpLoot", this.canPickUpLoot);
         nbttagcompound.setBoolean("PersistenceRequired", this.persistent);
-        nbttagcompound.setBoolean("Bukkit.PersistenceUpdated", true); // CraftBukkit
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.equipment.length; ++i) {
@@ -1134,13 +1133,15 @@ public abstract class EntityLiving extends Entity {
         this.hurtTicks = nbttagcompound.getShort("HurtTime");
         this.deathTicks = nbttagcompound.getShort("DeathTime");
         this.attackTicks = nbttagcompound.getShort("AttackTime");
-        this.canPickUpLoot = nbttagcompound.getBoolean("CanPickUpLoot");
-        // CraftBukkit start - if persistence is false only use it if it was set after we started using it
-        boolean data = nbttagcompound.getBoolean("PersistenceRequired");
-        if (nbttagcompound.hasKey("Bukkit.PersistenceUpdated") || data) {
+        // CraftBukkit start - if looting or persistence is false only use it if it was set after we started using it
+        boolean data = nbttagcompound.getBoolean("CanPickUpLoot");
+        if (isLevelAtLeast(nbttagcompound, 1) || data) {
+            this.canPickUpLoot = data;
+        }
+
+        data = nbttagcompound.getBoolean("PersistenceRequired");
+        if (isLevelAtLeast(nbttagcompound, 1) || data) {
             this.persistent = data;
-        } else {
-            this.persistent = !this.bj();
         }
         // CraftBukkit end
 
@@ -1273,7 +1274,8 @@ public abstract class EntityLiving extends Entity {
 
         this.world.methodProfiler.b();
         this.world.methodProfiler.a("looting");
-        if (!this.world.isStatic && this.canPickUpLoot && !this.bb && this.world.getGameRules().getBoolean("mobGriefing")) {
+        // CraftBukkit - Don't run mob pickup code on players
+        if (!this.world.isStatic && !(this instanceof EntityPlayer) && this.canPickUpLoot && !this.bb && this.world.getGameRules().getBoolean("mobGriefing")) {
             List list = this.world.a(EntityItem.class, this.boundingBox.grow(1.0D, 0.0D, 1.0D));
             Iterator iterator = list.iterator();
 
