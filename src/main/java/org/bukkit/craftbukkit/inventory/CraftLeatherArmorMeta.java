@@ -89,36 +89,8 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
         this.color = color == null ? DEFAULT_LEATHER_COLOR : color;
     }
 
-    public void dyeColor(Color... colors) {
-        // TODO: Justification to not be in Color
-        // TODO: wtf does this even do? Specifically; there are no javadocs
-        Validate.noNullElements(colors, "Color cannot be null");
-
-        Color currentColor = getColor();
-
-        int totalRed = currentColor.getRed();
-        int totalGreen = currentColor.getGreen();
-        int totalBlue = currentColor.getBlue();
-        int totalMax = Math.max(Math.max(currentColor.getRed(), currentColor.getGreen()), currentColor.getBlue());
-        for (Color color : colors) {
-            totalRed += color.getRed();
-            totalGreen += color.getGreen();
-            totalBlue += color.getBlue();
-            totalMax += Math.max(Math.max(color.getRed(), color.getGreen()), color.getBlue());
-        }
-
-        int averageRed = totalRed / (colors.length + 1);
-        int averageGreen = totalGreen / (colors.length + 1);
-        int averageBlue = totalBlue / (colors.length + 1);
-        int averageMax = totalMax / (colors.length + 1);
-
-        int maximumOfAverages = Math.max(Math.max(averageRed, averageGreen), averageBlue);
-        int gainFactor = averageMax / maximumOfAverages;
-
-        setColor(Color.fromRGB((averageRed * gainFactor), (averageGreen * gainFactor), (averageBlue * gainFactor)));
-    }
-
     boolean hasColor() {
+        // TODO: Public? Not public?
         return !DEFAULT_LEATHER_COLOR.equals(color);
     }
 
