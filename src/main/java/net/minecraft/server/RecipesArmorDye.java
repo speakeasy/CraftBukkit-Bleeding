@@ -2,13 +2,14 @@ package net.minecraft.server;
 
 import java.util.ArrayList;
 
-public class RecipesArmorDye extends ShapelessRecipes implements IRecipe { // CraftBukkit - added extends
+// CraftBukkit start
+import org.bukkit.craftbukkit.inventory.CraftDynamicRecipe;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.Recipe.RecipeType;
+// CraftBukkit end
 
-    // CraftBukkit start - delegate to new parent class with bogus info
-    public RecipesArmorDye() {
-        super(new ItemStack(Item.LEATHER_HELMET, 0, 0), java.util.Arrays.asList(new ItemStack(Item.INK_SACK, 0, 5)));
-    }
-    // CraftBukkit end
+public class RecipesArmorDye implements IRecipe {
+    private ItemStack lastResult; // CraftBukkit
 
     public boolean a(InventoryCrafting inventorycrafting, World world) {
         ItemStack itemstack = null;
@@ -59,6 +60,7 @@ public class RecipesArmorDye extends ShapelessRecipes implements IRecipe { // Cr
                 if (itemstack1.getItem() instanceof ItemArmor) {
                     itemarmor = (ItemArmor) itemstack1.getItem();
                     if (itemarmor.d() != EnumArmorMaterial.CLOTH || itemstack != null) {
+                        lastResult = null; // CraftBukkit
                         return null;
                     }
 
@@ -77,6 +79,7 @@ public class RecipesArmorDye extends ShapelessRecipes implements IRecipe { // Cr
                     }
                 } else {
                     if (itemstack1.id != Item.INK_SACK.id) {
+                        lastResult = null; // CraftBukkit
                         return null;
                     }
 
@@ -95,6 +98,7 @@ public class RecipesArmorDye extends ShapelessRecipes implements IRecipe { // Cr
         }
 
         if (itemarmor == null) {
+            lastResult = null; // CraftBukkit
             return null;
         } else {
             k = aint[0] / j;
@@ -109,6 +113,7 @@ public class RecipesArmorDye extends ShapelessRecipes implements IRecipe { // Cr
             i1 = (k << 8) + l1;
             i1 = (i1 << 8) + l;
             itemarmor.b(itemstack, i1);
+            lastResult = itemstack; // CraftBukkit
             return itemstack;
         }
     }
@@ -120,4 +125,10 @@ public class RecipesArmorDye extends ShapelessRecipes implements IRecipe { // Cr
     public ItemStack b() {
         return null;
     }
+
+    // CraftBukkit start
+    public Recipe toBukkitRecipe() {
+        return new CraftDynamicRecipe(lastResult, RecipeType.ARMOR_DYE);
+    }
+    // CraftBukkit end
 }

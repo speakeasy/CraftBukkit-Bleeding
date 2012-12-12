@@ -5,7 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+// CraftBukkit start
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.inventory.CraftDynamicRecipe.RepairRecipe;
+// CraftBukkit end
 
 public class CraftingManager {
 
@@ -255,11 +258,7 @@ public class CraftingManager {
 
             // CraftBukkit start - construct a dummy repair recipe
             ItemStack result = new ItemStack(itemstack.id, 1, j1);
-            List<ItemStack> ingredients = new ArrayList<ItemStack>();
-            ingredients.add(itemstack.cloneItemStack());
-            ingredients.add(itemstack1.cloneItemStack());
-            ShapelessRecipes recipe = new ShapelessRecipes(result.cloneItemStack(), ingredients);
-            inventorycrafting.currentRecipe = recipe;
+            inventorycrafting.currentRecipe = new RepairRecipe(result);
             result = CraftEventFactory.callPreCraftEvent(inventorycrafting, result, lastCraftView, true);
             return result;
             // CraftBukkit end

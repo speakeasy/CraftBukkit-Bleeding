@@ -1,18 +1,13 @@
 package net.minecraft.server;
 
 // CraftBukkit start
-import java.util.List;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
+import org.bukkit.craftbukkit.inventory.CraftDynamicRecipe;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.Recipe.RecipeType;
 // CraftBukkit end
 
-public class RecipesMapClone extends ShapelessRecipes implements IRecipe { // CraftBukkit - added extends
-
-    // CraftBukkit start - delegate to new parent class
-    public RecipesMapClone() {
-        super(new ItemStack(Item.MAP, 0, -1), java.util.Arrays.asList(new ItemStack(Item.MAP_EMPTY, 0, 0)));
-    }
-    // CraftBukkit end
+public class RecipesMapClone implements IRecipe {
+    private ItemStack lastResult; // CraftBukkit
 
     public boolean a(InventoryCrafting inventorycrafting, World world) {
         int i = 0;
@@ -51,12 +46,14 @@ public class RecipesMapClone extends ShapelessRecipes implements IRecipe { // Cr
             if (itemstack1 != null) {
                 if (itemstack1.id == Item.MAP.id) {
                     if (itemstack != null) {
+                        lastResult = null; // CraftBukkit
                         return null;
                     }
 
                     itemstack = itemstack1;
                 } else {
                     if (itemstack1.id != Item.MAP_EMPTY.id) {
+                        lastResult = null; // CraftBukkit
                         return null;
                     }
 
@@ -72,8 +69,10 @@ public class RecipesMapClone extends ShapelessRecipes implements IRecipe { // Cr
                 itemstack2.c(itemstack.r());
             }
 
+            lastResult = itemstack2; // CraftBukkit
             return itemstack2;
         } else {
+            lastResult = null; // CraftBukkit
             return null;
         }
     }
@@ -85,4 +84,10 @@ public class RecipesMapClone extends ShapelessRecipes implements IRecipe { // Cr
     public ItemStack b() {
         return null;
     }
+
+    // CraftBukkit start
+    public Recipe toBukkitRecipe() {
+        return new CraftDynamicRecipe(lastResult, RecipeType.MAP_COPY);
+    }
+    // CraftBukkit end
 }

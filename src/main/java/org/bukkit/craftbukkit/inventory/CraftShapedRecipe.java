@@ -6,16 +6,18 @@ import net.minecraft.server.CraftingManager;
 import net.minecraft.server.ShapedRecipes;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe.RecipeType;
 import org.bukkit.inventory.ShapedRecipe;
 
 public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
     private ShapedRecipes recipe;
-    
+    private RecipeType type = RecipeType.SHAPED;
+
     public CraftShapedRecipe(ItemStack result) {
         super(result);
     }
-    
+
     public CraftShapedRecipe(ItemStack result, ShapedRecipes recipe) {
         this(result);
         this.recipe = recipe;
@@ -60,5 +62,15 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
             i++;
         }
         CraftingManager.getInstance().registerShapedRecipe(CraftItemStack.createNMSItemStack(this.getResult()), data);
+    }
+
+    // Some stuff to allow the map extension recipe to have a custom type
+    public void setType(RecipeType type) {
+        this.type  = type;
+    }
+
+    @Override
+    public RecipeType getType() {
+        return type;
     }
 }
