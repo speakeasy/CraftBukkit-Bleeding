@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.junit.Test;
 
-public class ItemMetaTests {
+public class ItemMetaTest {
 
     static {
         DummyServer.setup();
