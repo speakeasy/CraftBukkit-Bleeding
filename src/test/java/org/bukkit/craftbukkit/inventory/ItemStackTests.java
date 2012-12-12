@@ -300,6 +300,9 @@ public class ItemStackTests {
     }
 
     static final Object[][] EMPTY_ARRAY = new Object[0][];
+    /**
+     * Materials that generate unique item meta types.
+     */
     static final Material[] COMPOUND_MATERIALS;
     static final int NAME_PARAMETER = 2;
     static {

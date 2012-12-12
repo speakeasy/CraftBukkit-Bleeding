@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.Overridden;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,21 +16,26 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class ItemMetaOverrideTest {
-    static final Class parent = CraftItemMeta.class;
-    static final Class annotation = Overridden.class;
+    static final Class<CraftItemMeta> parent = CraftItemMeta.class;
+    static final Class<Overridden> annotation = Overridden.class;
 
     static final List<Object[]> testData = new ArrayList<Object[]>();
     static final Method[] methods;
 
-    static final Class[] subclasses = new Class[] {
-        CraftBookMeta.class,
-        CraftLeatherArmorMeta.class,
-        CraftSkullMeta.class,
-        CraftPotionMeta.class,
-        // CraftMapMeta.class,
-    };
+    static final Class<? extends CraftItemMeta>[] subclasses;
 
     static {
+        List<Class<? extends CraftItemMeta>> classes = new ArrayList<Class<? extends CraftItemMeta>>();
+
+        for (Material material : ItemStackTests.COMPOUND_MATERIALS) {
+            Class<? extends CraftItemMeta> clazz = CraftItemFactory.instance().getItemMeta(material).getClass().asSubclass(parent);
+            if (clazz != parent) {
+                classes.add(clazz);
+            }
+        }
+        subclasses = classes.toArray(new Class[0]);
+
+
         List<Method> list = new ArrayList<Method>();
 
         for (Method method: parent.getDeclaredMethods()) {
@@ -37,7 +44,7 @@ public class ItemMetaOverrideTest {
             }
         }
 
-        for (Class clazz : subclasses) {
+        for (Class<?> clazz : subclasses) {
             for (Method method : list) {
                 testData.add(new Object[]{clazz, method, clazz.getSimpleName() + " contains " + method.getName()});
             }
