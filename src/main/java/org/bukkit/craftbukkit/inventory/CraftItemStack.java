@@ -293,18 +293,18 @@ public final class CraftItemStack extends ItemStack {
         switch (getType(item)) {
             case WRITTEN_BOOK:
             case BOOK_AND_QUILL:
-                return new CraftBookMeta(item.tag);
+                return new CraftMetaBook(item.tag);
             case SKULL_ITEM:
-                return new CraftSkullMeta(item.tag);
+                return new CraftMetaSkull(item.tag);
             case LEATHER_HELMET:
             case LEATHER_CHESTPLATE:
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
-                return new CraftLeatherArmorMeta(item.tag);
+                return new CraftMetaLeatherArmor(item.tag);
             case POTION:
-                return new CraftPotionMeta(item.tag);
+                return new CraftMetaPotion(item.tag);
             default:
-                return new CraftItemMeta(item.tag);
+                return new CraftMetaItem(item.tag);
         }
     }
 
@@ -333,7 +333,7 @@ public final class CraftItemStack extends ItemStack {
         NBTTagCompound tag = new NBTTagCompound();
         item.setTag(tag);
 
-        ((CraftItemMeta) itemMeta).applyToItem(tag);
+        ((CraftMetaItem) itemMeta).applyToItem(tag);
         return true;
     }
 

@@ -14,19 +14,19 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class ItemMetaOverrideTest {
-    static final Class<CraftItemMeta> parent = CraftItemMeta.class;
+    static final Class<CraftMetaItem> parent = CraftMetaItem.class;
     static final Class<Overridden> annotation = Overridden.class;
 
     static final List<Object[]> testData = new ArrayList<Object[]>();
     static final Method[] methods;
 
-    static final Class<? extends CraftItemMeta>[] subclasses;
+    static final Class<? extends CraftMetaItem>[] subclasses;
 
     static {
-        List<Class<? extends CraftItemMeta>> classes = new ArrayList<Class<? extends CraftItemMeta>>();
+        List<Class<? extends CraftMetaItem>> classes = new ArrayList<Class<? extends CraftMetaItem>>();
 
         for (Material material : ItemStackTests.COMPOUND_MATERIALS) {
-            Class<? extends CraftItemMeta> clazz = CraftItemFactory.instance().getItemMeta(material).getClass().asSubclass(parent);
+            Class<? extends CraftMetaItem> clazz = CraftItemFactory.instance().getItemMeta(material).getClass().asSubclass(parent);
             if (clazz != parent) {
                 classes.add(clazz);
             }

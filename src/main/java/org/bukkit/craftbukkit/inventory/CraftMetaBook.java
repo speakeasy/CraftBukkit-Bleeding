@@ -12,7 +12,7 @@ import net.minecraft.server.NBTTagString;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
+import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.BookMeta;
 
 import com.google.common.base.Strings;
@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftBookMeta extends CraftItemMeta implements BookMeta {
+class CraftMetaBook extends CraftMetaItem implements BookMeta {
     static final ItemMetaKey BOOK_TITLE = new ItemMetaKey("title");
     static final ItemMetaKey BOOK_AUTHOR = new ItemMetaKey("author");
     static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");
@@ -31,19 +31,19 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     private String author;
     private List<String> pages = new ArrayList<String>();
 
-    CraftBookMeta(CraftItemMeta meta) {
+    CraftMetaBook(CraftMetaItem meta) {
         super(meta);
 
-        if (!(meta instanceof CraftBookMeta)) {
+        if (!(meta instanceof CraftMetaBook)) {
             return;
         }
-        CraftBookMeta bookMeta = (CraftBookMeta) meta;
+        CraftMetaBook bookMeta = (CraftMetaBook) meta;
         this.title = bookMeta.title;
         this.author = bookMeta.author;
         pages.addAll(bookMeta.pages);
     }
 
-    CraftBookMeta(NBTTagCompound tag) {
+    CraftMetaBook(NBTTagCompound tag) {
         super(tag);
 
         if (tag.hasKey(BOOK_TITLE.NBT)) {
@@ -67,7 +67,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
         }
     }
 
-    CraftBookMeta(Map<String, Object> map) {
+    CraftMetaBook(Map<String, Object> map) {
         super(map);
 
         setAuthor(SerializableMeta.getString(map, BOOK_AUTHOR.BUKKIT, true));
@@ -75,7 +75,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
         setTitle(SerializableMeta.getString(map, BOOK_TITLE.BUKKIT, true));
 
         Collection<?> pages = SerializableMeta.getObject(Collection.class, map, BOOK_PAGES.BUKKIT, true);
-        CraftItemMeta.safelyAdd(pages, this.pages, MAX_PAGE_LENGTH);
+        CraftMetaItem.safelyAdd(pages, this.pages, MAX_PAGE_LENGTH);
     }
 
     @Override
@@ -196,7 +196,7 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
 
     public void setPages(List<String> pages) {
         this.pages.clear();
-        CraftItemMeta.safelyAdd(pages, this.pages, MAX_PAGE_LENGTH);
+        CraftMetaItem.safelyAdd(pages, this.pages, MAX_PAGE_LENGTH);
     }
 
     private boolean isValidPage(int page) {
@@ -204,8 +204,8 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    public CraftBookMeta clone() {
-        CraftBookMeta meta = (CraftBookMeta) super.clone();
+    public CraftMetaBook clone() {
+        CraftMetaBook meta = (CraftMetaBook) super.clone();
         meta.pages = new ArrayList<String>(pages);
         return meta;
     }
@@ -223,16 +223,16 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
         if (hasPages()) {
             hash = 61 * hash + 17 * this.pages.hashCode();
         }
-        return original != hash ? CraftBookMeta.class.hashCode() ^ hash : hash;
+        return original != hash ? CraftMetaBook.class.hashCode() ^ hash : hash;
     }
 
     @Override
-    boolean equalsCommon(CraftItemMeta meta) {
+    boolean equalsCommon(CraftMetaItem meta) {
         if (!super.equalsCommon(meta)) {
             return false;
         }
-        if (meta instanceof CraftBookMeta) {
-            CraftBookMeta that = (CraftBookMeta) meta;
+        if (meta instanceof CraftMetaBook) {
+            CraftMetaBook that = (CraftMetaBook) meta;
 
             return (hasTitle() ? that.hasTitle() && this.title.equals(that.title) : !that.hasTitle())
                     && (hasAuthor() ? that.hasAuthor() && this.author.equals(that.author) : !that.hasAuthor())
@@ -242,8 +242,8 @@ class CraftBookMeta extends CraftItemMeta implements BookMeta {
     }
 
     @Override
-    boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftItemMeta || isBookEmpty());
+    boolean notUncommon(CraftMetaItem meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftMetaItem || isBookEmpty());
     }
 
     @Override

@@ -28,15 +28,15 @@ import org.bukkit.craftbukkit.Overridden;
 /**
  * Children must include the following:
  *
- * <li> Constructor(CraftItemMeta meta)
+ * <li> Constructor(CraftMetaItem meta)
  * <li> Constructor(NBTTagCompound tag)
  * <li> Constructor(Map<String, Object> map)
  * <br><br>
  * <li> void applyToItem(NBTTagCompound tag)
  * <li> boolean applicableTo(Material type)
  * <br><br>
- * <li> boolean notUncommon(CraftItemMeta meta)
- * <li> boolean equalsCommon(CraftItemMeta meta)
+ * <li> boolean notUncommon(CraftMetaItem meta)
+ * <li> boolean equalsCommon(CraftMetaItem meta)
  * <br><br?
  * <li> boolean isEmpty()
  * <li> boolean is{Type}Empty()
@@ -47,8 +47,8 @@ import org.bukkit.craftbukkit.Overridden;
  * <li> Builder<String, Object> serialize(Builder<String, Object> builder)
  * <li> SerializableMeta.Deserializers deserializer()
  */
-@DelegateDeserialization(CraftItemMeta.SerializableMeta.class)
-class CraftItemMeta implements ItemMeta, Repairable {
+@DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
+class CraftMetaItem implements ItemMeta, Repairable {
     static class ItemMetaKey {
         final String BUKKIT;
         final String NBT;
@@ -70,20 +70,20 @@ class CraftItemMeta implements ItemMeta, Repairable {
         enum Deserializers {
             BOOK {
                 @Override
-                CraftBookMeta deserialize(Map<String, Object> map) {
-                    return new CraftBookMeta(map);
+                CraftMetaBook deserialize(Map<String, Object> map) {
+                    return new CraftMetaBook(map);
                 }
             },
             SKULL {
                 @Override
-                CraftSkullMeta deserialize(Map<String, Object> map) {
-                    return new CraftSkullMeta(map);
+                CraftMetaSkull deserialize(Map<String, Object> map) {
+                    return new CraftMetaSkull(map);
                 }
             },
             LEATHER_ARMOR {
                 @Override
-                CraftLeatherArmorMeta deserialize(Map<String, Object> map) {
-                    return new CraftLeatherArmorMeta(map);
+                CraftMetaLeatherArmor deserialize(Map<String, Object> map) {
+                    return new CraftMetaLeatherArmor(map);
                 }
             },
             MAP {
@@ -96,13 +96,13 @@ class CraftItemMeta implements ItemMeta, Repairable {
             POTION {
                 @Override
                 ItemMeta deserialize(Map<String, Object> map) {
-                    return new CraftPotionMeta(map);
+                    return new CraftMetaPotion(map);
                 }
             },
             UNSPECIFIC {
                 @Override
-                CraftItemMeta deserialize(Map<String, Object> map) {
-                    return new CraftItemMeta(map);
+                CraftMetaItem deserialize(Map<String, Object> map) {
+                    return new CraftMetaItem(map);
                 }
             };
 
@@ -162,7 +162,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
     private Map<Enchantment, Integer> enchantments;
     private int repairCost;
 
-    CraftItemMeta(CraftItemMeta meta) {
+    CraftMetaItem(CraftMetaItem meta) {
         if (meta == null) {
             return;
         }
@@ -180,7 +180,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         this.repairCost = meta.repairCost;
     }
 
-    CraftItemMeta(NBTTagCompound tag) {
+    CraftMetaItem(NBTTagCompound tag) {
         if (tag.hasKey(DISPLAY.NBT)) {
             NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
 
@@ -216,7 +216,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         }
     }
 
-    CraftItemMeta(Map<String, Object> map) {
+    CraftMetaItem(Map<String, Object> map) {
         setDisplayName(SerializableMeta.getString(map, NAME.BUKKIT, true));
 
         if (map.containsKey(LORE.BUKKIT)) {
@@ -385,7 +385,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof CraftItemMeta)) {
+        if (!(object instanceof CraftMetaItem)) {
             return false;
         }
         return CraftItemFactory.instance().equals(this, (ItemMeta) object);
@@ -397,7 +397,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
      * Checking your own internals is redundant if you are not common, as notUncommon is meant for checking those 'not common' variables.
      */
     @Overridden
-    boolean equalsCommon(CraftItemMeta that) {
+    boolean equalsCommon(CraftMetaItem that) {
         return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
                 && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
                 && (this.hasLore() ? that.hasLore() && this.lore.equals(that.lore) : !that.hasLore())
@@ -410,7 +410,7 @@ class CraftItemMeta implements ItemMeta, Repairable {
      * Empty uncommon parts implies the NBT data would be equivalent if both were applied to an item
      */
     @Overridden
-    boolean notUncommon(CraftItemMeta meta) {
+    boolean notUncommon(CraftMetaItem meta) {
         return true;
     }
 
@@ -431,9 +431,9 @@ class CraftItemMeta implements ItemMeta, Repairable {
 
     @Overridden
     @Override
-    public CraftItemMeta clone() {
+    public CraftMetaItem clone() {
         try {
-            return (CraftItemMeta) super.clone();
+            return (CraftMetaItem) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }

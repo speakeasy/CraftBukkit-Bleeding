@@ -14,14 +14,14 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
+import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
+class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     static final ItemMetaKey AMPLIFIER = new ItemMetaKey("Amplifier", "amplifier");
     static final ItemMetaKey AMBIENT = new ItemMetaKey("Ambient", "ambient");
     static final ItemMetaKey DURATION = new ItemMetaKey("Duration", "duration");
@@ -30,18 +30,18 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
 
     private List<PotionEffect> customEffects;
 
-    CraftPotionMeta(CraftItemMeta meta) {
+    CraftMetaPotion(CraftMetaItem meta) {
         super(meta);
-        if (!(meta instanceof CraftPotionMeta)) {
+        if (!(meta instanceof CraftMetaPotion)) {
             return;
         }
-        CraftPotionMeta potionMeta = (CraftPotionMeta) meta;
+        CraftMetaPotion potionMeta = (CraftMetaPotion) meta;
         if (potionMeta.hasCustomEffects()) {
             this.customEffects = new ArrayList<PotionEffect>(potionMeta.customEffects);
         }
     }
 
-    CraftPotionMeta(NBTTagCompound tag) {
+    CraftMetaPotion(NBTTagCompound tag) {
         super(tag);
 
         if (tag.hasKey(POTION_EFFECTS.NBT)) {
@@ -62,7 +62,7 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
         }
     }
 
-    CraftPotionMeta(Map<String, Object> map) {
+    CraftMetaPotion(Map<String, Object> map) {
         super(map);
 
         List<?> rawEffectList = SerializableMeta.getObject(List.class, map, POTION_EFFECTS.BUKKIT, true);
@@ -122,8 +122,8 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     @Override
-    public CraftPotionMeta clone() {
-        CraftPotionMeta clone = (CraftPotionMeta) super.clone();
+    public CraftMetaPotion clone() {
+        CraftMetaPotion clone = (CraftMetaPotion) super.clone();
         if (hasCustomEffects()) {
             clone.customEffects = new ArrayList<PotionEffect>(customEffects);
         }
@@ -228,16 +228,16 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
         if (hasCustomEffects()) {
             hash = 73 * hash + customEffects.hashCode();
         }
-        return original != hash ? CraftPotionMeta.class.hashCode() ^ hash : hash;
+        return original != hash ? CraftMetaPotion.class.hashCode() ^ hash : hash;
     }
 
     @Override
-    public boolean equalsCommon(CraftItemMeta meta) {
+    public boolean equalsCommon(CraftMetaItem meta) {
         if (!super.equalsCommon(meta)) {
             return false;
         }
-        if (meta instanceof CraftPotionMeta) {
-            CraftPotionMeta that = (CraftPotionMeta) meta;
+        if (meta instanceof CraftMetaPotion) {
+            CraftMetaPotion that = (CraftMetaPotion) meta;
 
             return (this.hasCustomEffects() ? that.hasCustomEffects() && this.customEffects.equals(that.customEffects) : !that.hasCustomEffects());
         }
@@ -245,8 +245,8 @@ class CraftPotionMeta extends CraftItemMeta implements PotionMeta {
     }
 
     @Override
-    boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftPotionMeta || isPotionEmpty());
+    boolean notUncommon(CraftMetaItem meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftMetaPotion || isPotionEmpty());
     }
 
     @Override

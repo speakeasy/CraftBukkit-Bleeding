@@ -59,7 +59,7 @@ public class FactoryItemMaterialTest {
 
     @Test
     public void generalCase() {
-        CraftItemMeta meta = (CraftItemMeta) factory.getItemMeta(material);
+        CraftMetaItem meta = (CraftMetaItem) factory.getItemMeta(material);
         if (meta == null) {
             assertThat(material, is(Material.AIR));
         } else {
@@ -74,7 +74,7 @@ public class FactoryItemMaterialTest {
 
     @Test
     public void asMetaFor() {
-        final CraftItemMeta baseMeta = (CraftItemMeta) factory.getItemMeta(material);
+        final CraftMetaItem baseMeta = (CraftMetaItem) factory.getItemMeta(material);
         if (baseMeta == null) {
             assertThat(material, is(Material.AIR));
             return;
@@ -83,7 +83,7 @@ public class FactoryItemMaterialTest {
         for (Material other : materials) {
             final ItemStack bukkitStack = new ItemStack(other);
             final CraftItemStack craftStack = CraftItemStack.asCraftCopy(bukkitStack);
-            final CraftItemMeta otherMeta = (CraftItemMeta) factory.asMetaFor(baseMeta, other);
+            final CraftMetaItem otherMeta = (CraftMetaItem) factory.asMetaFor(baseMeta, other);
 
             final String testName = name(material, other);
 
@@ -104,8 +104,8 @@ public class FactoryItemMaterialTest {
         if (material == Material.AIR) {
             return;
         }
-        final CraftItemMeta baseMeta = (CraftItemMeta) factory.getItemMeta(material);
-        final CraftItemMeta baseMetaClone = baseMeta.clone();
+        final CraftMetaItem baseMeta = (CraftMetaItem) factory.getItemMeta(material);
+        final CraftMetaItem baseMetaClone = baseMeta.clone();
 
         final ItemStack baseMetaStack = new ItemStack(material);
         baseMetaStack.setItemMeta(baseMeta);
@@ -126,7 +126,7 @@ public class FactoryItemMaterialTest {
         for (Material other : materials) {
             final String testName = name(material, other);
 
-            final CraftItemMeta otherMeta = (CraftItemMeta) factory.asMetaFor(baseMetaClone, other);
+            final CraftMetaItem otherMeta = (CraftMetaItem) factory.asMetaFor(baseMetaClone, other);
 
             if (otherMeta == null) {
                 assertThat(testName, other, is(Material.AIR));

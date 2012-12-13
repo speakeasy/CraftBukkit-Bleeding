@@ -11,28 +11,28 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.inventory.CraftItemMeta.SerializableMeta;
+import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
-class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
+class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
     static final ItemMetaKey COLOR = new ItemMetaKey("color");
 
     private Color color = DEFAULT_LEATHER_COLOR;
 
-    CraftLeatherArmorMeta(CraftItemMeta meta) {
+    CraftMetaLeatherArmor(CraftMetaItem meta) {
         super(meta);
-        if (!(meta instanceof CraftLeatherArmorMeta)) {
+        if (!(meta instanceof CraftMetaLeatherArmor)) {
             return;
         }
 
-        CraftLeatherArmorMeta armorMeta = (CraftLeatherArmorMeta) meta;
+        CraftMetaLeatherArmor armorMeta = (CraftMetaLeatherArmor) meta;
         this.color = armorMeta.color;
     }
 
-    CraftLeatherArmorMeta(NBTTagCompound tag) {
+    CraftMetaLeatherArmor(NBTTagCompound tag) {
         super(tag);
         if (tag.hasKey(DISPLAY.NBT)) {
             NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
@@ -42,7 +42,7 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
         }
     }
 
-    CraftLeatherArmorMeta(Map<String, Object> map) {
+    CraftMetaLeatherArmor(Map<String, Object> map) {
         super(map);
         setColor((Color) map.get(COLOR.NBT));
     }
@@ -77,8 +77,8 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     }
 
     @Override
-    public CraftLeatherArmorMeta clone() {
-        return (CraftLeatherArmorMeta) super.clone();
+    public CraftMetaLeatherArmor clone() {
+        return (CraftMetaLeatherArmor) super.clone();
     }
 
     public Color getColor() {
@@ -111,12 +111,12 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     }
 
     @Override
-    boolean equalsCommon(CraftItemMeta meta) {
+    boolean equalsCommon(CraftMetaItem meta) {
         if (!super.equalsCommon(meta)) {
             return false;
         }
-        if (meta instanceof CraftLeatherArmorMeta) {
-            CraftLeatherArmorMeta that = (CraftLeatherArmorMeta) meta;
+        if (meta instanceof CraftMetaLeatherArmor) {
+            CraftMetaLeatherArmor that = (CraftMetaLeatherArmor) meta;
 
             return color.equals(that.color);
         }
@@ -124,8 +124,8 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
     }
 
     @Override
-    boolean notUncommon(CraftItemMeta meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftSkullMeta || isLeatherArmorEmpty());
+    boolean notUncommon(CraftMetaItem meta) {
+        return super.notUncommon(meta) && (meta instanceof CraftMetaSkull || isLeatherArmorEmpty());
     }
 
     int applyHash() {
@@ -134,6 +134,6 @@ class CraftLeatherArmorMeta extends CraftItemMeta implements LeatherArmorMeta {
         if (hasColor()) {
             // TODO
         }
-        return original != hash ? CraftSkullMeta.class.hashCode() ^ hash : hash;
+        return original != hash ? CraftMetaSkull.class.hashCode() ^ hash : hash;
     }
 }

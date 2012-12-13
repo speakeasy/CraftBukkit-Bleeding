@@ -15,7 +15,7 @@ public final class CraftItemFactory implements ItemFactory {
 
     static {
         instance = new CraftItemFactory();
-        ConfigurationSerialization.registerClass(CraftItemMeta.SerializableMeta.class);
+        ConfigurationSerialization.registerClass(CraftMetaItem.SerializableMeta.class);
     }
 
     private CraftItemFactory() {
@@ -32,11 +32,11 @@ public final class CraftItemFactory implements ItemFactory {
         if (type == null || meta == null) {
             return false;
         }
-        if (!(meta instanceof CraftItemMeta)) {
+        if (!(meta instanceof CraftMetaItem)) {
             throw new IllegalArgumentException("Meta of " + meta.getClass().toString() + " not created by " + CraftItemFactory.class.getName());
         }
 
-        return ((CraftItemMeta) meta).applicableTo(type);
+        return ((CraftMetaItem) meta).applicableTo(type);
     }
 
     public ItemMeta getItemMeta(Material material) {
@@ -44,25 +44,25 @@ public final class CraftItemFactory implements ItemFactory {
         return getItemMeta(material, null);
     }
 
-    private ItemMeta getItemMeta(Material material, CraftItemMeta meta) {
+    private ItemMeta getItemMeta(Material material, CraftMetaItem meta) {
         switch (material) {
         case AIR:
             return null;
         case WRITTEN_BOOK:
         case BOOK_AND_QUILL:
-            return meta instanceof CraftBookMeta ? meta : new CraftBookMeta(meta);
+            return meta instanceof CraftMetaBook ? meta : new CraftMetaBook(meta);
         case SKULL_ITEM:
-            return meta instanceof CraftSkullMeta ? meta : new CraftSkullMeta(meta);
+            return meta instanceof CraftMetaSkull ? meta : new CraftMetaSkull(meta);
         case LEATHER_HELMET:
         case LEATHER_CHESTPLATE:
         case LEATHER_LEGGINGS:
         case LEATHER_BOOTS:
-            return meta instanceof CraftLeatherArmorMeta ? meta : new CraftLeatherArmorMeta(meta);
+            return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
         case POTION:
-            return meta instanceof CraftPotionMeta ? meta : new CraftPotionMeta(meta);
+            return meta instanceof CraftMetaPotion ? meta : new CraftMetaPotion(meta);
         case MAP: // TODO: - Add MapMeta; Verify use case
         default:
-            return new CraftItemMeta(meta);
+            return new CraftMetaItem(meta);
         }
     }
 
@@ -70,23 +70,23 @@ public final class CraftItemFactory implements ItemFactory {
         if (meta1 == meta2) {
             return true;
         }
-        if (meta1 != null && !(meta1 instanceof CraftItemMeta)) {
+        if (meta1 != null && !(meta1 instanceof CraftMetaItem)) {
             throw new IllegalArgumentException("First meta of " + meta1.getClass().getName() + " does not belong to " + CraftItemFactory.class.getName());
         }
-        if (meta2 != null && !(meta2 instanceof CraftItemMeta)) {
+        if (meta2 != null && !(meta2 instanceof CraftMetaItem)) {
             throw new IllegalArgumentException("Second meta " + meta2.getClass().getName() + " does not belong to " + CraftItemFactory.class.getName());
         }
         if (meta1 == null) {
-            return ((CraftItemMeta) meta2).isEmpty();
+            return ((CraftMetaItem) meta2).isEmpty();
         }
         if (meta2 == null) {
-            return ((CraftItemMeta) meta1).isEmpty();
+            return ((CraftMetaItem) meta1).isEmpty();
         }
 
-        return equals((CraftItemMeta) meta1, (CraftItemMeta) meta2);
+        return equals((CraftMetaItem) meta1, (CraftMetaItem) meta2);
     }
 
-    boolean equals(CraftItemMeta meta1, CraftItemMeta meta2) {
+    boolean equals(CraftMetaItem meta1, CraftMetaItem meta2) {
         /*
          * This couldn't be done inside of the objects themselves, else force recursion.
          * This is a fairly clean way of implementing it, by dividing the methods into purposes and letting each method perform its own function.
@@ -110,10 +110,10 @@ public final class CraftItemFactory implements ItemFactory {
 
     public ItemMeta asMetaFor(ItemMeta meta, Material material) {
         Validate.notNull(material, "Material cannot be null");
-        if (!(meta instanceof CraftItemMeta)) {
+        if (!(meta instanceof CraftMetaItem)) {
             throw new IllegalArgumentException("Meta of " + (meta != null ? meta.getClass().toString() : "null") + " not created by " + CraftItemFactory.class.getName());
         }
-        return getItemMeta(material, (CraftItemMeta) meta);
+        return getItemMeta(material, (CraftMetaItem) meta);
     }
 
     public Color getDefaultLeatherColor() {
