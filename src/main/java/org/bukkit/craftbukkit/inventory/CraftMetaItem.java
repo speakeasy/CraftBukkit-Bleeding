@@ -37,7 +37,7 @@ import org.bukkit.craftbukkit.Overridden;
  * <br><br>
  * <li> boolean notUncommon(CraftMetaItem meta)
  * <li> boolean equalsCommon(CraftMetaItem meta)
- * <br><br?
+ * <br><br>
  * <li> boolean isEmpty()
  * <li> boolean is{Type}Empty()
  * <br><br>
@@ -89,8 +89,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
             MAP {
                 @Override
                 ItemMeta deserialize(Map<String, Object> map) {
-                    // TODO
-                    throw new UnsupportedOperationException(this.name());
+                    return new CraftMetaMap(map);
                 }
             },
             POTION {
@@ -131,6 +130,11 @@ class CraftMetaItem implements ItemMeta, Repairable {
 
         static String getString(Map<?, ?> map, Object field, boolean nullable) {
             return getObject(String.class, map, field, nullable);
+        }
+
+        static boolean getBoolean(Map<?, ?> map, Object field) {
+            Boolean value = getObject(Boolean.class, map, field, true);
+            return value != null && value;
         }
 
         static <T> T getObject(Class<T> clazz, Map<?, ?> map, Object field, boolean nullable) {
