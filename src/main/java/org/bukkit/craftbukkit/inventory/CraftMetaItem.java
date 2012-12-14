@@ -340,8 +340,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
             enchantments = new HashMap<Enchantment, Integer>(4);
         }
 
-        // ench.getItemTarget().includes( ... ? ... )
-        // ^^ Only in ItemStack, ItemMeta will not care
         if (ignoreRestrictions || level >= ench.getStartLevel() && level <= ench.getMaxLevel()) {
             Integer old = enchantments.put(ench, level);
             return old == null || old != level;
