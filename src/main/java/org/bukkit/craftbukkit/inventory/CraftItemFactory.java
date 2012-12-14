@@ -60,7 +60,8 @@ public final class CraftItemFactory implements ItemFactory {
             return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
         case POTION:
             return meta instanceof CraftMetaPotion ? meta : new CraftMetaPotion(meta);
-        case MAP: // TODO: - Add MapMeta; Verify use case
+        case MAP:
+            return meta instanceof CraftMetaMap ? meta : new CraftMetaMap(meta);
         default:
             return new CraftMetaItem(meta);
         }

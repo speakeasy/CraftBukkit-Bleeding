@@ -61,12 +61,12 @@ class CraftMetaMap extends CraftMetaItem {
 
     @Override
     boolean equalsCommon(CraftMetaItem meta) {
-        return true;
+        return true; // TODO
     }
 
     @Override
     boolean notUncommon(CraftMetaItem meta) {
-        return false;
+        return super.notUncommon(meta) && (meta instanceof CraftMetaMap); // TODO
     }
 
     @Override

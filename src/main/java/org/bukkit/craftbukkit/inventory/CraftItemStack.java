@@ -303,6 +303,8 @@ public final class CraftItemStack extends ItemStack {
                 return new CraftMetaLeatherArmor(item.tag);
             case POTION:
                 return new CraftMetaPotion(item.tag);
+            case MAP:
+                return new CraftMetaMap(item.tag);
             default:
                 return new CraftMetaItem(item.tag);
         }
