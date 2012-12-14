@@ -75,6 +75,8 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
     private boolean T;
 
     // CraftBukkit start
+    private static final int TPS = 20;
+    private static final int TICK_TIME = 1000000000 / TPS;
     public List<WorldServer> worlds = new ArrayList<WorldServer>();
     public org.bukkit.craftbukkit.CraftServer server;
     public OptionSet options;
@@ -398,37 +400,18 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
             if (this.init()) {
                 long i = System.currentTimeMillis();
 
-                for (long j = 0L; this.isRunning; this.Q = true) {
-                    long k = System.currentTimeMillis();
-                    long l = k - i;
-
-                    if (l > 2000L && i - this.R >= 15000L) {
-                        if (this.server.getWarnOnOverload()) // CraftBukkit - Added option to suppress warning messages
-                        log.warning("Can\'t keep up! Did the system time change, or is the server overloaded?");
-                        l = 2000L;
-                        this.R = i;
+                // CraftBukkit start
+                for (long lastTick = System.nanoTime(); this.isRunning; this.Q = true) {
+                    long curTime = System.nanoTime();
+                    long wait = TICK_TIME - (curTime - lastTick);
+                    if (wait > 0) {
+                        Thread.sleep(wait / 1000000);
                     }
-
-                    if (l < 0L) {
-                        log.warning("Time ran backwards! Did the system time change?");
-                        l = 0L;
-                    }
-
-                    j += l;
-                    i = k;
-                    if (this.worlds.get(0).everyoneDeeplySleeping()) { // CraftBukkit
-                        this.q();
-                        j = 0L;
-                    } else {
-                        while (j > 50L) {
-                            MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
-                            j -= 50L;
-                            this.q();
-                        }
-                    }
-
-                    Thread.sleep(1L);
+                    lastTick = System.nanoTime();
+                    MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50);
+                    this.q();
                 }
+                // CraftBukkit end
             } else {
                 this.a((CrashReport) null);
             }
