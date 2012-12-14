@@ -3,6 +3,7 @@ package org.bukkit;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class ArtTest {
             arts.remove(subject);
         }
 
-        assertThat("org.bukkit.Art has too many arts", arts, hasSize(0));
+        assertThat("org.bukkit.Art has too many arts", arts, is(Collections.EMPTY_LIST));
     }
 
     @Test
@@ -48,7 +49,7 @@ public class ArtTest {
         for (Art art : Art.values()) {
             EnumArt enumArt = CraftArt.BukkitToNotch(art);
             assertNotNull(art.name(), enumArt);
-            assertThat(art.name(), cache.put(enumArt, art), is((Art) null));
+            assertThat(art.name(), cache.put(enumArt, art), is(nullValue()));
         }
     }
 
@@ -58,7 +59,7 @@ public class ArtTest {
         for (EnumArt enumArt : EnumArt.values()) {
             Art art = CraftArt.NotchToBukkit(enumArt);
             assertNotNull(enumArt.name(), art);
-            assertThat(enumArt.name(), cache.put(art, enumArt), is((EnumArt) null));
+            assertThat(enumArt.name(), cache.put(art, enumArt), is(nullValue()));
         }
     }
 }
