@@ -67,7 +67,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
     }
 
     boolean isMapEmpty() {
-        return hasScaling();
+        return !hasScaling();
     }
 
     boolean hasScaling() {

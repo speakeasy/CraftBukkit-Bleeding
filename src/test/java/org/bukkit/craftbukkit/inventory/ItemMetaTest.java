@@ -14,6 +14,7 @@ import org.bukkit.craftbukkit.inventory.ItemStackTests.CraftWrapper;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.support.AbstractTestingBase;
@@ -47,6 +48,14 @@ public class ItemMetaTest extends AbstractTestingBase {
                 @Override ItemStack operate(final ItemStack cleanStack) {
                     final SkullMeta meta = (SkullMeta) cleanStack.getItemMeta();
                     meta.setOwner("Notch");
+                    cleanStack.setItemMeta(meta);
+                    return cleanStack;
+                }
+            },
+            new StackProvider(Material.MAP) {
+                @Override ItemStack operate(final ItemStack cleanStack) {
+                    final MapMeta meta = (MapMeta) cleanStack.getItemMeta();
+                    meta.setScaling(true);
                     cleanStack.setItemMeta(meta);
                     return cleanStack;
                 }
