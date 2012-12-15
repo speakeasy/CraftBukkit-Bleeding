@@ -25,7 +25,7 @@ public class ItemMetaOverrideTest {
     static {
         List<Class<? extends CraftMetaItem>> classes = new ArrayList<Class<? extends CraftMetaItem>>();
 
-        for (Material material : ItemStackTests.COMPOUND_MATERIALS) {
+        for (Material material : ItemStackTest.COMPOUND_MATERIALS) {
             Class<? extends CraftMetaItem> clazz = CraftItemFactory.instance().getItemMeta(material).getClass().asSubclass(parent);
             if (clazz != parent) {
                 classes.add(clazz);

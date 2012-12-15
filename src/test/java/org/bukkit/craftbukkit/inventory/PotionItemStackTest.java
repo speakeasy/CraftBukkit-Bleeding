@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class PotionItemStackTest extends ItemStackTests {
+public class PotionItemStackTest extends ItemStackTest {
     static {
         PotionTest.init();
     }

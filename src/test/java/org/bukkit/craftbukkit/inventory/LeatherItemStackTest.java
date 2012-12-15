@@ -14,7 +14,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.common.base.Joiner;
 
 @RunWith(Parameterized.class)
-public class LeatherItemStackTest extends ItemStackTests {
+public class LeatherItemStackTest extends ItemStackTest {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {

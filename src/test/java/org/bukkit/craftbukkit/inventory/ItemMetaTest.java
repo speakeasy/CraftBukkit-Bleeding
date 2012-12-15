@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.inventory.ItemStackTests.StackProvider;
-import org.bukkit.craftbukkit.inventory.ItemStackTests.StackWrapper;
-import org.bukkit.craftbukkit.inventory.ItemStackTests.BukkitWrapper;
-import org.bukkit.craftbukkit.inventory.ItemStackTests.CraftWrapper;
+import org.bukkit.craftbukkit.inventory.ItemStackTest.StackProvider;
+import org.bukkit.craftbukkit.inventory.ItemStackTest.StackWrapper;
+import org.bukkit.craftbukkit.inventory.ItemStackTest.BukkitWrapper;
+import org.bukkit.craftbukkit.inventory.ItemStackTest.CraftWrapper;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;

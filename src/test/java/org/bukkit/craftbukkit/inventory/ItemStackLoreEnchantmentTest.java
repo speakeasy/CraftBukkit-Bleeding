@@ -11,11 +11,11 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.common.base.Joiner;
 
 @RunWith(Parameterized.class)
-public class ItemStackLoreEnchantmentTest extends ItemStackTests {
+public class ItemStackLoreEnchantmentTest extends ItemStackTest {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {
-        return StackProvider.compound(operators(), "%s %s", NAME_PARAMETER, ItemStackTests.COMPOUND_MATERIALS);
+        return StackProvider.compound(operators(), "%s %s", NAME_PARAMETER, ItemStackTest.COMPOUND_MATERIALS);
     }
 
     static List<Object[]> operators() {
