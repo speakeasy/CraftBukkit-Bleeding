@@ -498,4 +498,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
             }
         }
     }
+
+    @Override
+    public final String toString() {
+        return serialize().toString(); // TODO: cry
+    }
 }
