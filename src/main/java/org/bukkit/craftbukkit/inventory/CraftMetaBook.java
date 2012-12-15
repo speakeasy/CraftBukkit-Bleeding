@@ -243,7 +243,7 @@ class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
     @Override
     boolean notUncommon(CraftMetaItem meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftMetaItem || isBookEmpty());
+        return super.notUncommon(meta) && (meta instanceof CraftMetaBook || isBookEmpty());
     }
 
     @Override
