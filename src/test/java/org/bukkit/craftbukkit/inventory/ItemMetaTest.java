@@ -77,6 +77,9 @@ public class ItemMetaTest extends AbstractTestingBase {
                 }
             }
         );
+
+        assertThat("Forgotten test?", providers, hasSize(ItemStackTest.COMPOUND_MATERIALS.length - 1 /* Normal item meta */));
+
         for (final StackProvider provider : providers) {
             downCastTest(new BukkitWrapper(provider));
             downCastTest(new CraftWrapper(provider));
