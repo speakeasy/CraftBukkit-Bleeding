@@ -1,4 +1,4 @@
-package org.bukkit;
+package org.bukkit.support;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -6,8 +6,8 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import net.minecraft.server.StatisticList;
-
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.util.Versioning;
 
@@ -65,9 +65,7 @@ public class DummyServer implements InvocationHandler {
         }
     }
 
-    public static void setup() {
-        StatisticList.a();
-    }
+    public static void setup() {}
 
     private DummyServer() {};
 

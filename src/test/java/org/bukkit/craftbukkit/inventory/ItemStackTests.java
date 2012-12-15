@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.DummyServer;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.support.AbstractTestingBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -26,7 +26,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 @RunWith(Parameterized.class)
-public class ItemStackTests {
+public class ItemStackTests extends AbstractTestingBase {
     static abstract class StackProvider {
         final Material material;
 
@@ -306,8 +306,6 @@ public class ItemStackTests {
     static final Material[] COMPOUND_MATERIALS;
     static final int NAME_PARAMETER = 2;
     static {
-        DummyServer.setup();
-
         COMPOUND_MATERIALS = new Object() { // Workaround for JDK5
             Material[] value() {
                 final ItemFactory factory = CraftItemFactory.instance();

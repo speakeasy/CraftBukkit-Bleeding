@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.*;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.DummyServer;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.inventory.ItemStackTests.StackProvider;
 import org.bukkit.craftbukkit.inventory.ItemStackTests.StackWrapper;
@@ -17,13 +16,10 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.support.AbstractTestingBase;
 import org.junit.Test;
 
-public class ItemMetaTest {
-
-    static {
-        DummyServer.setup();
-    }
+public class ItemMetaTest extends AbstractTestingBase {
 
     @Test
     public void testCrazyEquality() {

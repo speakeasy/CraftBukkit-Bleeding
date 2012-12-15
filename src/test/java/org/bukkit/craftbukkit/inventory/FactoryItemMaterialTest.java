@@ -6,11 +6,11 @@ import static org.hamcrest.Matchers.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.DummyServer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.support.AbstractTestingBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -18,13 +18,10 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class FactoryItemMaterialTest {
+public class FactoryItemMaterialTest extends AbstractTestingBase {
     static final ItemFactory factory = CraftItemFactory.instance();
     static final StringBuilder buffer = new StringBuilder();
     static final Material[] materials = Material.values();
-    static {
-        DummyServer.setup();
-    }
 
     static String name(Enum<?> from, Enum<?> to) {
         if (from.getClass() == to.getClass()) {

@@ -17,5 +17,6 @@ public abstract class AbstractTestingBase {
     @BeforeClass
     public static void setup() {
         StatisticList.a();
+        DummyServer.setup();
     }
 }

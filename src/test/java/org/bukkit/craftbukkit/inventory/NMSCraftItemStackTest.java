@@ -4,18 +4,13 @@ import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
 import net.minecraft.server.Enchantment;
-import net.minecraft.server.StatisticList;
 
-import org.bukkit.DummyServer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.junit.Before;
+import org.bukkit.support.AbstractTestingBase;
 import org.junit.Test;
 
-public class NMSCraftItemStackTest {
-    static {
-        DummyServer.setup();
-    }
+public class NMSCraftItemStackTest extends AbstractTestingBase {
 
     @Test
     public void testCloneEnchantedItem() throws Exception {
