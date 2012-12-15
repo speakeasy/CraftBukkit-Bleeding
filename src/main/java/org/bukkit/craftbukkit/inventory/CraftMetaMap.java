@@ -46,7 +46,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
 
     @Override
     void applyToItem(NBTTagCompound tag) {
-        if (!hasScaling()) {
+        if (hasScaling()) {
             tag.setBoolean(MAP_SCALING.NBT, isScaling());
         }
     }
@@ -105,7 +105,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         final int original;
         int hash = original = super.applyHash();
 
-        if (!hasScaling()) {
+        if (hasScaling()) {
             hash ^= 0x22222222 << (isScaling() ? 1 : -1);
         }
 
@@ -120,7 +120,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
     ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         super.serialize(builder);
 
-        if (!hasScaling()) {
+        if (hasScaling()) {
             builder.put(MAP_SCALING.BUKKIT, scaling);
         }
 
