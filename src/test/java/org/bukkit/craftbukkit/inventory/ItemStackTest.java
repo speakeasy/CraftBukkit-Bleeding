@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+import static org.bukkit.support.Matchers.sameHash;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -354,41 +355,41 @@ public class ItemStackTest extends AbstractTestingBase {
     static void testInequality(StackWrapper provider, StackWrapper unequalProvider) {
         final ItemStack stack = provider.stack();
         final ItemStack stack2 = provider.stack();
-        assertThat(stack, is(stack));
+        assertThat(stack, allOf(equalTo(stack), sameHash(stack)));
         assertThat(stack, is(not(sameInstance(stack2))));
-        assertThat(stack, is(stack2));
+        assertThat(stack, allOf(equalTo(stack2), sameHash(stack2)));
 
         final ItemStack unequalStack = unequalProvider.stack();
         final ItemStack unequalStack2 = unequalProvider.stack();
-        assertThat(unequalStack, is(unequalStack));
+        assertThat(unequalStack, allOf(equalTo(unequalStack), sameHash(unequalStack)));
         assertThat(unequalStack, is(not(sameInstance(unequalStack2))));
-        assertThat(unequalStack, is(unequalStack2));
+        assertThat(unequalStack, allOf(equalTo(unequalStack2), sameHash(unequalStack2)));
 
         assertThat(stack, is(not(unequalStack)));
         assertThat(unequalStack, is(not(stack)));
 
         final ItemStack newStack = new ItemStack(stack2);
-        assertThat(newStack, is(stack));
+        assertThat(newStack, allOf(equalTo(stack), sameHash(stack)));
         assertThat(newStack, is(not(unequalStack)));
-        assertThat(newStack.getItemMeta(), is(stack.getItemMeta()));
+        assertThat(newStack.getItemMeta(), allOf(equalTo(stack.getItemMeta()), sameHash(stack.getItemMeta())));
         assertThat(newStack.getItemMeta(), is(not(unequalStack.getItemMeta())));
 
         final ItemStack craftStack = CraftItemStack.asCraftCopy(stack2);
-        assertThat(craftStack, is(stack));
+        assertThat(craftStack, allOf(equalTo(stack), sameHash(stack)));
         assertThat(craftStack, is(not(unequalStack)));
-        assertThat(craftStack.getItemMeta(), is(stack.getItemMeta()));
+        assertThat(craftStack.getItemMeta(), allOf(equalTo(stack.getItemMeta()), sameHash(stack.getItemMeta())));
         assertThat(craftStack.getItemMeta(), is(not(unequalStack.getItemMeta())));
 
         final ItemStack newUnequalStack = new ItemStack(unequalStack2);
-        assertThat(newUnequalStack, is(unequalStack));
+        assertThat(newUnequalStack, allOf(equalTo(unequalStack), sameHash(unequalStack)));
         assertThat(newUnequalStack, is(not(stack)));
-        assertThat(newUnequalStack.getItemMeta(), is(unequalStack.getItemMeta()));
+        assertThat(newUnequalStack.getItemMeta(), allOf(equalTo(unequalStack.getItemMeta()), sameHash(unequalStack.getItemMeta())));
         assertThat(newUnequalStack.getItemMeta(), is(not(stack.getItemMeta())));
 
         final ItemStack newUnequalCraftStack = CraftItemStack.asCraftCopy(unequalStack2);
-        assertThat(newUnequalCraftStack, is(unequalStack));
+        assertThat(newUnequalCraftStack, allOf(equalTo(unequalStack), sameHash(unequalStack)));
         assertThat(newUnequalCraftStack, is(not(stack)));
-        assertThat(newUnequalCraftStack.getItemMeta(), is(unequalStack.getItemMeta()));
+        assertThat(newUnequalCraftStack.getItemMeta(), allOf(equalTo(unequalStack.getItemMeta()), sameHash(unequalStack.getItemMeta())));
         assertThat(newUnequalCraftStack.getItemMeta(), is(not(stack.getItemMeta())));
     }
 
@@ -419,8 +420,8 @@ public class ItemStackTest extends AbstractTestingBase {
             throw new RuntimeException(out, ex);
         }
 
-        assertThat(out, configIn.getItemStack("provider"), is(stack));
-        assertThat(out, configIn.getItemStack("unequal"), is(unequalStack));
+        assertThat(out, configIn.getItemStack("provider"), allOf(equalTo(stack), sameHash(stack)));
+        assertThat(out, configIn.getItemStack("unequal"), allOf(equalTo(unequalStack), sameHash(unequalStack)));
         assertThat(out, configIn.getItemStack("provider"), is(not(unequalStack)));
         assertThat(out, configIn.getItemStack("provider"), is(not(configIn.getItemStack("unequal"))));
     }
