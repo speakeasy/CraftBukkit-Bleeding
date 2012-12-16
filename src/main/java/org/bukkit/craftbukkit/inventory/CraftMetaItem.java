@@ -462,7 +462,11 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
 
         if (hasEnchants()) {
-            builder.put(ENCHANTMENTS.BUKKIT, ImmutableMap.copyOf(enchantments));
+            ImmutableMap.Builder<String, Integer> enchantments = ImmutableMap.builder();
+            for (Map.Entry<Enchantment, Integer> enchant : this.enchantments.entrySet()) {
+                enchantments.put(enchant.getKey().getName(), enchant.getValue());
+            }
+            builder.put(ENCHANTMENTS.BUKKIT, enchantments.build());
         }
 
         if (hasRepairCost()) {
