@@ -13,7 +13,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.google.common.base.Joiner;
 
 @RunWith(Parameterized.class)
-public class SkullItemStackTest extends ItemStackTest {
+public class ItemStackSkullTest extends ItemStackTest {
 
     @Parameters(name="[{index}]:{" + NAME_PARAMETER + "}")
     public static List<Object[]> data() {

@@ -13,7 +13,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class ItemMetaOverrideTest {
+public class ItemMetaImplementationOverrideTest {
     static final Class<CraftMetaItem> parent = CraftMetaItem.class;
     static final Class<Overridden> annotation = Overridden.class;
 
