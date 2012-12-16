@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -32,31 +33,54 @@ public class ItemStackLeatherTest extends ItemStackTest {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
                             LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
+                            meta.setColor(Color.FUCHSIA);
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Do other LEATHER stuff
                             return cleanStack;
                         }
                     },
-                    "LEATHER1"
+                    "Color vs Null"
                 },
                 new Object[] {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Do LEATHER stuff
+                            LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
+                            meta.setColor(Color.GRAY);
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Do other LEATHER stuff
+                            LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
-                    "LEATHER2"
+                    "Color vs Blank"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
+                            meta.setColor(Color.MAROON);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
+                            meta.setColor(Color.ORANGE);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "Color vs Other"
                 }
             )
         );
