@@ -247,7 +247,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
     @Overridden
     void applyToItem(NBTTagCompound itemTag) {
         if (hasDisplayName()) {
-            setDisplay(itemTag, NAME.NBT, new NBTTagString(NAME.NBT, displayName));
+            setDisplayTag(itemTag, NAME.NBT, new NBTTagString(NAME.NBT, displayName));
         }
 
         if (hasLore()) {
@@ -255,7 +255,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
             for (int i = 0; i < lore.size(); i++) {
                 list.add(new NBTTagString(String.valueOf(i), lore.get(i)));
             }
-            setDisplay(itemTag, LORE.NBT, list);
+            setDisplayTag(itemTag, LORE.NBT, list);
         }
 
         if (hasEnchants()) {
@@ -278,10 +278,12 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
     }
 
-    void setDisplay(NBTTagCompound tag, String key, NBTBase value) {
-        NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+    void setDisplayTag(NBTTagCompound tag, String key, NBTBase value) {
+        final NBTTagCompound display;
 
-        if (display == null) {
+        if (tag.hasKey(DISPLAY.NBT)) {
+            display = tag.getCompound(key);
+        } else {
             display = new NBTTagCompound(DISPLAY.NBT);
             tag.setCompound(DISPLAY.NBT, display);
         }

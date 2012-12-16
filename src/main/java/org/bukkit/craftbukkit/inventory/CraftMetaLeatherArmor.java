@@ -43,14 +43,14 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
 
     CraftMetaLeatherArmor(Map<String, Object> map) {
         super(map);
-        setColor((Color) map.get(COLOR.NBT));
+        setColor(SerializableMeta.getObject(Color.class, map, COLOR.BUKKIT, true));
     }
 
     void applyToItem(NBTTagCompound itemTag) {
         super.applyToItem(itemTag);
 
         if (hasColor()) {
-            setDisplay(itemTag, COLOR.NBT, new NBTTagInt(COLOR.NBT, color.asRGB()));
+            setDisplayTag(itemTag, COLOR.NBT, new NBTTagInt(COLOR.NBT, color.asRGB()));
         }
     }
 
@@ -131,7 +131,7 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
         final int original;
         int hash = original = super.applyHash();
         if (hasColor()) {
-            // TODO
+            hash ^= color.hashCode();
         }
         return original != hash ? CraftMetaSkull.class.hashCode() ^ hash : hash;
     }

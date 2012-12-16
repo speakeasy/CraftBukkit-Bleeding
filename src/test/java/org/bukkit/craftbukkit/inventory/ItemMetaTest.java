@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.*;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.inventory.ItemStackTest.StackProvider;
 import org.bukkit.craftbukkit.inventory.ItemStackTest.StackWrapper;
@@ -60,17 +61,17 @@ public class ItemMetaTest extends AbstractTestingBase {
                     return cleanStack;
                 }
             },
-            new StackProvider(Material.POTION) {
+            new StackProvider(Material.LEATHER_BOOTS) {
                 @Override ItemStack operate(final ItemStack cleanStack) {
-                    final PotionMeta meta = (PotionMeta) cleanStack.getItemMeta();
-                    // TODO
+                    final LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
+                    meta.setColor(Color.FUCHSIA);
                     cleanStack.setItemMeta(meta);
                     return cleanStack;
                 }
             },
-            new StackProvider(Material.LEATHER_BOOTS) {
+            new StackProvider(Material.POTION) {
                 @Override ItemStack operate(final ItemStack cleanStack) {
-                    final LeatherArmorMeta meta = (LeatherArmorMeta) cleanStack.getItemMeta();
+                    final PotionMeta meta = (PotionMeta) cleanStack.getItemMeta();
                     // TODO
                     cleanStack.setItemMeta(meta);
                     return cleanStack;
