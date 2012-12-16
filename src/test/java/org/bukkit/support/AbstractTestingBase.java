@@ -19,5 +19,6 @@ public abstract class AbstractTestingBase {
         StatisticList.a();
         DummyServer.setup();
         DummyPotions.setup();
+        DummyEnchantments.setup();
     }
 }
