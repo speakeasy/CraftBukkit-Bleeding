@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.support.AbstractTestingBase;
 import org.junit.Test;
 
@@ -72,7 +73,7 @@ public class ItemMetaTest extends AbstractTestingBase {
             new StackProvider(Material.POTION) {
                 @Override ItemStack operate(final ItemStack cleanStack) {
                     final PotionMeta meta = (PotionMeta) cleanStack.getItemMeta();
-                    // TODO
+                    meta.addCustomEffect(PotionEffectType.CONFUSION.createEffect(1, 1), false);
                     cleanStack.setItemMeta(meta);
                     return cleanStack;
                 }
