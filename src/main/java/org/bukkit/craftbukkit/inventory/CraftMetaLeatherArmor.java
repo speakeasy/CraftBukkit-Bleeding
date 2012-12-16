@@ -89,7 +89,6 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
     }
 
     boolean hasColor() {
-        // TODO: Public? Not public?
         return !DEFAULT_LEATHER_COLOR.equals(color);
     }
 
