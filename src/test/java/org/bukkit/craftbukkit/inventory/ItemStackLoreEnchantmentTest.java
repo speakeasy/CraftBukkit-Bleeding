@@ -3,7 +3,9 @@ package org.bukkit.craftbukkit.inventory;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -27,95 +29,210 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTest {
                 new Object[] {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setLore(Arrays.asList("First Lore", "Second Lore"));
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add other lore
                             return cleanStack;
                         }
                     },
-                    "Lore1"
+                    "Lore vs Null"
                 },
                 new Object[] {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add name
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setLore(Arrays.asList("Some lore"));
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add other name
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
-                    "Lore2"
+                    "Lore vs Blank"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setLore(Arrays.asList("Some more lore", "Another lore"));
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setLore(Arrays.asList("Some more lore"));
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "Lore vs Other"
                 }
             ),
             Arrays.asList(
                 new Object[] {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add Lore
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setDisplayName("TestItemName");
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add other lore
                             return cleanStack;
                         }
                     },
-                    "Name1"
+                    "Name vs Null"
                 },
                 new Object[] {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add name
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setDisplayName("AnotherItemName");
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add other name
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
-                    "Name2"
+                    "Name vs Blank"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setDisplayName("The original ItemName");
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.setDisplayName("The other name");
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "Name vs Other"
                 }
             ),
             Arrays.asList(
                 new Object[] {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add enchantment
+                            cleanStack.addUnsafeEnchantment(Enchantment.DIG_SPEED, 2);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add other enchantment
                             return cleanStack;
                         }
                     },
-                    "Enchant1"
+                    "EnchantStack vs Null"
                 },
                 new Object[] {
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add enchantment
+                            cleanStack.addUnsafeEnchantment(Enchantment.OXYGEN, 1);
                             return cleanStack;
                         }
                     },
                     new Operator() {
                         public ItemStack operate(ItemStack cleanStack) {
-                            // TODO Add other enchantment
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            cleanStack.setItemMeta(meta);
                             return cleanStack;
                         }
                     },
-                    "Enchant2"
+                    "EnchantStack vs Blank"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            cleanStack.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            cleanStack.addUnsafeEnchantment(Enchantment.ARROW_FIRE, 1);
+                            return cleanStack;
+                        }
+                    },
+                    "EnchantStack vs OtherEnchantStack"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "Enchant vs Blank"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            return cleanStack;
+                        }
+                    },
+                    "Enchant vs Null"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.addEnchant(Enchantment.PROTECTION_FIRE, 1, true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.addEnchant(Enchantment.PROTECTION_FIRE, 2, true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "Enchant vs Other"
                 }
             )
         );
