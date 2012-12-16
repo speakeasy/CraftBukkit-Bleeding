@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.*;
 
 import net.minecraft.server.Enchantment;
 
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.support.AbstractTestingBase;
 import org.junit.Test;
@@ -32,16 +31,5 @@ public class NMSCraftItemStackTest extends AbstractTestingBase {
         ItemStack itemStack = CraftItemStack.asCraftMirror(nmsItemStack);
         ItemStack clone = itemStack.clone();
         assertThat(clone, is((itemStack)));
-    }
-
-    @Test
-    public void testStackSize() throws Exception {
-        for (Material material : Material.values()) {
-            ItemStack bukkit = new ItemStack(material);
-            CraftItemStack craft = CraftItemStack.asCraftCopy(bukkit);
-            net.minecraft.server.ItemStack nms = craft.handle;
-            assertThat(material.name(), bukkit.getMaxStackSize(), is(nms != null ? nms.getItem().getMaxStackSize() : 0));
-            assertThat(material.name(), craft.getMaxStackSize(), is(bukkit.getMaxStackSize()));
-        }
     }
 }
