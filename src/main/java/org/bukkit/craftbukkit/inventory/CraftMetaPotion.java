@@ -79,7 +79,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
             final int amp = SerializableMeta.getObject(Integer.class, fieldMap, AMPLIFIER.BUKKIT, false);
             final int duration = SerializableMeta.getObject(Integer.class, fieldMap, DURATION.BUKKIT, false);
             final boolean ambient = SerializableMeta.getObject(Boolean.class, fieldMap, AMBIENT.BUKKIT, false);
-            PotionEffect effect = new PotionEffect(type, amp, duration, ambient);
+            PotionEffect effect = new PotionEffect(type, duration, amp, ambient);
             addCustomEffect(effect, true);
         }
     }
