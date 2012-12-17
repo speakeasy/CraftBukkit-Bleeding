@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.craftbukkit.Overridden;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
@@ -24,7 +25,6 @@ import org.bukkit.inventory.meta.Repairable;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.bukkit.craftbukkit.Overridden;
 
 /**
  * Children must include the following:
@@ -280,12 +280,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
     }
 
     void setDisplayTag(NBTTagCompound tag, String key, NBTBase value) {
-        final NBTTagCompound display;
+        final NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
 
-        if (tag.hasKey(DISPLAY.NBT)) {
-            display = tag.getCompound(key);
-        } else {
-            display = new NBTTagCompound(DISPLAY.NBT);
+        if (!tag.hasKey(DISPLAY.NBT)) {
             tag.setCompound(DISPLAY.NBT, display);
         }
 
