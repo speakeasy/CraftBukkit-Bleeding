@@ -56,7 +56,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
                     int amp = effect.getByte(AMPLIFIER.NBT);
                     int duration = effect.getInt(DURATION.NBT);
                     boolean ambient = effect.getBoolean(AMBIENT.NBT);
-                    customEffects.add(new PotionEffect(type, amp, duration, ambient));
+                    customEffects.add(new PotionEffect(type, duration, amp, ambient));
                 }
             }
         }
