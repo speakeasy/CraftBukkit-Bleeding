@@ -79,7 +79,7 @@ public class PerMaterialTest extends AbstractTestingBase {
         final ItemStack bukkit = new ItemStack(material);
         final CraftItemStack craft = CraftItemStack.asCraftCopy(bukkit);
         if (material == Material.AIR) {
-            final int MAX_AIR_STACK = 64 /* Why can't I hold all of these AIR? */;
+            final int MAX_AIR_STACK = 0 /* Why can't I hold all of these AIR? */;
             assertThat(material.getMaxStackSize(), is(MAX_AIR_STACK));
             assertThat(bukkit.getMaxStackSize(), is(MAX_AIR_STACK));
             assertThat(craft.getMaxStackSize(), is(MAX_AIR_STACK));
