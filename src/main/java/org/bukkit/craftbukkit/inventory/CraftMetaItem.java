@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import net.minecraft.server.NBTBase;
 import net.minecraft.server.NBTTagCompound;
@@ -88,13 +89,13 @@ class CraftMetaItem implements ItemMeta, Repairable {
             },
             MAP {
                 @Override
-                ItemMeta deserialize(Map<String, Object> map) {
+                CraftMetaMap deserialize(Map<String, Object> map) {
                     return new CraftMetaMap(map);
                 }
             },
             POTION {
                 @Override
-                ItemMeta deserialize(Map<String, Object> map) {
+                CraftMetaPotion deserialize(Map<String, Object> map) {
                     return new CraftMetaPotion(map);
                 }
             },
@@ -105,7 +106,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
                 }
             };
 
-            abstract ItemMeta deserialize(Map<String, Object> map);
+            abstract CraftMetaItem deserialize(Map<String, Object> map);
         }
 
         private SerializableMeta() {
@@ -145,7 +146,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
             }
             if (object == null) {
                 if (!nullable) {
-                    throw new IllegalArgumentException(field + " cannot be null");
+                    throw new NoSuchElementException(map + " does not contain " + field);
                 }
                 return null;
             }
