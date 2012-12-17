@@ -49,6 +49,8 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
 
     @Override
     void applyToItem(NBTTagCompound tag) {
+        super.applyToItem(tag);
+
         if (hasScaling()) {
             tag.setBoolean(MAP_SCALING.NBT, isScaling());
         }
