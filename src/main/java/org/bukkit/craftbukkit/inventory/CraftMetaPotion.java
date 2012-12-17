@@ -17,7 +17,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
 @DelegateDeserialization(SerializableMeta.class)
@@ -71,16 +70,10 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         }
 
         for (Object obj : rawEffectList) {
-            if (!(obj instanceof Map)) {
+            if (!(obj instanceof PotionEffect)) {
                 throw new IllegalArgumentException("Object in effect list is not valid. " + obj.getClass());
             }
-            Map<?,?> fieldMap = (Map<?,?>) obj;
-            final PotionEffectType type = PotionEffectType.getById(SerializableMeta.getObject(Integer.class, fieldMap, ID.BUKKIT, false));
-            final int amp = SerializableMeta.getObject(Integer.class, fieldMap, AMPLIFIER.BUKKIT, false);
-            final int duration = SerializableMeta.getObject(Integer.class, fieldMap, DURATION.BUKKIT, false);
-            final boolean ambient = SerializableMeta.getObject(Boolean.class, fieldMap, AMBIENT.BUKKIT, false);
-            PotionEffect effect = new PotionEffect(type, duration, amp, ambient);
-            addCustomEffect(effect, true);
+            addCustomEffect((PotionEffect) obj, true);
         }
     }
 
@@ -254,18 +247,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         super.serialize(builder);
 
         if (hasCustomEffects()) {
-            final ImmutableList.Builder<Map<String, Object>> effectsMapList = ImmutableList.builder();
-            for (final PotionEffect effect : customEffects) {
-                effectsMapList.add(
-                    ImmutableMap.<String, Object>of(
-                        AMPLIFIER.BUKKIT, effect.getAmplifier(),
-                        DURATION.BUKKIT, effect.getDuration(),
-                        AMBIENT.BUKKIT, effect.isAmbient(),
-                        ID.BUKKIT, effect.getType().getId()
-                    )
-                );
-            }
-            builder.put(POTION_EFFECTS.BUKKIT, effectsMapList.build());
+            builder.put(POTION_EFFECTS.BUKKIT, ImmutableList.copyOf(this.customEffects));
         }
 
         return builder;
