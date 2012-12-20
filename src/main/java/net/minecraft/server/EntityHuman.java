@@ -35,6 +35,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
     // CraftBukkit start
     public boolean sleeping; // protected -> public
     public boolean fauxSleeping;
+    public boolean insomniac = false;
     public String spawnWorld = "";
 
     public HumanEntity getBukkitEntity() {
@@ -1075,7 +1076,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
     }
 
     public boolean isDeeplySleeping() {
-        return this.sleeping && this.sleepTicks >= 100;
+        return this.sleeping && this.sleepTicks >= 100 && !this.insomniac;
     }
 
     protected void b(int i, boolean flag) {

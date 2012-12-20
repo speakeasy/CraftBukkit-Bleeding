@@ -93,6 +93,14 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         return getHandle().sleepTicks;
     }
 
+    public void setInsomniac(boolean insomnia) {
+        getHandle().insomniac = insomnia;
+    }
+
+    public boolean isInsomniac() {
+        return getHandle().insomniac;
+    }
+
     public boolean isOp() {
         return op;
     }

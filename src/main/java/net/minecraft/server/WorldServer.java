@@ -255,7 +255,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
                 if (entityhuman.isDeeplySleeping()) {
                     foundActualSleepers = true;
                 }
-            } while (entityhuman.isDeeplySleeping() || entityhuman.fauxSleeping);
+            } while (entityhuman.isDeeplySleeping() || entityhuman.fauxSleeping || entityhuman.insomniac);
             // CraftBukkit end
 
             return false;
