@@ -4,10 +4,12 @@ import java.util.Iterator;
 import java.util.List;
 
 // CraftBukkit start
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -881,6 +883,10 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
         super.die();
         this.defaultContainer.b(this);
         if (this.activeContainer != null) {
+            // CraftBukkit start
+            InventoryCloseEvent event = new InventoryCloseEvent(this.activeContainer.getBukkitView());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            // CraftBukkit end
             this.activeContainer.b(this);
         }
     }
