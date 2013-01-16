@@ -59,6 +59,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private final Set<String> channels = new HashSet<String>();
     private final Map<String, Player> hiddenPlayers = new MapMaker().softValues().makeMap();
     private int hash = 0;
+    private ChatColor namePrefix;
 
     public CraftPlayer(CraftServer server, EntityPlayer entity) {
         super(server, entity);
@@ -954,5 +955,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void resetMaxHealth() {
         super.resetMaxHealth();
         getHandle().m(); // Update health
+    }
+
+    public void setNameTagPrefix(ChatColor color) {
+        Validate.isTrue(getName().length() <= 14, "Name tag can not be applied to " + getName() + "; name too long");
+        this.namePrefix = color;
+
+        ((WorldServer) getHandle().world).getTracker().a(getHandle(), new Packet20NamedEntitySpawn(getHandle()));
+    }
+
+    public ChatColor getNameTagPrefix() {
+        return namePrefix;
     }
 }

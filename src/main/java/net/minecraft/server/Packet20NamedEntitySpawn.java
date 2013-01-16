@@ -23,12 +23,13 @@ public class Packet20NamedEntitySpawn extends Packet {
 
     public Packet20NamedEntitySpawn(EntityHuman entityhuman) {
         this.a = entityhuman.id;
-
-        // CraftBukkit start - limit name length to 16 characters
-        if (entityhuman.name.length() > 16) {
-            this.b = entityhuman.name.substring(0, 16);
-        } else {
-            this.b = entityhuman.name;
+        this.b = entityhuman.name;
+        // CraftBukkit start - add tag
+        if (entityhuman instanceof EntityPlayer) {
+            org.bukkit.ChatColor prefix = ((EntityPlayer) entityhuman).getBukkitEntity().getNameTagPrefix();
+            if (prefix != null) {
+                this.b = prefix + this.b;
+            }
         }
         // CraftBukkit end
 
@@ -57,7 +58,7 @@ public class Packet20NamedEntitySpawn extends Packet {
 
     public void a(DataOutputStream dataoutputstream) throws IOException { // CraftBukkit
         dataoutputstream.writeInt(this.a);
-        a(this.b, dataoutputstream);
+        a(this.b.substring(0, Math.min(this.b.length(), 16)), dataoutputstream); // CraftBukkit - no more than 16 characters
         dataoutputstream.writeInt(this.c);
         dataoutputstream.writeInt(this.d);
         dataoutputstream.writeInt(this.e);
