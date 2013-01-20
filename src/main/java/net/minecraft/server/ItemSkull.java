@@ -47,7 +47,7 @@ public class ItemSkull extends Item {
             } else {
                 // CraftBukkit start - handle in ItemBlock
                 // world.setTypeIdAndData(i, j, k, Block.SKULL.id, l);
-                if (!ItemBlock.processBlockPlace(world, entityhuman, null, i, j, k, Block.SKULL.id, l)) {
+                if (!ItemBlock.processBlockPlace(world, entityhuman, null, i, j, k, Block.SKULL.id, l, false)) {
                     return false;
                 }
                 l = world.getData(i, j, k);
@@ -70,6 +70,12 @@ public class ItemSkull extends Item {
                     ((TileEntitySkull) tileentity).setSkullType(itemstack.getData(), s);
                     ((TileEntitySkull) tileentity).setRotation(i1);
                     ((BlockSkull) Block.SKULL).a(world, i, j, k, (TileEntitySkull) tileentity);
+
+                    // CraftBukkit start - custom handling of BlockPostBreakEvent, don't call if the block turned into a wither in the above method
+                    if (world.getTypeId(i, j, k) == Block.SKULL.id) {
+                        org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPostPlaceEvent(world, entityhuman, i, j, k);
+                    }
+                    // CraftBukkit end
                 }
 
                 --itemstack.count;

@@ -102,6 +102,14 @@ public class CraftEventFactory {
         return event;
     }
 
+    public static void callBlockPostPlaceEvent(World world, EntityHuman who, int x, int y, int z) {
+        Player player = (Player) who.getBukkitEntity();
+        Block block = world.getWorld().getBlockAt(x, y, z);
+
+        BlockPostPlaceEvent event = new BlockPostPlaceEvent(block, player);
+        callEvent(event);
+    }
+
     /**
      * Bucket methods
      */

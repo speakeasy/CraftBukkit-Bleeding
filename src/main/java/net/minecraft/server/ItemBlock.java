@@ -1,5 +1,7 @@
 package net.minecraft.server;
 
+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+
 public class ItemBlock extends Item {
 
     private int id;
@@ -77,12 +79,16 @@ public class ItemBlock extends Item {
 
     // CraftBukkit start - add method to process block placement
     static boolean processBlockPlace(final World world, final EntityHuman entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data) {
+        return processBlockPlace(world, entityhuman, itemstack, x, y, z, id, data, true);
+    }
+
+    static boolean processBlockPlace(final World world, final EntityHuman entityhuman, final ItemStack itemstack, final int x, final int y, final int z, final int id, final int data, boolean callPostPlace) {
         org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(world, x, y, z);
 
         world.suppressPhysics = true;
         world.setRawTypeIdAndData(x, y, z, id, data);
 
-        org.bukkit.event.block.BlockPlaceEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockstate, x, y, z);
+        org.bukkit.event.block.BlockPlaceEvent event = CraftEventFactory.callBlockPlaceEvent(world, entityhuman, blockstate, x, y, z);
         if (event.isCancelled() || !event.canBuild()) {
             blockstate.update(true);
             world.suppressPhysics = false;
@@ -104,6 +110,10 @@ public class ItemBlock extends Item {
         if (block != null) {
             block.postPlace(world, x, y, z, entityhuman);
             block.postPlace(world, x, y, z, newData);
+
+            if (callPostPlace) {
+                CraftEventFactory.callBlockPostPlaceEvent(world, entityhuman, x, y, z);
+            }
 
             world.makeSound((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume1() + 1.0F) / 2.0F, block.stepSound.getVolume2() * 0.8F);
         }
