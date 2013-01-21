@@ -28,6 +28,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.entity.EntityTeleportEvent.TeleportCause;
 import org.bukkit.plugin.PluginManager;
 // CraftBukkit end
 
@@ -1754,7 +1755,8 @@ public abstract class Entity {
             Location exit = minecraftserver.getPlayerList().calculateTarget(enter, minecraftserver.getWorldServer(i));
 
             TravelAgent agent = (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().s();
-            EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);
+            TeleportCause cause = this.dimension == 1 || i == 1 ? TeleportCause.END_PORTAL : TeleportCause.NETHER_PORTAL;
+            EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent, cause);
             event.getEntity().getServer().getPluginManager().callEvent(event);
             if (event.isCancelled() || event.getTo() == null || !this.isAlive()) {
                 return;
