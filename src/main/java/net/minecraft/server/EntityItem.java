@@ -150,7 +150,7 @@ public class EntityItem extends Entity {
                 return entityitem.a(this, event); // CraftBukkit - forward event status
             } else if (itemstack1.count + itemstack.count > itemstack1.getMaxStackSize()) {
                 return false;
-             // CraftBukkit start - generate cancellable merge event
+            // CraftBukkit start - generate cancellable merge event
             } else if (event) {
                 ItemMergeEvent merge = new ItemMergeEvent((org.bukkit.entity.Item) this.getBukkitEntity(), (org.bukkit.entity.Item) entityitem.getBukkitEntity());
                 this.world.getServer().getPluginManager().callEvent(merge);
@@ -158,7 +158,7 @@ public class EntityItem extends Entity {
                     return false;
                 }
                 return this.a(entityitem, false); // verify nothing has changed from original comparison
-            // CraftBukkit end
+                // CraftBukkit end
             } else {
                 itemstack1.count += itemstack.count;
                 entityitem.pickupDelay = Math.max(entityitem.pickupDelay, this.pickupDelay);
