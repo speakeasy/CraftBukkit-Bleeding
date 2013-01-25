@@ -13,9 +13,11 @@ import net.minecraft.server.EntityEnderDragon;
 import net.minecraft.server.EntityEnderPearl;
 import net.minecraft.server.EntityLargeFireball;
 import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityPotion;
 import net.minecraft.server.EntitySmallFireball;
 import net.minecraft.server.EntitySnowball;
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.EntityThrownExpBottle;
 import net.minecraft.server.EntityWitherSkull;
 import net.minecraft.server.MobEffect;
 import net.minecraft.server.MobEffectList;
@@ -24,10 +26,12 @@ import net.minecraft.server.Packet42RemoveMobEffect;
 import org.apache.commons.lang.Validate;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftEntityEquipment;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
@@ -40,9 +44,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
@@ -286,8 +293,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         return effects;
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
+        return this.launchProjectile(projectile, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, ItemStack item) {
         net.minecraft.server.World world = ((CraftWorld) getWorld()).getHandle();
         net.minecraft.server.Entity launch = null;
 
@@ -299,6 +310,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             launch = new EntityEnderPearl(world, getHandle());
         } else if (Arrow.class.isAssignableFrom(projectile)) {
             launch = new EntityArrow(world, getHandle(), 1);
+        } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
+            Validate.notNull(item, "Must provide an ItemStack for thrown Potions");
+            Validate.isTrue(item.getType() == Material.POTION, "Provided ItemStack must be a Potion");
+            launch = new EntityPotion(world, getHandle(), CraftItemStack.asNMSCopy(item));
+        } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
+            launch = new EntityThrownExpBottle(world, getHandle());
         } else if (Fireball.class.isAssignableFrom(projectile)) {
             Location location = getEyeLocation();
             Vector direction = location.getDirection().multiply(10);
