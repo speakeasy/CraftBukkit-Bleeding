@@ -9,6 +9,8 @@ import java.util.Map;
 // CraftBukkit start
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.map.MapInitializeEvent;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.map.CraftMapView;
@@ -101,6 +103,11 @@ public class WorldMap extends WorldMapBase {
                 }
             }
         }
+
+        // CraftBukkit start
+        MapInitializeEvent event = new MapInitializeEvent(mapView, MapInitializeEvent.InitializeCause.LOAD);
+        org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
+        // CraftBukkit end
     }
 
     public void b(NBTTagCompound nbttagcompound) {

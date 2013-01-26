@@ -30,7 +30,7 @@ public class ItemWorldMap extends ItemWorldMapBase {
             world.a(s, (WorldMapBase) worldmap);
 
             // CraftBukkit start
-            MapInitializeEvent event = new MapInitializeEvent(worldmap.mapView);
+            MapInitializeEvent event = new MapInitializeEvent(worldmap.mapView, MapInitializeEvent.InitializeCause.CUSTOM);
             Bukkit.getServer().getPluginManager().callEvent(event);
             // CraftBukkit end
         }
@@ -252,7 +252,7 @@ public class ItemWorldMap extends ItemWorldMapBase {
             world.a("map_" + itemstack.getData(), (WorldMapBase) worldmap1);
 
             // CraftBukkit start
-            MapInitializeEvent event = new MapInitializeEvent(worldmap1.mapView);
+            MapInitializeEvent event = new MapInitializeEvent(worldmap1.mapView, MapInitializeEvent.InitializeCause.EXPAND);
             Bukkit.getServer().getPluginManager().callEvent(event);
             // CraftBukkit end
         }

@@ -21,7 +21,7 @@ public class ItemMapEmpty extends ItemWorldMapBase {
         worldmap.map = (byte) ((WorldServer) world).dimension; // CraftBukkit - use bukkit dimension
         worldmap.c();
 
-        org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(worldmap.mapView)); // CraftBukkit
+        org.bukkit.craftbukkit.event.CraftEventFactory.callEvent(new org.bukkit.event.server.MapInitializeEvent(worldmap.mapView, org.bukkit.event.server.MapInitializeEvent.InitializeCause.CREATE)); // CraftBukkit
 
         --itemstack.count;
         if (itemstack.count <= 0) {

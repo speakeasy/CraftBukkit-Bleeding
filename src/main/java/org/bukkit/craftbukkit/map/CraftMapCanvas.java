@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.map;
 
-import java.awt.Image;
-import java.util.Arrays;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapFont;
 import org.bukkit.map.MapFont.CharacterSprite;
 import org.bukkit.map.MapPalette;
+
+import java.awt.Image;
+import java.util.Arrays;
 
 public class CraftMapCanvas implements MapCanvas {
 
@@ -62,10 +63,16 @@ public class CraftMapCanvas implements MapCanvas {
     }
 
     public void drawImage(int x, int y, Image image) {
+        drawImage(x, y, image, false);
+    }
+
+    public void drawImage(int x, int y, Image image, boolean alpha) {
+        int w = image.getWidth(null), h = image.getHeight(null);
         byte[] bytes = MapPalette.imageToBytes(image);
-        for (int x2 = 0; x2 < image.getWidth(null); ++x2) {
-            for (int y2 = 0; y2 < image.getHeight(null); ++y2) {
-                setPixel(x + x2, y + y2, bytes[y2 * image.getWidth(null) + x2]);
+        for (int x2 = 0; x2 < w; ++x2) {
+            for (int y2 = 0; y2 < h; ++y2) {
+                if (alpha && bytes[y2 * w + x2] == 0) continue;
+                setPixel(x + x2, y + y2, bytes[y2 *w + x2]);
             }
         }
     }
