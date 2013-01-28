@@ -358,9 +358,9 @@ public abstract class PlayerList {
             }
 
             if (location == null) {
+                // use world default spawn (code modeled after vanilla EntityPlayer constructor which would be used in vanilla moveToWorld)
                 cworld = (CraftWorld) this.server.server.getWorlds().get(0);
-                chunkcoordinates = cworld.getHandle().getSpawn();
-                location = new Location(cworld, chunkcoordinates.x + 0.5, chunkcoordinates.y, chunkcoordinates.z + 0.5);
+                location = entityplayer.defaultSpawn(this.server, cworld.getHandle());
             }
 
             Player respawnPlayer = this.cserver.getPlayer(entityplayer1);
@@ -437,11 +437,24 @@ public abstract class PlayerList {
         Location enter = entityplayer.getBukkitEntity().getLocation();
         Location exit = null;
         boolean useTravelAgent = false; // don't use agent for custom worlds or return from THE_END
+        boolean bedProblem = false;
         if (exitWorld != null) {
             if ((cause == TeleportCause.END_PORTAL) && (i == 0)) {
-                // THE_END -> NORMAL; use bed if available, otherwise default spawn
-                exit = ((CraftPlayer) entityplayer.getBukkitEntity()).getBedSpawnLocation();
-                if (exit == null) exit = exitWorld.getWorld().getSpawnLocation();
+                // THE_END -> NORMAL; use bed if available (code modeled after vanilla moveToWorld)
+                ChunkCoordinates chunkcoordinates = entityplayer.getBed();
+                CraftWorld spawnWorld = (CraftWorld) this.server.server.getWorld(entityplayer.spawnWorld);
+                if (spawnWorld != null && chunkcoordinates != null && !spawnWorld.equals(enter.getWorld())) { // skip using bed in THE_END for possibility of CraftBukkit spawnpoint command setting bed in THE_END
+                    ChunkCoordinates chunkcoordinates1 = EntityHuman.getBed(spawnWorld.getHandle(), chunkcoordinates, entityplayer.isRespawnForced());
+                    if (chunkcoordinates1 != null) {
+                        exit = new Location(spawnWorld, chunkcoordinates1.x + 0.5, chunkcoordinates1.y, chunkcoordinates1.z + 0.5);
+                    } else {
+                        bedProblem = true;
+                    }
+                }
+                if (exit == null) {
+                    // use world default spawn (code modeled after vanilla EntityPlayer constructor which would be used in vanilla moveToWorld)
+                    exit = entityplayer.defaultSpawn(this.server, exitWorld);
+                }
             } else {
                 // NORMAL <-> NETHER or NORMAL -> THE_END
                 exit = this.calculateTarget(enter, exitWorld);
@@ -466,6 +479,7 @@ public abstract class PlayerList {
         exitWorld.s().adjustExit(entityplayer, exit, velocity);
         exitWorld.chunkProviderServer.forceChunkLoad = before;
 
+        if (bedProblem) entityplayer.playerConnection.sendPacket(new Packet70Bed(0, 0));
         this.moveToWorld(entityplayer, exitWorld.dimension, true, exit);
         if (entityplayer.motX != velocity.getX() || entityplayer.motY != velocity.getY() || entityplayer.motZ != velocity.getZ()) {
             entityplayer.getBukkitEntity().setVelocity(velocity);

@@ -10,6 +10,7 @@ import java.util.List;
 
 // CraftBukkit start
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
@@ -55,6 +56,20 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         playerinteractmanager.player = this;
         this.playerInteractManager = playerinteractmanager;
         this.cq = minecraftserver.getPlayerList().o();
+        // CraftBukkit start - split default spawn positioning logic out
+        Location spawn = this.defaultSpawn(minecraftserver, world);
+        this.setPositionRotation(spawn.getX(), spawn.getY(), spawn.getZ(), spawn.getYaw(),spawn.getPitch());
+        // CraftBukkit end
+        this.server = minecraftserver;
+        this.X = 0.0F;
+        this.name = s;
+        this.height = 0.0F;
+        this.displayName = this.name; // CraftBukkit
+        this.listName = this.name; // CraftBukkit
+        this.canPickUpLoot = true; // CraftBukkit
+    }
+    // CraftBukkit start - create accessible default spawn positioning logic
+    public Location defaultSpawn(MinecraftServer minecraftserver, World world) {
         ChunkCoordinates chunkcoordinates = world.getSpawn();
         int i = chunkcoordinates.x;
         int j = chunkcoordinates.z;
@@ -68,15 +83,9 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
             k = world.i(i, j);
         }
 
-        this.setPositionRotation((double) i + 0.5D, (double) k, (double) j + 0.5D, 0.0F, 0.0F);
-        this.server = minecraftserver;
-        this.X = 0.0F;
-        this.name = s;
-        this.height = 0.0F;
-        this.displayName = this.name; // CraftBukkit
-        this.listName = this.name; // CraftBukkit
-        this.canPickUpLoot = true; // CraftBukkit
+        return new Location(world.getWorld(), (double) i + 0.5D, (double) k, (double) j + 0.5D, 0.0F, 0.0F);
     }
+    // CraftBukkit end
 
     public void a(NBTTagCompound nbttagcompound) {
         super.a(nbttagcompound);
