@@ -22,6 +22,7 @@ import org.apache.commons.lang.NotImplementedException;
 
 import org.bukkit.*;
 import org.bukkit.Achievement;
+import org.bukkit.BanList;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.World;
@@ -498,18 +499,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public boolean isBanned() {
-        return server.getHandle().getNameBans().isBanned(getName().toLowerCase());
+        return server.getBanList(BanList.Type.PLAYER).isBanned(getName());
     }
 
     public void setBanned(boolean value) {
         if (value) {
-            BanEntry entry = new BanEntry(getName().toLowerCase());
-            server.getHandle().getNameBans().add(entry);
+            server.getBanList(BanList.Type.PLAYER).addBan(getName(), null, null, null);
         } else {
-            server.getHandle().getNameBans().remove(getName().toLowerCase());
+            server.getBanList(BanList.Type.PLAYER).unban(getName());
         }
-
-        server.getHandle().getNameBans().save();
     }
 
     public boolean isWhitelisted() {

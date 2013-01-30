@@ -18,7 +18,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.server.BanEntry;
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.Convertable;
 import net.minecraft.server.ConvertProgressUpdater;
@@ -1072,15 +1071,21 @@ public final class CraftServer implements Server {
         return result;
     }
 
+    public org.bukkit.BanList getBanList(org.bukkit.BanList.Type type) {
+        if (type == org.bukkit.BanList.Type.IP) {
+            return new CraftBanList(playerList.getIPBans());
+        } else {
+            return new CraftBanList(playerList.getNameBans());
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public Set<String> getIPBans() {
-        return playerList.getIPBans().getEntries().keySet();
+        return new HashSet<String>(playerList.getIPBans().getEntries().keySet());
     }
 
     public void banIP(String address) {
-        BanEntry entry = new BanEntry(address);
-        playerList.getIPBans().add(entry);
-        playerList.getIPBans().save();
+        this.getBanList(org.bukkit.BanList.Type.IP).addBan(address, null, null, null);
     }
 
     public void unbanIP(String address) {
