@@ -380,7 +380,7 @@ public class ContainerAnvil extends Container {
             return bukkitEntity;
         }
 
-        CraftInventory inventory = new CraftInventoryAnvil(this.g);
+        CraftInventory inventory = new CraftInventoryAnvil(this.g, this.f);
         bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
         return bukkitEntity;
     }

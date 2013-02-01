@@ -76,7 +76,7 @@ public class CraftInventory implements Inventory {
     }
 
     public void setItem(int index, ItemStack item) {
-        getInventory().setItem(index, ((item == null || item.getTypeId() == 0) ? null : CraftItemStack.asNMSCopy(item)));
+        getInventory().setItem(index, CraftItemStack.asNMSCopy(item));
     }
 
     public boolean contains(int materialId) {
