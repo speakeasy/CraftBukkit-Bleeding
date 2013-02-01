@@ -51,7 +51,6 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
 
         int primaryEffectId = primaryEffect == null ? 0 : primaryEffect.getId();
         int secondaryEffectId = secondaryEffect == null ? 0 : secondaryEffect.getId();
-        // TODO: add these into TileEntityBeacon from mc-dev
         beacon.setPrimaryEffect(primaryEffectId);
         beacon.setSecondaryEffect(secondaryEffectId);
 

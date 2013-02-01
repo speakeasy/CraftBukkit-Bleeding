@@ -248,4 +248,14 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     public void startOpen() {}
 
     public void f() {}
+
+    // CraftBukkit start - simple setters for potion effects
+    public void setPrimaryEffect(int id) {
+        this.f = id;
+    }
+
+    public void setSecondaryEffect(int id) {
+        this.g = id;
+    }
+    // CraftBukkit end
 }
