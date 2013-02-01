@@ -127,10 +127,10 @@ public class EntityItem extends Entity {
 
     public boolean a(EntityItem entityitem) {
         // CraftBukkit start - enable merge event to verify items have not changed after event processing
-        return this.a(entityitem, true);
+        return this.merge(entityitem, true);
     }
 
-    public boolean a(EntityItem entityitem, boolean event) {
+    public boolean merge(EntityItem entityitem, boolean event) {
         // CraftBukkit end
         if (entityitem == this) {
             return false;
@@ -147,7 +147,7 @@ public class EntityItem extends Entity {
             } else if (itemstack1.getItem().l() && itemstack1.getData() != itemstack.getData()) {
                 return false;
             } else if (itemstack1.count < itemstack.count) {
-                return entityitem.a(this, event); // CraftBukkit - forward event status
+                return entityitem.merge(this, event); // CraftBukkit - forward event status
             } else if (itemstack1.count + itemstack.count > itemstack1.getMaxStackSize()) {
                 return false;
             // CraftBukkit start - generate cancellable merge event
@@ -157,7 +157,7 @@ public class EntityItem extends Entity {
                 if (merge.isCancelled()) {
                     return false;
                 }
-                return this.a(entityitem, false); // verify nothing has changed from original comparison
+                return this.merge(entityitem, false); // verify nothing has changed from original comparison
                 // CraftBukkit end
             } else {
                 itemstack1.count += itemstack.count;
