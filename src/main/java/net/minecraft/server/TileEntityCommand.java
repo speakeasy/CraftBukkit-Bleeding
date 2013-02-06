@@ -11,7 +11,7 @@ import com.google.common.base.Joiner;
 
 public class TileEntityCommand extends TileEntity implements ICommandListener {
 
-    private String a = "";
+    public String a = ""; // CraftBukkit - private -> public
     private final org.bukkit.command.BlockCommandSender sender;
 
     public TileEntityCommand() {
