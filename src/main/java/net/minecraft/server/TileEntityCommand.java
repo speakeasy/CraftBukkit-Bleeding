@@ -81,7 +81,11 @@ public class TileEntityCommand extends TileEntity implements ICommandListener {
 
                 // now dispatch all of the commands we ended up with
                 for (int i = 0; i < commandList.size(); i++) {
-                    commandMap.dispatch(sender, commandList.get(i));
+                    String cmd = commandList.get(i);
+                    if (cmd == null) {
+                        continue;
+                    }
+                    commandMap.dispatch(sender, cmd);
                 }
                 // CraftBukkit end
             }
