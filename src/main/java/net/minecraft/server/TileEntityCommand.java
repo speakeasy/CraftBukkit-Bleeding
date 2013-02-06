@@ -3,6 +3,9 @@ package net.minecraft.server;
 // CraftBukkit start
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.bukkit.event.block.CommandBlockCommandEvent;
+
 import com.google.common.base.Joiner;
 // CraftBukkit end
 
@@ -68,9 +71,17 @@ public class TileEntityCommand extends TileEntity implements ICommandListener {
                     }
                 }
 
+                // Build the commands
+                ArrayList<String> commandList = new ArrayList<String>();
+                for(int i = 0; i < commands.size(); i++) {
+                    commandList.add(joiner.join(Arrays.asList(commands.get(i))));
+                }
+                CommandBlockCommandEvent event = new CommandBlockCommandEvent(sender, commandList);
+                minecraftserver.server.getPluginManager().callEvent(event);
+
                 // now dispatch all of the commands we ended up with
-                for (int i = 0; i < commands.size(); i++) {
-                    commandMap.dispatch(sender, joiner.join(Arrays.asList(commands.get(i))));
+                for (int i = 0; i < commandList.size(); i++) {
+                    commandMap.dispatch(sender, commandList.get(i));
                 }
                 // CraftBukkit end
             }
