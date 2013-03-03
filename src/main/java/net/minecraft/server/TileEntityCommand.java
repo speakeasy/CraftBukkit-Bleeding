@@ -70,7 +70,12 @@ public class TileEntityCommand extends TileEntity implements ICommandListener {
 
                 // now dispatch all of the commands we ended up with
                 for (int i = 0; i < commands.size(); i++) {
-                    commandMap.dispatch(sender, joiner.join(Arrays.asList(commands.get(i))));
+                    String[] cmd = commands.get(i);
+                    try {
+                        commandMap.dispatch(sender, joiner.join(Arrays.asList(cmd)));
+                    } catch (org.bukkit.command.CommandException ex) {
+                        org.bukkit.Bukkit.getServer().getLogger().log(java.util.logging.Level.WARNING, "Unexpected exception while parsing command block command \"" + cmd[0] + '"', ex);
+                    }
                 }
                 // CraftBukkit end
             }
