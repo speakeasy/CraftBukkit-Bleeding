@@ -306,6 +306,67 @@ public class CraftInventory implements Inventory {
 
                     int amount = item.getAmount();
                     int partialAmount = partialItem.getAmount();
+                    int maxAmount = getMaxItemStack();
+
+                    // Check if it fully fits
+                    if (amount + partialAmount <= maxAmount) {
+                        partialItem.setAmount(amount + partialAmount);
+                        break;
+                    }
+
+                    // It fits partially
+                    partialItem.setAmount(maxAmount);
+                    item.setAmount(amount + partialAmount - maxAmount);
+                }
+            }
+        }
+        return leftover;
+    }
+
+    public HashMap<Integer, ItemStack> addItemSplit(ItemStack... items) {
+        Validate.noNullElements(items, "Item cannot be null");
+        HashMap<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
+
+        /* TODO: some optimization
+         *  - Create a 'firstPartial' with a 'fromIndex'
+         *  - Record the lastPartial per Material
+         *  - Cache firstEmpty result
+         */
+
+        for (int i = 0; i < items.length; i++) {
+            ItemStack item = items[i];
+            while (true) {
+                // Do we already have a stack of it?
+                int firstPartial = firstPartial(item);
+
+                // Drat! no partial stack
+                if (firstPartial == -1) {
+                    // Find a free spot!
+                    int firstFree = firstEmpty();
+
+                    if (firstFree == -1) {
+                        // No space at all!
+                        leftover.put(i, item);
+                        break;
+                    } else {
+                        // More than a single stack!
+                        if (item.getAmount() > item.getMaxStackSize()) {
+                            CraftItemStack stack = CraftItemStack.asCraftCopy(item);
+                            stack.setAmount(item.getMaxStackSize());
+                            setItem(firstFree, stack);
+                            item.setAmount(item.getAmount() - item.getMaxStackSize());
+                        } else {
+                            // Just store it
+                            setItem(firstFree, item);
+                            break;
+                        }
+                    }
+                } else {
+                    // So, apparently it might only partially fit, well lets do just that
+                    ItemStack partialItem = getItem(firstPartial);
+
+                    int amount = item.getAmount();
+                    int partialAmount = partialItem.getAmount();
                     int maxAmount = partialItem.getMaxStackSize();
 
                     // Check if it fully fits
