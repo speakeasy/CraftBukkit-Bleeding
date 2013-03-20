@@ -131,16 +131,16 @@ public class InventoryAddTest extends AbstractTestingBase {
         assertThat(leftover, is(Collections.EMPTY_MAP));
     }
 
+    // Now, compare to Ender Pearls
+
     @Test
     public void testAdd64OfMax16() {
         TileEntityChest nmsinv = new TileEntityChest();
         Inventory bukkitinv = new CraftInventory(nmsinv);
-        bukkitinv.setItem(0, new ItemStack(Material.DIRT, 10));
-        HashMap<Integer, ItemStack> leftover = bukkitinv.addItem(new ItemStack(Material.DIRT, 100));
+        HashMap<Integer, ItemStack> leftover = bukkitinv.addItem(new ItemStack(Material.ENDER_PEARL, 64));
 
         ItemStack[] expected = emptyChest.clone();
-        expected[0] = new ItemStack(Material.DIRT, 64);
-        expected[1] = new ItemStack(Material.DIRT, 46);
+        expected[0] = new ItemStack(Material.ENDER_PEARL, 64);
 
         assertThat(bukkitinv.getContents(), is(expected));
         assertThat(leftover, is(Collections.EMPTY_MAP));
