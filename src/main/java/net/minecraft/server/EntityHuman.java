@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -687,8 +688,21 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
     }
 
     public boolean a(EntityHuman entityhuman) {
-        ScoreboardTeam scoreboardteam = this.getScoreboardTeam();
-        ScoreboardTeam scoreboardteam1 = entityhuman.getScoreboardTeam();
+        // CraftBukkit start - Change to check player's scoreboard team
+        Scoreboard scoreboard;
+        if (this instanceof EntityPlayer) {
+            scoreboard = (this.getScoreboard().getPlayerBoard(((EntityPlayer) this).getBukkitEntity())).getHandle();
+        } else {
+            scoreboard = (this.getScoreboard().getMainScoreboard()).getHandle();
+        }
+        ScoreboardTeam scoreboardteam = scoreboard.getPlayerTeam(this.name);
+        if (entityhuman instanceof EntityPlayer) {
+            scoreboard = (this.getScoreboard().getPlayerBoard(((EntityPlayer) entityhuman).getBukkitEntity())).getHandle();
+        } else {
+            scoreboard = (this.getScoreboard().getMainScoreboard()).getHandle();
+        }
+        ScoreboardTeam scoreboardteam1 = scoreboard.getPlayerTeam(entityhuman.name);
+        // CraftBukkit end
 
         return scoreboardteam != scoreboardteam1 ? true : (scoreboardteam != null ? scoreboardteam.allowFriendlyFire() : true);
     }
@@ -1485,12 +1499,12 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
         return !this.abilities.isFlying;
     }
 
-    public Scoreboard getScoreboard() {
+    public CraftScoreboardManager getScoreboard() { // CraftBukkit - Scoreboard -> CraftScoreboardManager
         return this.world.getScoreboard();
     }
 
     public ScoreboardTeam getScoreboardTeam() {
-        return this.getScoreboard().getPlayerTeam(this.name);
+        return (this.getScoreboard().getMainScoreboard()).getHandle().getPlayerTeam(this.name); // CraftBukkit - Get main scoreboard team. Watch what calls this method.
     }
 
     public String getScoreboardDisplayName() {

@@ -50,6 +50,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
+import org.bukkit.scoreboard.Scoreboard;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -973,5 +974,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void resetMaxHealth() {
         super.resetMaxHealth();
         getHandle().triggerHealthUpdate();
+    }
+
+    public Scoreboard getScoreboard() {
+        return this.server.getScoreboardManager().getPlayerBoard(this);
+    }
+
+    public void setScoreboard(Scoreboard scoreboard) {
+        Validate.notNull(scoreboard, "Scoreboard cannot be null");
+        this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
     }
 }

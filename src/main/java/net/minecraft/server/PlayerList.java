@@ -95,7 +95,7 @@ public abstract class PlayerList {
         playerconnection.sendPacket(new Packet6SpawnPosition(chunkcoordinates.x, chunkcoordinates.y, chunkcoordinates.z));
         playerconnection.sendPacket(new Packet202Abilities(entityplayer.abilities));
         playerconnection.sendPacket(new Packet16BlockItemSwitch(entityplayer.inventory.itemInHandIndex));
-        this.a((ScoreboardServer) worldserver.getScoreboard(), entityplayer);
+        this.a((ScoreboardServer) (worldserver.getScoreboard().getMainScoreboard()).getHandle(), entityplayer); // CraftBukkit - Scoreboard manager. Get main scoreboard.
         this.b(entityplayer, worldserver);
         // this.sendAll(new Packet3Chat(EnumChatFormat.YELLOW + entityplayer.getScoreboardDisplayName() + EnumChatFormat.YELLOW + " joined the game.")); // CraftBukkit - handled in event
         this.c(entityplayer);
@@ -127,7 +127,7 @@ public abstract class PlayerList {
         }
     }
 
-    protected void a(ScoreboardServer scoreboardserver, EntityPlayer entityplayer) {
+    public void a(ScoreboardServer scoreboardserver, EntityPlayer entityplayer) { // CraftBukkit - protected -> public
         HashSet hashset = new HashSet();
         Iterator iterator = scoreboardserver.getTeams().iterator();
 
@@ -278,6 +278,7 @@ public abstract class PlayerList {
                 entityplayer1.playerConnection.sendPacket(packet);
             }
         }
+        this.cserver.getScoreboardManager().removePlayer(this.cserver.getPlayer(entityplayer));
 
         return playerQuitEvent.getQuitMessage();
         // CraftBukkit end
@@ -844,7 +845,7 @@ public abstract class PlayerList {
                         s1 = s1.substring(1);
                     }
 
-                    ScoreboardTeam scoreboardteam = entityplayer.getScoreboardTeam();
+                    ScoreboardTeam scoreboardteam = ((CraftWorld) this.cserver.getWorlds().get(0)).getHandle().getScoreboard().getMainScoreboard().getHandle().getPlayerTeam(entityplayer.getName()); // CraftBukkit - Use main scoreboard for command blocks
                     String s2 = scoreboardteam == null ? "" : scoreboardteam.getName();
 
                     if (flag1 == s1.equalsIgnoreCase(s2)) {
@@ -903,14 +904,14 @@ public abstract class PlayerList {
                     s = s.substring(0, s.length() - 4);
                 }
 
-                Scoreboard scoreboard = entityhuman.getScoreboard();
+                Scoreboard scoreboard = ((CraftWorld) this.cserver.getWorlds().get(0)).getHandle().getScoreboard().getMainScoreboard().getHandle(); // CraftBukkit - Use main scoreboard for command blocks
                 ScoreboardObjective scoreboardobjective = scoreboard.getObjective(s);
 
                 if (scoreboardobjective == null) {
                     return false;
                 }
 
-                ScoreboardScore scoreboardscore = entityhuman.getScoreboard().getPlayerScoreForObjective(entityhuman.getLocalizedName(), scoreboardobjective);
+                ScoreboardScore scoreboardscore = scoreboard.getPlayerScoreForObjective(entityhuman.getLocalizedName(), scoreboardobjective); // CraftBukkit - Use main scoreboard for command blocks
 
                 i = scoreboardscore.getScore();
                 if (i < ((Integer) entry.getValue()).intValue() && flag) {

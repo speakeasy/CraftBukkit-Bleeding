@@ -30,4 +30,10 @@ public class ScoreboardObjective {
         this.d = s;
         this.a.handleObjectiveChanged(this);
     }
+
+    // CraftBukkit start - Get scoreboard
+    public Scoreboard getScoreboard() {
+        return this.a;
+    }
+    // CraftBukkit end
 }
