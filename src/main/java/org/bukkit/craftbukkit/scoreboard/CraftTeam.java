@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.server.ScoreboardTeam;
 
 public final class CraftTeam implements Team {
-
     private final Scoreboard scoreboard;
     private final ScoreboardTeam team;
 
@@ -33,9 +32,7 @@ public final class CraftTeam implements Team {
 
     public void setDisplayName(String displayName) {
         Validate.notNull(displayName, "Display name cannot be null");
-        if (displayName.length() > 32) {
-            throw new IllegalArgumentException("Display name cannot be longer than 32 characters");
-        }
+        Validate.isTrue(displayName.length() <= 32, "Display name '" + displayName + "' is longer than the limit of 32 characters");
         team.setDisplayName(displayName);
     }
 
@@ -45,9 +42,7 @@ public final class CraftTeam implements Team {
 
     public void setPrefix(String prefix) {
         Validate.notNull(prefix, "Prefix cannot be null");
-        if (prefix.length() > 16) {
-            throw new IllegalArgumentException("Prefix cannot be longer than 16 characters");
-        }
+        Validate.isTrue(prefix.length() <= 32, "Prefix '" + prefix + "' is longer than the limit of 32 characters");
         team.setPrefix(prefix);
     }
 
@@ -57,9 +52,7 @@ public final class CraftTeam implements Team {
 
     public void setSuffix(String suffix) {
         Validate.notNull(suffix, "Suffix cannot be null");
-        if (suffix.length() > 16) {
-            throw new IllegalArgumentException("Suffix cannot be longer than 16 characters");
-        }
+        Validate.isTrue(suffix.length() <= 32, "Suffix '" + suffix + "' is longer than the limit of 32 characters");
         team.setSuffix(suffix);
     }
 

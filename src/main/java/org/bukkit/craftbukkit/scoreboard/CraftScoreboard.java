@@ -22,7 +22,6 @@ import org.bukkit.scoreboard.Team;
 import com.google.common.collect.ImmutableSet;
 
 public final class CraftScoreboard implements Scoreboard {
-
     private final ScoreboardServer board;
 
     CraftScoreboard(ScoreboardServer board) {
@@ -32,6 +31,8 @@ public final class CraftScoreboard implements Scoreboard {
     public Objective registerObjective(String name, Criteria criteria) {
         Validate.notNull(name, "Objective name cannot be null");
         Validate.notNull(criteria, "Criteria cannot be null");
+        Validate.isTrue(name.length() <= 16, "The name '" + name + "' is longer than the limit of 16 characters");
+        Validate.isTrue(board.getObjective(name) == null, "An objective of name '" + name + "' already exists");
         return new CraftObjective(this, board.registerObjective(name, nmsCriteriaToBukkit(criteria)));
     }
 
@@ -68,12 +69,12 @@ public final class CraftScoreboard implements Scoreboard {
 
     public Score getScore(Objective objective, OfflinePlayer player) {
         Validate.notNull(objective, "Objective cannot be null");
-        Validate.notNull(player, "player cannot be null");
+        Validate.notNull(player, "OfflinePlayer cannot be null");
         return new CraftScore(this, board.getPlayerScoreForObjective(player.getName(), ((CraftObjective) objective).getHandle()));
     }
 
     public Set<Score> getScores(OfflinePlayer player) {
-        Validate.notNull(player, "player cannot be null");
+        Validate.notNull(player, "OfflinePlayer cannot be null");
         Set<Score> scores = new HashSet<Score>();
         for (Object o : board.getPlayerObjectives(player.getName()).values()) {
             if (o != null && o instanceof ScoreboardScore) {
@@ -84,18 +85,18 @@ public final class CraftScoreboard implements Scoreboard {
     }
 
     public void resetScores(OfflinePlayer player) {
-        Validate.notNull(player, "player cannot be null");
+        Validate.notNull(player, "OfflinePlayer cannot be null");
         board.resetPlayerScores(player.getName());
     }
 
     public Team getPlayerTeam(OfflinePlayer player) {
-        Validate.notNull(player, "player cannot be null");
+        Validate.notNull(player, "OfflinePlayer cannot be null");
         ScoreboardTeam team = board.getTeam(player.getName());
         return team == null ? null : new CraftTeam(this, team);
     }
 
     public void setPlayerTeam(OfflinePlayer player, Team team) {
-        Validate.notNull(player, "player cannot be null");
+        Validate.notNull(player, "OfflinePlayer cannot be null");
         board.addPlayerToTeam(player.getName(), team == null ? null : ((CraftTeam) team).getHandle());
     }
 
@@ -117,9 +118,8 @@ public final class CraftScoreboard implements Scoreboard {
 
     public Team registerTeam(String name) {
         Validate.notNull(name, "Team name cannot be null");
-        if (board.getTeam(name) != null) {
-            throw new IllegalArgumentException("Team name '" + name + "' is already in use");
-        }
+        Validate.isTrue(name.length() <= 16, "Team name '" + name + "' is longer than the limit of 16 characters");
+        Validate.isTrue(board.getTeam(name) == null, "Team name '" + name + "' is already in use");
         return new CraftTeam(this, board.createTeam(name));
     }
 

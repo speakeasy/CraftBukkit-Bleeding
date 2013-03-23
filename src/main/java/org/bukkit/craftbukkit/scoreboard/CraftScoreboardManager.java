@@ -25,7 +25,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 public final class CraftScoreboardManager implements ScoreboardManager {
-
     private final CraftScoreboard mainScoreboard;
     private final MinecraftServer server;
     private final Set<CraftScoreboard> scoreboards = new HashSet<CraftScoreboard>();
@@ -55,9 +54,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
 
     public void unregisterScoreboard(Scoreboard scoreboard) {
         Validate.notNull(scoreboard, "Scoreboard may not be null");
-        if (scoreboard.equals(mainScoreboard)) {
-            throw new IllegalArgumentException("You may not unregister the main scoreboard");
-        }
+        Validate.isTrue(!scoreboard.equals(mainScoreboard), "The main scoreboard cannot be unregistered");
         scoreboards.remove(scoreboard);
     }
 
@@ -80,9 +77,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     }
 
     public void setPlayerBoard(CraftPlayer player, Scoreboard scoreboard) {
-        if (!scoreboards.contains(scoreboard)) {
-            throw new IllegalArgumentException("Scoreboard is unregistered!");
-        }
+        Validate.isTrue(scoreboards.contains(scoreboard), "Cannot set player scoreboard to an unregistered Scoreboard");
         ScoreboardServer oldboard = getPlayerBoard(player).getHandle();
         if (oldboard.equals(scoreboard)) {
             return;

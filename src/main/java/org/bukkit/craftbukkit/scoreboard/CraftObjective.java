@@ -7,7 +7,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 public final class CraftObjective implements Objective {
-
     private final Scoreboard scoreboard;
     private final ScoreboardObjective objective;
     private final Criteria criteria;
@@ -28,9 +27,7 @@ public final class CraftObjective implements Objective {
 
     public void setDisplayName(String displayName) {
         Validate.notNull(displayName, "Display name cannot be null");
-        if (displayName.length() > 32) {
-            throw new IllegalArgumentException("Display name cannot be longer than 32 characters");
-        }
+        Validate.isTrue(displayName.length() <= 32, "Display name '" + displayName + "' is longer than the limit of 32 characters");
         objective.setDisplayName(displayName);
     }
 

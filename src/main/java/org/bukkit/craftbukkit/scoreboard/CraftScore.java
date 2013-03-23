@@ -9,7 +9,6 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
 public final class CraftScore implements Score {
-
     private final Scoreboard scoreboard;
     private final ScoreboardScore score;
 
