@@ -1361,6 +1361,6 @@ public final class CraftServer implements Server {
     }
 
     public CraftScoreboardManager getScoreboardManager() {
-        return ((CraftWorld)this.getWorlds().get(0)).getHandle().getScoreboard();
+        return ((CraftWorld)getWorlds().get(0)).getHandle().getScoreboard();
     }
 }

@@ -32,50 +32,50 @@ public final class CraftScoreboard implements Scoreboard {
     public Objective registerObjective(String name, Criteria criteria) {
         Validate.notNull(name, "Objective name cannot be null");
         Validate.notNull(criteria, "Criteria cannot be null");
-        return new CraftObjective(this, this.board.registerObjective(name, this.nmsCriteriaToBukkit(criteria)));
+        return new CraftObjective(this, board.registerObjective(name, nmsCriteriaToBukkit(criteria)));
     }
 
     public Objective getObjective(String name) {
         Validate.notNull(name, "Objective name cannot be null");
-        ScoreboardObjective objective = this.board.getObjective(name);
+        ScoreboardObjective objective = board.getObjective(name);
         return objective == null ? null : new CraftObjective(this, objective);
     }
 
     public Set<Objective> getObjectivesByCriteria(Criteria criteria) {
         Validate.notNull(criteria, "Criteria cannot be null");
-        return this.nmsObjectivesToSet(this.board.getObjectivesForCriteria(this.nmsCriteriaToBukkit(criteria)));
+        return nmsObjectivesToSet(board.getObjectivesForCriteria(nmsCriteriaToBukkit(criteria)));
     }
 
     public Set<Objective> getObjectives() {
-        return this.nmsObjectivesToSet(this.board.getObjectives());
+        return nmsObjectivesToSet(board.getObjectives());
     }
 
     public void unregisterObjective(Objective objective) {
         Validate.notNull(objective, "Objective cannot be null");
-        this.board.unregisterObjective(((CraftObjective) objective).getHandle());
+        board.unregisterObjective(((CraftObjective) objective).getHandle());
     }
 
     public void setDisplaySlot(DisplaySlot slot, Objective objective) {
         Validate.notNull(slot, "Display slot cannot be null");
-        this.board.setDisplaySlot(net.minecraft.server.Scoreboard.getSlotForName(slot.getCommandName()), objective == null ? null : ((CraftObjective) objective).getHandle());
+        board.setDisplaySlot(net.minecraft.server.Scoreboard.getSlotForName(slot.getCommandName()), objective == null ? null : ((CraftObjective) objective).getHandle());
     }
 
     public Objective getDisplaySlot(DisplaySlot slot) {
         Validate.notNull(slot, "Display slot cannot be null");
-        ScoreboardObjective objective = this.board.getObjectiveForSlot(net.minecraft.server.Scoreboard.getSlotForName(slot.getCommandName()));
+        ScoreboardObjective objective = board.getObjectiveForSlot(net.minecraft.server.Scoreboard.getSlotForName(slot.getCommandName()));
         return objective == null ? null : new CraftObjective(this, objective);
     }
 
     public Score getScore(Objective objective, OfflinePlayer player) {
         Validate.notNull(objective, "Objective cannot be null");
         Validate.notNull(player, "player cannot be null");
-        return new CraftScore(this, this.board.getPlayerScoreForObjective(player.getName(), ((CraftObjective) objective).getHandle()));
+        return new CraftScore(this, board.getPlayerScoreForObjective(player.getName(), ((CraftObjective) objective).getHandle()));
     }
 
     public Set<Score> getScores(OfflinePlayer player) {
         Validate.notNull(player, "player cannot be null");
         Set<Score> scores = new HashSet<Score>();
-        for (Object o : this.board.getPlayerObjectives(player.getName()).values()) {
+        for (Object o : board.getPlayerObjectives(player.getName()).values()) {
             if (o != null && o instanceof ScoreboardScore) {
                 scores.add(new CraftScore(this, (ScoreboardScore) o));
             }
@@ -85,29 +85,29 @@ public final class CraftScoreboard implements Scoreboard {
 
     public void resetScores(OfflinePlayer player) {
         Validate.notNull(player, "player cannot be null");
-        this.board.resetPlayerScores(player.getName());
+        board.resetPlayerScores(player.getName());
     }
 
     public Team getPlayerTeam(OfflinePlayer player) {
         Validate.notNull(player, "player cannot be null");
-        ScoreboardTeam team = this.board.getTeam(player.getName());
+        ScoreboardTeam team = board.getTeam(player.getName());
         return team == null ? null : new CraftTeam(this, team);
     }
 
     public void setPlayerTeam(OfflinePlayer player, Team team) {
         Validate.notNull(player, "player cannot be null");
-        this.board.addPlayerToTeam(player.getName(), team == null ? null : ((CraftTeam) team).getHandle());
+        board.addPlayerToTeam(player.getName(), team == null ? null : ((CraftTeam) team).getHandle());
     }
 
     public Team getTeam(String teamName) {
         Validate.notNull(teamName, "Team name cannot be null");
-        ScoreboardTeam team = this.board.getTeam(teamName);
+        ScoreboardTeam team = board.getTeam(teamName);
         return team == null ? null : new CraftTeam(this, team);
     }
 
     public Set<Team> getTeams() {
         Set<Team> teams = new HashSet<Team>();
-        for (Object o : this.board.getTeams()) {
+        for (Object o : board.getTeams()) {
             if (o != null && o instanceof ScoreboardTeam) {
                 teams.add(new CraftTeam(this, (ScoreboardTeam) o));
             }
@@ -117,20 +117,20 @@ public final class CraftScoreboard implements Scoreboard {
 
     public Team registerTeam(String name) {
         Validate.notNull(name, "Team name cannot be null");
-        if (this.board.getTeam(name) != null) {
+        if (board.getTeam(name) != null) {
             throw new IllegalArgumentException("Team name '" + name + "' is already in use");
         }
-        return new CraftTeam(this, this.board.createTeam(name));
+        return new CraftTeam(this, board.createTeam(name));
     }
 
     public void unregisterTeam(Team team) {
         Validate.notNull(team, "Team cannot be null");
-        this.board.removeTeam(((CraftTeam) team).getHandle());
+        board.removeTeam(((CraftTeam) team).getHandle());
     }
 
     public Set<OfflinePlayer> getPlayers() {
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
-        for (Object o : this.board.getPlayers()) {
+        for (Object o : board.getPlayers()) {
             players.add(Bukkit.getOfflinePlayer(o.toString()));
         }
         return ImmutableSet.copyOf(players);
@@ -151,6 +151,6 @@ public final class CraftScoreboard implements Scoreboard {
     }
 
     public ScoreboardServer getHandle() {
-        return this.board;
+        return board;
     }
 }

@@ -12,7 +12,6 @@ import java.util.TreeSet;
 // CraftBukkit start
 import org.bukkit.WeatherType;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.util.LongHash;
 
 import org.bukkit.event.block.BlockFormEvent;
@@ -73,7 +72,7 @@ public class WorldServer extends World implements org.bukkit.BlockChangeDelegate
 
         scoreboardsavedata.a(this.scoreboard);
         ((ScoreboardServer) this.scoreboard).a(scoreboardsavedata);
-        this.scoreboardManager = new CraftScoreboardManager(minecraftserver, (ScoreboardServer) this.scoreboard); // CraftBukkit - Initialize scoreboard manager
+        this.scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(minecraftserver, (ScoreboardServer) this.scoreboard); // CraftBukkit - Initialize scoreboard manager
     }
 
     // CraftBukkit start

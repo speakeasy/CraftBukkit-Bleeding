@@ -19,15 +19,15 @@ public final class CraftScore implements Score {
     }
 
     public OfflinePlayer getPlayer() {
-        return Bukkit.getOfflinePlayer(this.score.getPlayerName());
+        return Bukkit.getOfflinePlayer(score.getPlayerName());
     }
 
     public Objective getObjective() {
-        return new CraftObjective(this.scoreboard, this.score.getObjective());
+        return new CraftObjective(scoreboard, score.getObjective());
     }
 
     public int getScore() {
-        return this.score.getScore();
+        return score.getScore();
     }
 
     public void setScore(int score) {
@@ -36,9 +36,9 @@ public final class CraftScore implements Score {
 
     @Override
     public boolean equals(Object o) {
-        if (o != null && (o instanceof CraftScore)) {
+        if (o instanceof CraftScore) {
             CraftScore s = (CraftScore) o;
-            return this.scoreboard.equals(s.scoreboard) && this.score.equals(s.score);
+            return scoreboard.equals(s.scoreboard) && score.equals(s.score);
         }
         return false;
     }

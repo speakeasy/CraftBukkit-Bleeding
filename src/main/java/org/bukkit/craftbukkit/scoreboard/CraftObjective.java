@@ -15,7 +15,7 @@ public final class CraftObjective implements Objective {
     CraftObjective(Scoreboard scoreboard, ScoreboardObjective objective) {
         this.scoreboard = scoreboard;
         this.objective = objective;
-        this.criteria = Criteria.getCriteria(objective.getCriteria().getName());
+        criteria = Criteria.getCriteria(objective.getCriteria().getName());
     }
 
     public String getName() {
@@ -23,7 +23,7 @@ public final class CraftObjective implements Objective {
     }
 
     public String getDisplayName() {
-        return this.objective.getDisplayName();
+        return objective.getDisplayName();
     }
 
     public void setDisplayName(String displayName) {
@@ -31,27 +31,27 @@ public final class CraftObjective implements Objective {
         if (displayName.length() > 32) {
             throw new IllegalArgumentException("Display name cannot be longer than 32 characters");
         }
-        this.objective.setDisplayName(displayName);
+        objective.setDisplayName(displayName);
     }
 
     public Criteria getCriteria() {
-        return this.criteria;
+        return criteria;
     }
 
     public Scoreboard getScoreboard() {
-        return this.scoreboard;
+        return scoreboard;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o != null && (o instanceof CraftObjective)) {
+        if (o instanceof CraftObjective) {
             CraftObjective c = (CraftObjective) o;
-            return this.scoreboard.equals(c.scoreboard) && this.objective.equals(c.objective);
+            return scoreboard.equals(c.scoreboard) && objective.equals(c.objective);
         }
         return false;
     }
 
     ScoreboardObjective getHandle() {
-        return this.objective;
+        return objective;
     }
 }

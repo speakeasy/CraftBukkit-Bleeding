@@ -12,7 +12,6 @@ import java.util.concurrent.Callable;
 
 // CraftBukkit start
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.util.LongHashSet;
 import org.bukkit.craftbukkit.util.UnsafeList;
 import org.bukkit.generator.ChunkGenerator;
@@ -62,7 +61,7 @@ public abstract class World implements IBlockAccess {
     private final Vec3DPool J = new Vec3DPool(300, 2000);
     private final Calendar K = Calendar.getInstance();
     protected Scoreboard scoreboard = new Scoreboard();
-    protected CraftScoreboardManager scoreboardManager; // CraftBukkit - Scoreboard Manager
+    protected org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager scoreboardManager; // CraftBukkit - Scoreboard Manager
     private final IConsoleLogManager logAgent;
     private UnsafeList M = new UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
     private boolean N;
@@ -2788,7 +2787,7 @@ public abstract class World implements IBlockAccess {
     }
 
     // CraftBukkit start - Scoreboard manager
-    public CraftScoreboardManager getScoreboard() {
+    public org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager getScoreboard() {
         return this.scoreboardManager;
         // CraftBukkit end
     }

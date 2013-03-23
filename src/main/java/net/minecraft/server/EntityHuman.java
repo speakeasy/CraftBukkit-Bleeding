@@ -8,7 +8,6 @@ import java.util.List;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -1499,7 +1498,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
         return !this.abilities.isFlying;
     }
 
-    public CraftScoreboardManager getScoreboard() { // CraftBukkit - Scoreboard -> CraftScoreboardManager
+    public org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager getScoreboard() { // CraftBukkit - Scoreboard -> CraftScoreboardManager
         return this.world.getScoreboard();
     }
 

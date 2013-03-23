@@ -24,11 +24,11 @@ public final class CraftTeam implements Team {
     }
 
     public String getName() {
-        return this.team.getName();
+        return team.getName();
     }
 
     public String getDisplayName() {
-        return this.team.getDisplayName();
+        return team.getDisplayName();
     }
 
     public void setDisplayName(String displayName) {
@@ -36,11 +36,11 @@ public final class CraftTeam implements Team {
         if (displayName.length() > 32) {
             throw new IllegalArgumentException("Display name cannot be longer than 32 characters");
         }
-        this.team.setDisplayName(displayName);
+        team.setDisplayName(displayName);
     }
 
     public String getPrefix() {
-        return this.team.getPrefix();
+        return team.getPrefix();
     }
 
     public void setPrefix(String prefix) {
@@ -48,11 +48,11 @@ public final class CraftTeam implements Team {
         if (prefix.length() > 16) {
             throw new IllegalArgumentException("Prefix cannot be longer than 16 characters");
         }
-        this.team.setPrefix(prefix);
+        team.setPrefix(prefix);
     }
 
     public String getSuffix() {
-        return this.team.getSuffix();
+        return team.getSuffix();
     }
 
     public void setSuffix(String suffix) {
@@ -60,50 +60,50 @@ public final class CraftTeam implements Team {
         if (suffix.length() > 16) {
             throw new IllegalArgumentException("Suffix cannot be longer than 16 characters");
         }
-        this.team.setSuffix(suffix);
+        team.setSuffix(suffix);
     }
 
     public boolean allowFriendlyFire() {
-        return this.team.allowFriendlyFire();
+        return team.allowFriendlyFire();
     }
 
     public void setAllowFriendlyFire(boolean enabled) {
-        this.team.setAllowFriendlyFire(enabled);
+        team.setAllowFriendlyFire(enabled);
     }
 
     public boolean canSeeFriendlyInvisibles() {
-        return this.team.canSeeFriendlyInvisibles();
+        return team.canSeeFriendlyInvisibles();
     }
 
     public void setCanSeeFriendlyInvisibles(boolean enabled) {
-        this.team.setCanSeeFriendlyInvisibles(enabled);
+        team.setCanSeeFriendlyInvisibles(enabled);
     }
 
     public Set<OfflinePlayer> getPlayers() {
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
-        for (Object o : this.team.getPlayerNameSet()) {
+        for (Object o : team.getPlayerNameSet()) {
             players.add(Bukkit.getOfflinePlayer(o.toString()));
         }
         return ImmutableSet.copyOf(players);
     }
 
     public int getSize() {
-        return this.team.getPlayerNameSet().size();
+        return team.getPlayerNameSet().size();
     }
 
     public Scoreboard getScoreboard() {
-        return this.scoreboard;
+        return scoreboard;
     }
 
     ScoreboardTeam getHandle() {
-        return this.team;
+        return team;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o != null && (o instanceof CraftTeam)) {
+        if (o instanceof CraftTeam) {
             CraftTeam t = (CraftTeam) o;
-            return this.scoreboard.equals(t.scoreboard) && this.team.equals(t.team);
+            return scoreboard.equals(t.scoreboard) && team.equals(t.team);
         }
         return false;
     }

@@ -31,34 +31,34 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     private final Set<CraftScoreboard> scoreboards = new HashSet<CraftScoreboard>();
     private final Map<CraftPlayer, CraftScoreboard> playerBoards = new HashMap<CraftPlayer, CraftScoreboard>();
 
-    public CraftScoreboardManager(MinecraftServer server, ScoreboardServer scoreboard) {
-        this.mainScoreboard = new CraftScoreboard(scoreboard);
-        this.server = server;
+    public CraftScoreboardManager(MinecraftServer minecraftserver, ScoreboardServer scoreboard) {
+        mainScoreboard = new CraftScoreboard(scoreboard);
+        server = minecraftserver;
         scoreboard.setManager(this);
-        this.scoreboards.add(this.mainScoreboard);
+        scoreboards.add(mainScoreboard);
     }
 
     public CraftScoreboard getMainScoreboard() {
-        return this.mainScoreboard;
+        return mainScoreboard;
     }
 
     public CraftScoreboard registerScoreboard() {
-        CraftScoreboard scoreboard = new CraftScoreboard(new ScoreboardServer(this.server, this));
-        this.scoreboards.add(scoreboard);
+        CraftScoreboard scoreboard = new CraftScoreboard(new ScoreboardServer(server, this));
+        scoreboards.add(scoreboard);
         return scoreboard;
     }
 
     public void registerScoreboard(Scoreboard scoreboard) {
         Validate.notNull(scoreboard, "Scoreboard may not be null");
-        this.scoreboards.add((CraftScoreboard) scoreboard);
+        scoreboards.add((CraftScoreboard) scoreboard);
     }
 
     public void unregisterScoreboard(Scoreboard scoreboard) {
         Validate.notNull(scoreboard, "Scoreboard may not be null");
-        if (scoreboard.equals(this.mainScoreboard)) {
+        if (scoreboard.equals(mainScoreboard)) {
             throw new IllegalArgumentException("You may not unregister the main scoreboard");
         }
-        this.scoreboards.remove(scoreboard);
+        scoreboards.remove(scoreboard);
     }
 
     @SuppressWarnings("unchecked")
@@ -75,22 +75,22 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     }
 
     public CraftScoreboard getPlayerBoard(CraftPlayer player) {
-        CraftScoreboard board = this.playerBoards.get(player);
-        return (CraftScoreboard) (board == null ? this.getMainScoreboard() : board);
+        CraftScoreboard board = playerBoards.get(player);
+        return (CraftScoreboard) (board == null ? getMainScoreboard() : board);
     }
 
     public void setPlayerBoard(CraftPlayer player, Scoreboard scoreboard) {
-        if (!this.scoreboards.contains(scoreboard)) {
+        if (!scoreboards.contains(scoreboard)) {
             throw new IllegalArgumentException("Scoreboard is unregistered!");
         }
-        ScoreboardServer oldboard = this.getPlayerBoard(player).getHandle();
+        ScoreboardServer oldboard = getPlayerBoard(player).getHandle();
         if (oldboard.equals(scoreboard)) {
             return;
         }
-        if (scoreboard.equals(this.mainScoreboard)) {
-            this.playerBoards.remove(player);
+        if (scoreboard.equals(mainScoreboard)) {
+            playerBoards.remove(player);
         } else {
-            this.playerBoards.put(player, (CraftScoreboard) scoreboard);
+            playerBoards.put(player, (CraftScoreboard) scoreboard);
         }
         ScoreboardServer newboard = ((CraftScoreboard) scoreboard).getHandle();
 
@@ -109,10 +109,10 @@ public final class CraftScoreboardManager implements ScoreboardManager {
             entityplayer.playerConnection.sendPacket(new Packet209SetScoreboardTeam(scoreboardteam, 1));
         }
         // The above is the reverse of the below method.
-        this.server.getPlayerList().a(newboard, player.getHandle());
+        server.getPlayerList().a(newboard, player.getHandle());
     }
 
     public void removePlayer(Player player) {
-        this.playerBoards.remove(player);
+        playerBoards.remove(player);
     }
 }
