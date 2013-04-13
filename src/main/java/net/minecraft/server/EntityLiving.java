@@ -962,6 +962,8 @@ public abstract class EntityLiving extends Entity {
                 if (i > 0) {
                     this.getBukkitEntity().setLastDamageCause(event);
                 }
+            } else {
+                i = 0;
             }
         }
         // CraftBukkit end
