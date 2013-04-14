@@ -51,6 +51,11 @@ public class CraftContainer extends Container {
             public InventoryType getType() {
                 return inventory.getType();
             }
+
+            @Override
+            public InventoryType.SlotType getSlotType(int slot) {
+                return CraftInventoryView.getSlotType(this, slot);
+            }
         }, id);
     }
 

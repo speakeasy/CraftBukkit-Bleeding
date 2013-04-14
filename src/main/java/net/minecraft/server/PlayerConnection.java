@@ -27,6 +27,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryActionEvent.InventoryAction;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -1166,45 +1169,83 @@ public class PlayerConnection extends Connection {
             InventoryView inventory = this.player.activeContainer.getBukkitView();
             SlotType type = CraftInventoryView.getSlotType(inventory, packet102windowclick.slot);
 
-            InventoryClickEvent event = new InventoryClickEvent(inventory, type, packet102windowclick.slot, packet102windowclick.button != 0, packet102windowclick.shift == 1);
+            InventoryClickEvent event = null;
+            InventoryAction action = InventoryAction.OTHER;
+
+            if (packet102windowclick.shift == 0) {
+                if (packet102windowclick.button == 0) {
+                    action = InventoryAction.LEFT;
+                } else if (packet102windowclick.button == 1) {
+                    action = InventoryAction.RIGHT;
+                }
+            } else if (packet102windowclick.shift == 1) {
+                if (packet102windowclick.button == 0) {
+                    action = InventoryAction.SHIFT_LEFT;
+                } else if (packet102windowclick.button == 1) {
+                    action = InventoryAction.SHIFT_RIGHT;
+                }
+            } else if (packet102windowclick.shift == 2) {
+                // Special constructor for number key
+                if (packet102windowclick.button >= 0 && packet102windowclick.button < 9) {
+                    event = new InventoryClickEvent(inventory, type, packet102windowclick.slot, packet102windowclick.button);
+                }
+            } else if (packet102windowclick.shift == 3) {
+                if (packet102windowclick.button == 2) {
+                    action = InventoryAction.MIDDLE;
+                }
+            } else if (packet102windowclick.shift == 4) {
+                if (type != SlotType.OUTSIDE) {
+                    if (packet102windowclick.button == 0) {
+                        action = InventoryAction.DROP;
+                    } else if (packet102windowclick.button == 1) {
+                        action = InventoryAction.CONTROL_DROP;
+                    }
+                } else {
+                    // Sane default (because this happens)
+                    action = InventoryAction.LEFT;
+                }
+            } else if (packet102windowclick.shift == 5) {
+                if ((packet102windowclick.button & 3) != 1) {
+                    // Forward directly to container; this is a paint start/stop
+                    this.player.activeContainer.clickItem(packet102windowclick.slot, packet102windowclick.button, packet102windowclick.shift, this.player);
+                    return;
+                } else {
+                    if (packet102windowclick.button == 1) {
+                        action = InventoryAction.DRAG_LEFT;
+                    } else if (packet102windowclick.button == 5) {
+                        action = InventoryAction.DRAG_RIGHT;
+                    }
+                }
+            } else if (packet102windowclick.shift == 6) {
+                action = InventoryAction.DOUBLE_CLICK;
+            }
+            // At this point, any unrecognized actions are ClickAction.OTHER.
+
             org.bukkit.inventory.Inventory top = inventory.getTopInventory();
             if (packet102windowclick.slot == 0 && top instanceof CraftingInventory) {
                 org.bukkit.inventory.Recipe recipe = ((CraftingInventory) top).getRecipe();
                 if (recipe != null) {
-                    event = new org.bukkit.event.inventory.CraftItemEvent(recipe, inventory, type, packet102windowclick.slot, packet102windowclick.button != 0, packet102windowclick.shift == 1);
+                    if (action == InventoryAction.NUMBER_KEY) {
+                        event = new org.bukkit.event.inventory.CraftItemEvent(recipe, inventory, type, packet102windowclick.slot, packet102windowclick.button);
+                    } else {
+                        event = new org.bukkit.event.inventory.CraftItemEvent(recipe, inventory, type, packet102windowclick.slot, action);
+                    }
                 }
+            }
+            // Normal case (not number key, not crafting)
+            if (event == null) {
+                event = new InventoryClickEvent(inventory, type, packet102windowclick.slot, action);
             }
             server.getPluginManager().callEvent(event);
 
             ItemStack itemstack = null;
-            boolean defaultBehaviour = false;
-
             switch(event.getResult()) {
+            case ALLOW: // Not yet implemented, but supposed to allow unconditionally
             case DEFAULT:
                 itemstack = this.player.activeContainer.clickItem(packet102windowclick.slot, packet102windowclick.button, packet102windowclick.shift, this.player);
-                defaultBehaviour = true;
                 break;
             case DENY: // Deny any change, including changes from the event
-                break;
-            case ALLOW: // Allow changes unconditionally
-                org.bukkit.inventory.ItemStack cursor = event.getCursor();
-                if (cursor == null) {
-                    this.player.inventory.setCarried((ItemStack) null);
-                } else {
-                    this.player.inventory.setCarried(CraftItemStack.asNMSCopy(cursor));
-                }
-                org.bukkit.inventory.ItemStack item = event.getCurrentItem();
-                if (item != null) {
-                    itemstack = CraftItemStack.asNMSCopy(item);
-                    if (packet102windowclick.slot == -999) {
-                        this.player.drop(itemstack);
-                    } else {
-                        this.player.activeContainer.getSlot(packet102windowclick.slot).set(itemstack);
-                    }
-                } else if (packet102windowclick.slot != -999) {
-                    this.player.activeContainer.getSlot(packet102windowclick.slot).set((ItemStack) null);
-                }
-                break;
+                return;
             }
             // CraftBukkit end
 
@@ -1243,7 +1284,7 @@ public class PlayerConnection extends Connection {
     }
 
     public void a(Packet107SetCreativeSlot packet107setcreativeslot) {
-        if (this.player.playerInteractManager.isCreative()) {
+        if (true || this.player.playerInteractManager.isCreative()) { // CraftBukkit - run every time
             boolean flag = packet107setcreativeslot.slot < 0;
             ItemStack itemstack = packet107setcreativeslot.b;
             boolean flag1 = packet107setcreativeslot.slot >= 1 && packet107setcreativeslot.slot < 36 + PlayerInventory.getHotbarSize();
@@ -1254,35 +1295,29 @@ public class PlayerConnection extends Connection {
             // CraftBukkit start - Call click event
             org.bukkit.entity.HumanEntity player = this.player.getBukkitEntity();
             InventoryView inventory = new CraftInventoryView(player, player.getInventory(), this.player.defaultContainer);
-            SlotType slot = SlotType.QUICKBAR;
-            if (packet107setcreativeslot.slot == -1) {
-                slot = SlotType.OUTSIDE;
-            }
+            org.bukkit.inventory.ItemStack item = CraftItemStack.asBukkitCopy(packet107setcreativeslot.b); // Should be packet107setcreativeslot.newitem
 
-            InventoryClickEvent event = new InventoryClickEvent(inventory, slot, slot == SlotType.OUTSIDE ? -999 : packet107setcreativeslot.slot, false, false);
+            InventoryCreativeEvent event = new InventoryCreativeEvent(inventory, packet107setcreativeslot.slot == -1 ? SlotType.OUTSIDE : SlotType.QUICKBAR, packet107setcreativeslot.slot == -1 ? -999 : packet107setcreativeslot.slot, item, this.player.playerInteractManager.isCreative());
             server.getPluginManager().callEvent(event);
-            org.bukkit.inventory.ItemStack item = event.getCurrentItem();
+
+            itemstack = CraftItemStack.asNMSCopy(event.getItem());
 
             switch (event.getResult()) {
             case ALLOW:
-                if (slot == SlotType.QUICKBAR) {
-                    if (item == null) {
-                        this.player.defaultContainer.setItem(packet107setcreativeslot.slot, (ItemStack) null);
-                    } else {
-                        this.player.defaultContainer.setItem(packet107setcreativeslot.slot, CraftItemStack.asNMSCopy(item));
-                    }
-                } else if (item != null) {
-                    this.player.drop(CraftItemStack.asNMSCopy(item));
-                }
-                return;
+                // Ignore creative status
+                flag1 = flag2 = flag3 = true;
+                break;
             case DENY:
-                // TODO: Will this actually work?
+                // Reset the slot
                 if (packet107setcreativeslot.slot > -1) {
                     this.player.playerConnection.sendPacket(new Packet103SetSlot(this.player.defaultContainer.windowId, packet107setcreativeslot.slot, CraftItemStack.asNMSCopy(item)));
                 }
                 return;
             case DEFAULT:
-                // We do the stuff below
+                // Return if they aren't in creative
+                if (!this.player.playerInteractManager.isCreative()) {
+                    return;
+                }
                 break;
             default:
                 return;

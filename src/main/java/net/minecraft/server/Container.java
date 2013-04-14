@@ -8,6 +8,8 @@ import java.util.Set;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.InventoryView;
 // CraftBukkit end
 
@@ -140,6 +142,7 @@ public abstract class Container {
                     l = playerinventory.getCarried().count;
                     Iterator iterator = this.h.iterator();
 
+                    java.util.Map<Integer, Integer> paintedSlots = new java.util.HashMap<Integer, Integer>(); // CraftBukkit - map of raw slot id to amount added to the slot
                     while (iterator.hasNext()) {
                         Slot slot1 = (Slot) iterator.next();
 
@@ -157,16 +160,30 @@ public abstract class Container {
                             }
 
                             l -= itemstack2.count - j1;
-                            slot1.set(itemstack2);
+                            // CraftBukkit start - put in map instead of setting
+                            paintedSlots.put(slot1.g, itemstack2.count - j1);
+                            // CraftBukkit end
                         }
                     }
 
-                    itemstack1.count = l;
-                    if (itemstack1.count <= 0) {
-                        itemstack1 = null;
+                    // CraftBukkit start - InventoryPaintEvent
+                    InventoryView view = getBukkitView();
+                    org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack1);
+                    newcursor.setAmount(l);
+                    InventoryDragEvent event = new InventoryDragEvent(view, newcursor, this.f == 1, new java.util.HashMap<Integer, Integer>(paintedSlots));
+                    entityhuman.world.getServer().getPluginManager().callEvent(event);
+                    if (!event.isCancelled()) {
+                        for (org.bukkit.event.inventory.InventoryDragEvent.PaintedSlot pSlot : event.getSlots()) {
+                            view.setItem(pSlot.getRawSlot(), pSlot.getResult());
+                        }
+                        playerinventory.setCarried(CraftItemStack.asNMSCopy(newcursor));
                     }
-
-                    playerinventory.setCarried(itemstack1);
+                    if (entityhuman instanceof EntityPlayer) {
+                        ((EntityPlayer) entityhuman).updateInventory(this);
+                    }
+                    paintedSlots.clear();
+                    paintedSlots = null;
+                    // CraftBukkit end
                 }
 
                 this.d();
