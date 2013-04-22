@@ -2373,6 +2373,14 @@ public abstract class World implements IBlockAccess {
     }
 
     public boolean mayPlace(int i, int j, int k, int l, boolean flag, int i1, Entity entity, ItemStack itemstack) {
+        // CraftBukkit start - Pass the entity placing the block
+        return this.mayPlace(i, j, k, l, flag, i1, entity, entity, itemstack);
+    }
+
+    // Use this new method if passing null for the 'entity' field
+    // entityPlacing should never be null, unless Minecraft starts sending placement that isn't based on entities through here
+    public boolean mayPlace(int i, int j, int k, int l, boolean flag, int i1, Entity entity, Entity entityPlacing, ItemStack itemstack) {
+        // CraftBukkit end
         int j1 = this.getTypeId(j, k, l);
         Block block = Block.byId[j1];
         Block block1 = Block.byId[i];
@@ -2396,7 +2404,7 @@ public abstract class World implements IBlockAccess {
         }
 
         // CraftBukkit start
-        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(j, k, l), i, defaultReturn);
+        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(j, k, l), i, defaultReturn, entityPlacing != null ? entityPlacing.getBukkitEntity() : null);
         this.getServer().getPluginManager().callEvent(event);
 
         return event.isBuildable();

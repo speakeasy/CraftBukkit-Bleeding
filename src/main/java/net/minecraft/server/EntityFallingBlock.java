@@ -103,7 +103,8 @@ public class EntityFallingBlock extends Entity {
                     if (this.world.getTypeId(i, j, k) != Block.PISTON_MOVING.id) {
                         this.die();
                         // CraftBukkit start
-                        if (!this.f && this.world.mayPlace(this.id, i, j, k, true, 1, (Entity) null, (ItemStack) null) && !BlockSand.canFall(this.world, i, j - 1, k) /* mimic the false conditions of setTypeIdAndData */ && i >= -30000000 && k >= -30000000 && i < 30000000 && k < 30000000 && j > 0 && j < 256 && !(this.world.getTypeId(i, j, k) == this.id && this.world.getData(i, j, k) == this.data)) {
+                        // Place pass the placing entity (this) to mayPlace
+                        if (!this.f && this.world.mayPlace(this.id, i, j, k, true, 1, (Entity) null, this, (ItemStack) null) && !BlockSand.canFall(this.world, i, j - 1, k) /* mimic the false conditions of setTypeIdAndData */ && i >= -30000000 && k >= -30000000 && i < 30000000 && k < 30000000 && j > 0 && j < 256 && !(this.world.getTypeId(i, j, k) == this.id && this.world.getData(i, j, k) == this.data)) {
                             if (CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.id, this.data).isCancelled()) {
                                 return;
                             }

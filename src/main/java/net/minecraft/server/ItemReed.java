@@ -46,7 +46,7 @@ public class ItemReed extends Item {
         } else if (itemstack.count == 0) {
             return false;
         } else {
-            if (world.mayPlace(this.id, i, j, k, false, l, (Entity) null, itemstack)) {
+            if (world.mayPlace(this.id, i, j, k, false, l, (Entity) null, entityhuman, itemstack)) { // CraftBukkit - Pass the placing entity
                 Block block = Block.byId[this.id];
                 int j1 = block.getPlacedData(world, i, j, k, l, f, f1, f2, 0);
 
