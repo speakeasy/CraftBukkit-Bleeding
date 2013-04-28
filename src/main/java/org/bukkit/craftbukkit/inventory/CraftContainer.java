@@ -9,6 +9,7 @@ import org.bukkit.inventory.InventoryView;
 import net.minecraft.server.Container;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.IInventory;
+import net.minecraft.server.ItemStack;
 import net.minecraft.server.Packet100OpenWindow;
 import net.minecraft.server.Slot;
 
@@ -89,6 +90,33 @@ public class CraftContainer extends Container {
             player.updateInventory();
         }
         return true;
+    }
+
+    @Override
+    public ItemStack b(EntityHuman human, int slot) { // Should be doShiftClick
+        ItemStack itemstack = null;
+        Slot clickedSlot = getSlot(slot);
+
+        if (clickedSlot != null && clickedSlot.d()) {
+            ItemStack itemstack1 = clickedSlot.getItem();
+
+            itemstack = itemstack1.cloneItemStack();
+            if (slot < view.countSlots()) {
+                if (!this.a(itemstack1, view.getTopInventory().getSize(), view.countSlots(), true)) {
+                    return null;
+                }
+            } else if (!this.a(itemstack1, 0, view.getTopInventory().getSize(), false)) {
+                return null;
+            }
+
+            if (itemstack1.count == 0) {
+                clickedSlot.set(null);
+            } else {
+                clickedSlot.e();
+            }
+        }
+
+        return itemstack;
     }
 
     public static int getNotchInventoryType(InventoryType type) {
