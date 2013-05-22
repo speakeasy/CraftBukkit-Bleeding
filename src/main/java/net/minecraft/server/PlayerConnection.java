@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.block.SignDataEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -1360,7 +1361,7 @@ public class PlayerConnection extends Connection {
 
                 // CraftBukkit start
                 Player player = this.server.getPlayer(this.player);
-                SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(j, k, i), this.server.getPlayer(this.player), packet130updatesign.lines);
+                SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(j, k, i), player, packet130updatesign.lines);
                 this.server.getPluginManager().callEvent(event);
 
                 if (!event.isCancelled()) {
@@ -1376,6 +1377,12 @@ public class PlayerConnection extends Connection {
 
                 tileentitysign1.update();
                 worldserver.notify(j, k, i);
+                // CraftBukkit start
+            } else {
+                Player player = this.server.getPlayer(this.player);
+                SignDataEvent event = new SignDataEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(packet130updatesign.x, packet130updatesign.y, packet130updatesign.z), player, packet130updatesign.lines);
+                this.server.getPluginManager().callEvent(event);
+                // CraftBukkit end
             }
         }
     }
