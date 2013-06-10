@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 // CraftBukkit start
+import org.bukkit.bans.Ban;
+import org.bukkit.craftbukkit.CraftBanImplementation;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
@@ -36,7 +38,7 @@ public abstract class PlayerList {
     private static final SimpleDateFormat d = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
     private final MinecraftServer server;
     public final List players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
-    private final BanList banByName = new BanList(new File("banned-players.txt"));
+    private final org.bukkit.bans.BanList banByName = new org.bukkit.bans.BanList(new CraftBanImplementation(new File("banned-players.txt")));
     private final BanList banByIP = new BanList(new File("banned-ips.txt"));
     private Set operators = new HashSet();
     private Set whitelist = new java.util.LinkedHashSet(); // CraftBukkit - HashSet -> LinkedHashSet
