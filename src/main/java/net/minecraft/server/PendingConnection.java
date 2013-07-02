@@ -150,18 +150,19 @@ public class PendingConnection extends Connection {
                 // CraftBukkit
                 s = pingEvent.getMotd() + "\u00A7" + playerlist.getPlayerCount() + "\u00A7" + pingEvent.getMaxPlayers();
             } else {
-                List list = Arrays.asList(new Serializable[] { Integer.valueOf(1), Integer.valueOf(73), this.server.getVersion(), this.server.getMotd(), Integer.valueOf(playerlist.getPlayerCount()), Integer.valueOf(playerlist.getMaxPlayers())});
+                // CraftBukkit start - Don't create a list from an array
+                Object[] list = new Object[] { 1, 73, this.server.getVersion(), pingEvent.getMotd(), playerlist.getPlayerCount(), pingEvent.getMaxPlayers() };
 
-                Object object;
-
-                for (Iterator iterator = list.iterator(); iterator.hasNext(); s = s + object.toString().replaceAll("\0", "")) {
-                    object = iterator.next();
+                for (Object object : list) {
                     if (s == null) {
                         s = "\u00A7";
                     } else {
-                        s = s + '\0';
+                        s = s + "\0";
                     }
+
+                    s += org.apache.commons.lang.StringUtils.replace(object.toString(), "\0", "");
                 }
+                // CraftBukkit end
             }
 
             InetAddress inetaddress = null;
