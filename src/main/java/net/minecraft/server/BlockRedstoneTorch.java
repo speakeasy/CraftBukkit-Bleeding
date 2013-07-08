@@ -40,6 +40,12 @@ public class BlockRedstoneTorch extends BlockTorch {
         return false;
     }
 
+    // CraftBukkit start - drop world references
+    public static void onWorldUnload(World w) {
+        b.remove(w);
+    }
+    // CraftBukkit end
+
     protected BlockRedstoneTorch(int i, boolean flag) {
         super(i);
         this.isOn = flag;

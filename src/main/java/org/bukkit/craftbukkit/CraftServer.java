@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.server.BanEntry;
+import net.minecraft.server.BlockRedstoneTorch;
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.Convertable;
 import net.minecraft.server.ConvertProgressUpdater;
@@ -807,6 +808,7 @@ public final class CraftServer implements Server {
 
         worlds.remove(world.getName().toLowerCase());
         console.worlds.remove(console.worlds.indexOf(handle));
+        BlockRedstoneTorch.onWorldUnload(handle); // Plug memory leak
 
         return true;
     }
