@@ -44,4 +44,34 @@ public class CraftPotionBrewer implements PotionBrewer {
         return new PotionEffect(potion, potion.isInstant() ? 1 : (int) (duration * potion.getDurationModifier()),
                 amplifier);
     }
+
+    public static PotionEffect nmsToBukkitEffect(MobEffect handle) {
+        return new PotionEffect(PotionEffectType.getById(handle.getEffectId()), handle.getDuration(), handle.getAmplifier(), handle.isAmbient());
+    }
+
+    public static List<PotionEffect> nmsToBukkitEffects(Collection<MobEffect> coll) {
+        List<PotionEffect> list = new ArrayList<PotionEffect>();
+        for (Object o : coll) {
+            if (o instanceof MobEffect) {
+                MobEffect handle = (MobEffect) o;
+                list.add(nmsToBukkitEffect(handle));
+            }
+        }
+        return list;
+    }
+
+    public static MobEffect bukkitToNmsEffect(PotionEffect effect) {
+        return new MobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient());
+    }
+
+    public static List<MobEffect> bukkitToNmsEffects(Collection<PotionEffect> coll) {
+        List<MobEffect> list = new ArrayList<MobEffect>();
+        for (Object o : coll) {
+            if (o instanceof PotionEffect) {
+                PotionEffect effect = (PotionEffect) o;
+                list.add(bukkitToNmsEffect(effect));
+            }
+        }
+        return list;
+    }
 }
