@@ -15,7 +15,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
 
     public static final MobEffectList[][] a = new MobEffectList[][] { { MobEffectList.FASTER_MOVEMENT, MobEffectList.FASTER_DIG}, { MobEffectList.RESISTANCE, MobEffectList.JUMP}, { MobEffectList.INCREASE_DAMAGE}, { MobEffectList.REGENERATION}};
     private boolean d;
-    private int e = -1;
+    public int e = -1; // CraftBukkit - private -> public
     private int f;
     private int g;
     private ItemStack inventorySlot;
@@ -23,6 +23,8 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     // CraftBukkit start
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
+    public boolean customEffects = false;
+    public List<MobEffect> effects;
 
     public ItemStack[] getContents() {
         return new ItemStack[] { this.inventorySlot };
@@ -42,6 +44,20 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
 
     public void setMaxStackSize(int size) {
         maxStack = size;
+    }
+
+    public boolean isEnabled() {
+        if (this.d && this.e > 0) {
+            updateEffects();
+            return !effects.isEmpty();
+        }
+        return false;
+    }
+
+    public void updateEffects() {
+        if (!customEffects) {
+            effects = getDefaultEffects(this.e, this.f, this.g);
+        }
     }
 
     private List<MobEffect> getDefaultEffects(int pyramid, int primary, int secondary) {
@@ -66,14 +82,16 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         }
     }
 
-    private void u() {
-        if (this.d && this.e > 0 && !this.world.isStatic && this.f > 0) {
-            double d0 = (double) (this.e * 10 + 10);
-            byte b0 = 0;
-
-            if (this.e >= 4 && this.f == this.g) {
-                b0 = 1;
-            }
+    // CraftBukkit start - custom effects, private -> public
+    public void u() {
+        if (this.world.isStatic) {
+            return;
+        }
+        if (isEnabled()) {
+            // [Update Team] update CraftBeacon.getRadius() if this formula is modified
+            // Cap at 50 due to countPyramid() modifying e
+            double d0 = this.e >= 4 ? 50D : (double) (this.e * 10 + 10);
+            // CraftBukkit end
 
             AxisAlignedBB axisalignedbb = AxisAlignedBB.a().a((double) this.x, (double) this.y, (double) this.z, (double) (this.x + 1), (double) (this.y + 1), (double) (this.z + 1)).grow(d0, d0, d0);
 
@@ -85,29 +103,42 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
 
             while (iterator.hasNext()) {
                 entityhuman = (EntityHuman) iterator.next();
-                entityhuman.addEffect(new MobEffect(this.f, 180, b0, true));
-            }
-
-            if (this.e >= 4 && this.f != this.g && this.g > 0) {
-                iterator = list.iterator();
-
-                while (iterator.hasNext()) {
-                    entityhuman = (EntityHuman) iterator.next();
-                    entityhuman.addEffect(new MobEffect(this.g, 180, 0, true));
+                // CraftBukkit start - custom effects
+                for (MobEffect eff : effects) {
+                    entityhuman.addEffect(new MobEffect(eff.getEffectId(), 180, eff.getAmplifier(), true));
                 }
+                // CraftBukkit end
             }
         }
     }
 
+    // CraftBukkit start - split method to expose
+    public boolean canSeeSky() {
+        return this.world.l(this.x, this.y + 1, this.z);
+    }
+
     private void v() {
-        if (!this.world.l(this.x, this.y + 1, this.z)) {
+        if (!canSeeSky()) {
+            // CraftBukkit end
             this.d = false;
             this.e = 0;
         } else {
             this.d = true;
-            this.e = 0;
 
-            for (int i = 1; i <= 4; this.e = i++) {
+            // CraftBukkit - split into method
+            countPyramid(4);
+
+            if (this.e == 0) {
+                this.d = false;
+            }
+        }
+    }
+
+    // CraftBukkit start - split method
+    public int countPyramid(int max) {
+        this.e = 0;
+        { // TODO remove extra braces before putting on master (for temprorary prettydiffs)
+            for (int i = 1; i <= max; this.e = i++) {
                 int j = this.y - i;
 
                 if (j < 0) {
@@ -131,12 +162,10 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
                     break;
                 }
             }
-
-            if (this.e == 0) {
-                this.d = false;
-            }
         }
+        return this.e;
     }
+    // CraftBukkit end
 
     public int j() {
         return this.f;
@@ -158,6 +187,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         if (!event.isCancelled()) {
             this.f = newPri;
             this.g = newSec;
+            updateEffects();
             return true;
         }
         return false;
