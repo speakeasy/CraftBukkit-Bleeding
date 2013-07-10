@@ -9,6 +9,7 @@ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.potion.CraftPotionBrewer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.block.BeaconPaidEvent;
+import org.bukkit.potion.PotionEffect;
 // CraftBukkit end
 
 public class TileEntityBeacon extends TileEntity implements IInventory {
@@ -137,7 +138,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     // CraftBukkit start - split method
     public int countPyramid(int max) {
         this.e = 0;
-        { // TODO remove extra braces before putting on master (for temprorary prettydiffs)
+        { // TODO remove extra braces before putting on master (for temporary prettydiffs)
             for (int i = 1; i <= max; this.e = i++) {
                 int j = this.y - i;
 
@@ -183,11 +184,21 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     public boolean pickEffects(EntityPlayer player, int prim, int seco) {
         int newPri = d(prim); // should be choosePrimary
         int newSec = e(seco); // should be chooseSecondary
-        BeaconPaidEvent event = new BeaconPaidEvent(this.world.getWorld().getBlockAt(this.x, this.y, this.z), player.getBukkitEntity(), CraftPotionBrewer.nmsToBukkitEffects(getDefaultEffects(this.e, newPri, newSec)));
+        List<PotionEffect> newEffects = CraftPotionBrewer.nmsToBukkitEffects(getDefaultEffects(this.e, newPri, newSec));
+        BeaconPaidEvent event = new BeaconPaidEvent(this.world.getWorld().getBlockAt(this.x, this.y, this.z), player.getBukkitEntity(), newEffects);
+        this.world.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             this.f = newPri;
             this.g = newSec;
-            updateEffects();
+            // Set customEffects to false if the effects weren't changed
+            if (newEffects.equals(event.getNewEffects())) {
+                customEffects = false;
+                updateEffects();
+            } else {
+                // TODO if given effects are possible, set pri/sec to those
+                customEffects = true;
+                effects = CraftPotionBrewer.bukkitToNmsEffects(event.getNewEffects());
+            }
             return true;
         }
         return false;

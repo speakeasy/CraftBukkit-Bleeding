@@ -46,6 +46,7 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
 
     @Override
     public void setEffects(Collection<PotionEffect> newEffects) {
+        Validate.noNullElements(newEffects, "Cannot set null PotionEffects");
         beacon.customEffects = true;
         if (newEffects == null) {
             beacon.effects = java.util.Collections.EMPTY_LIST;
@@ -53,6 +54,7 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
         beacon.effects = CraftPotionBrewer.bukkitToNmsEffects(newEffects);
     }
 
+    @Override
     public Collection<PotionEffect> resetEffects() {
         beacon.customEffects = false;
         beacon.updateEffects();

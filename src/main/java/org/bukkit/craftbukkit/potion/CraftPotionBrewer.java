@@ -51,10 +51,12 @@ public class CraftPotionBrewer implements PotionBrewer {
 
     public static List<PotionEffect> nmsToBukkitEffects(Collection<MobEffect> coll) {
         List<PotionEffect> list = new ArrayList<PotionEffect>();
-        for (Object o : coll) {
-            if (o instanceof MobEffect) {
-                MobEffect handle = (MobEffect) o;
-                list.add(nmsToBukkitEffect(handle));
+        if (coll != null) {
+            for (Object o : coll) {
+                if (o instanceof MobEffect) {
+                    MobEffect handle = (MobEffect) o;
+                    list.add(nmsToBukkitEffect(handle));
+                }
             }
         }
         return list;
@@ -66,10 +68,12 @@ public class CraftPotionBrewer implements PotionBrewer {
 
     public static List<MobEffect> bukkitToNmsEffects(Collection<PotionEffect> coll) {
         List<MobEffect> list = new ArrayList<MobEffect>();
-        for (Object o : coll) {
-            if (o instanceof PotionEffect) {
-                PotionEffect effect = (PotionEffect) o;
-                list.add(bukkitToNmsEffect(effect));
+        if (coll != null) {
+            for (Object o : coll) {
+                if (o instanceof PotionEffect) {
+                    PotionEffect effect = (PotionEffect) o;
+                    list.add(bukkitToNmsEffect(effect));
+                }
             }
         }
         return list;
