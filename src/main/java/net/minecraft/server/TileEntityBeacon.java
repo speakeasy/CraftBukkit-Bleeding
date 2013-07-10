@@ -5,6 +5,9 @@ import java.util.List;
 
 // CraftBukkit start
 import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.potion.CraftPotionBrewer;
 import org.bukkit.entity.HumanEntity;
@@ -22,7 +25,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     private ItemStack inventorySlot;
     private String i;
     // CraftBukkit start
-    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
+    public List<HumanEntity> transaction = new ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
     public boolean customEffects = false;
     public List<MobEffect> effects;
@@ -252,6 +255,22 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         this.f = nbttagcompound.getInt("Primary");
         this.g = nbttagcompound.getInt("Secondary");
         this.e = nbttagcompound.getInt("Levels");
+        // CraftBukkit start - persist custom effects
+        if (nbttagcompound.hasKey("Bukkit-Effects")) {
+            customEffects = true;
+            NBTTagList list = (NBTTagList) nbttagcompound.getList("Bukkit-Effects");
+
+            effects = new java.util.ArrayList<MobEffect>();
+
+            final int size = list.size();
+            for (int i = 0; i < size; i++) {
+                NBTTagCompound effectTag = (NBTTagCompound) list.get(i);
+                effects.add(new MobEffect(effectTag.getInt("id"), 180, effectTag.getInt("amp"), true));
+            }
+        } else {
+            updateEffects();
+        }
+        // CraftBukkit end
     }
 
     public void b(NBTTagCompound nbttagcompound) {
@@ -259,6 +278,18 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         nbttagcompound.setInt("Primary", this.f);
         nbttagcompound.setInt("Secondary", this.g);
         nbttagcompound.setInt("Levels", this.e);
+        // CraftBukkit start - persist custom effects
+        if (customEffects) {
+            NBTTagList tagList = new NBTTagList("Bukkit-Effects");
+            for (MobEffect eff : effects) {
+                NBTTagCompound effectTag = new NBTTagCompound();
+                effectTag.setInt("id", eff.getEffectId());
+                effectTag.setInt("amp", eff.getAmplifier());
+                tagList.add(effectTag);
+            }
+            nbttagcompound.set("Bukkit-Effects", tagList);
+        }
+        // CraftBukkit end
     }
 
     public int getSize() {
