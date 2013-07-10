@@ -1762,11 +1762,16 @@ public class PlayerConnection extends Connection {
                             Slot slot = containerbeacon.getSlot(0);
 
                             if (slot.e()) {
-                                slot.a(1);
+                                // slot.a(1); // CraftBukkit - moved down
                                 TileEntityBeacon tileentitybeacon = containerbeacon.e();
 
-                                tileentitybeacon.d(i);
-                                tileentitybeacon.e(j);
+                                // CraftBukkit start - call event
+                                if (tileentitybeacon.pickEffects(this.player, i, j)) {
+                                    slot.a(1);
+                                } else {
+                                    this.player.playerConnection.sendPacket(new Packet103SetSlot(containerbeacon.windowId, 0, slot.getItem()));
+                                }
+                                // CraftBukkit end
                                 tileentitybeacon.update();
                             }
                         } catch (Exception exception4) {

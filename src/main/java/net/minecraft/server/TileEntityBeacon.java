@@ -4,8 +4,11 @@ import java.util.Iterator;
 import java.util.List;
 
 // CraftBukkit start
+import com.google.common.collect.ImmutableList;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.potion.CraftPotionBrewer;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.block.BeaconPaidEvent;
 // CraftBukkit end
 
 public class TileEntityBeacon extends TileEntity implements IInventory {
@@ -39,6 +42,18 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
 
     public void setMaxStackSize(int size) {
         maxStack = size;
+    }
+
+    private List<MobEffect> getDefaultEffects(int pyramid, int primary, int secondary) {
+        if (pyramid <= 0 || primary <= 0) {
+            return ImmutableList.of();
+        } else if (pyramid >= 4 && primary == secondary) {
+            return ImmutableList.of(new MobEffect(primary, 180, 1, true));
+        } else if (pyramid >= 4 && secondary > 0) {
+            return ImmutableList.of(new MobEffect(primary, 180, 0, true), new MobEffect(secondary, 180, 0, true));
+        } else {
+            return ImmutableList.of(new MobEffect(primary, 180, 0, true));
+        }
     }
     // CraftBukkit end
 
@@ -135,9 +150,21 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         return this.e;
     }
 
-    public void d(int i) {
-        this.f = 0;
+    // CraftBukkit start - call event
+    public boolean pickEffects(EntityPlayer player, int prim, int seco) {
+        int newPri = d(prim); // should be choosePrimary
+        int newSec = e(seco); // should be chooseSecondary
+        BeaconPaidEvent event = new BeaconPaidEvent(this.world.getWorld().getBlockAt(this.x, this.y, this.z), player.getBukkitEntity(), CraftPotionBrewer.nmsToBukkitEffects(getDefaultEffects(this.e, newPri, newSec)));
+        if (!event.isCancelled()) {
+            this.f = newPri;
+            this.g = newSec;
+            return true;
+        }
+        return false;
+    }
 
+    public int d(int i) {
+        // CraftBukkit end
         for (int j = 0; j < this.e && j < 3; ++j) {
             MobEffectList[] amobeffectlist = a[j];
             int k = amobeffectlist.length;
@@ -146,15 +173,15 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
                 MobEffectList mobeffectlist = amobeffectlist[l];
 
                 if (mobeffectlist.id == i) {
-                    this.f = i;
-                    return;
+                    return i; // CraftBukkit - return instead of set
                 }
             }
         }
+        return 0; // CraftBukkit - return instead of set
     }
 
-    public void e(int i) {
-        this.g = 0;
+    // CraftBukkit - return instead of set
+    public int e(int i) {
         if (this.e >= 4) {
             for (int j = 0; j < 4; ++j) {
                 MobEffectList[] amobeffectlist = a[j];
@@ -164,12 +191,12 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
                     MobEffectList mobeffectlist = amobeffectlist[l];
 
                     if (mobeffectlist.id == i) {
-                        this.g = i;
-                        return;
+                        return i; // CraftBukkit - return instead of set
                     }
                 }
             }
         }
+        return 0; // CraftBukkit - return instead of set
     }
 
     public Packet getUpdatePacket() {
