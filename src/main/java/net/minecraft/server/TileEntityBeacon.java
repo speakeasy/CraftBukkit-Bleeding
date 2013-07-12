@@ -256,9 +256,9 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         this.g = nbttagcompound.getInt("Secondary");
         this.e = nbttagcompound.getInt("Levels");
         // CraftBukkit start - persist custom effects
-        if (nbttagcompound.hasKey("Bukkit-Effects")) {
+        if (nbttagcompound.hasKey("Bukkit.Effects")) {
             customEffects = true;
-            NBTTagList list = (NBTTagList) nbttagcompound.getList("Bukkit-Effects");
+            NBTTagList list = (NBTTagList) nbttagcompound.getList("Bukkit.Effects");
 
             effects = new java.util.ArrayList<MobEffect>();
 
@@ -280,14 +280,14 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         nbttagcompound.setInt("Levels", this.e);
         // CraftBukkit start - persist custom effects
         if (customEffects) {
-            NBTTagList tagList = new NBTTagList("Bukkit-Effects");
+            NBTTagList tagList = new NBTTagList("Bukkit.Effects");
             for (MobEffect eff : effects) {
                 NBTTagCompound effectTag = new NBTTagCompound();
                 effectTag.setInt("id", eff.getEffectId());
                 effectTag.setInt("amp", eff.getAmplifier());
                 tagList.add(effectTag);
             }
-            nbttagcompound.set("Bukkit-Effects", tagList);
+            nbttagcompound.set("Bukkit.Effects", tagList);
         }
         // CraftBukkit end
     }
