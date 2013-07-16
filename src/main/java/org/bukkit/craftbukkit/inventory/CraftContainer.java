@@ -22,8 +22,8 @@ public class CraftContainer extends Container {
         this.view = view;
         this.windowId = id;
         // TODO: Do we need to check that it really is a CraftInventory?
-        IInventory top = ((CraftInventory)view.getTopInventory()).getInventory();
-        IInventory bottom = ((CraftInventory)view.getBottomInventory()).getInventory();
+        IInventory top = ((CraftInventory)view.getTopInventory()).getPrimaryInventory();
+        IInventory bottom = ((CraftInventory)view.getBottomInventory()).getPrimaryInventory();
         cachedType = view.getType();
         cachedTitle = view.getTitle();
         cachedSize = getSize();
@@ -77,8 +77,8 @@ public class CraftContainer extends Container {
         if (view.getPlayer() instanceof CraftPlayer) {
             CraftPlayer player = (CraftPlayer) view.getPlayer();
             int type = getNotchInventoryType(cachedType);
-            IInventory top = ((CraftInventory)view.getTopInventory()).getInventory();
-            IInventory bottom = ((CraftInventory)view.getBottomInventory()).getInventory();
+            IInventory top = ((CraftInventory)view.getTopInventory()).getPrimaryInventory();
+            IInventory bottom = ((CraftInventory)view.getBottomInventory()).getPrimaryInventory();
             this.b.clear();
             this.c.clear();
             if (typeChanged) {

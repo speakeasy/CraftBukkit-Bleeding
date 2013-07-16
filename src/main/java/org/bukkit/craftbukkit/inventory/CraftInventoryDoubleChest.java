@@ -12,7 +12,7 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
     private final CraftInventory right;
 
     public CraftInventoryDoubleChest(CraftInventory left, CraftInventory right) {
-        super(new InventoryLargeChest("Large chest", left.getInventory(), right.getInventory()));
+        super(new InventoryLargeChest("Large chest", left.getPrimaryInventory(), right.getPrimaryInventory()));
         this.left = left;
         this.right = right;
     }
@@ -41,8 +41,8 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
 
     @Override
     public void setContents(ItemStack[] items) {
-        if (getInventory().getContents().length < items.length) {
-            throw new IllegalArgumentException("Invalid inventory size; expected " + getInventory().getContents().length + " or less");
+        if (getPrimaryInventory().getContents().length < items.length) {
+            throw new IllegalArgumentException("Invalid inventory size; expected " + getPrimaryInventory().getContents().length + " or less");
         }
         ItemStack[] leftItems = new ItemStack[left.getSize()], rightItems = new ItemStack[right.getSize()];
         System.arraycopy(items, 0, leftItems, 0, Math.min(left.getSize(),items.length));

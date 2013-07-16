@@ -190,18 +190,18 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         case PLAYER:
         case CHEST:
         case ENDER_CHEST:
-            getHandle().openContainer(craftinv.getInventory());
+            getHandle().openContainer(craftinv.getPrimaryInventory());
             break;
         case DISPENSER:
-            if (craftinv.getInventory() instanceof TileEntityDispenser) {
-                getHandle().openDispenser((TileEntityDispenser) craftinv.getInventory());
+            if (craftinv.getPrimaryInventory() instanceof TileEntityDispenser) {
+                getHandle().openDispenser((TileEntityDispenser) craftinv.getPrimaryInventory());
             } else {
                 openCustomInventory(inventory, player, 3);
             }
             break;
         case FURNACE:
-            if (craftinv.getInventory() instanceof TileEntityFurnace) {
-                getHandle().openFurnace((TileEntityFurnace) craftinv.getInventory());
+            if (craftinv.getPrimaryInventory() instanceof TileEntityFurnace) {
+                getHandle().openFurnace((TileEntityFurnace) craftinv.getPrimaryInventory());
             } else {
                 openCustomInventory(inventory, player, 2);
             }
@@ -210,8 +210,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
             openCustomInventory(inventory, player, 1);
             break;
         case BREWING:
-            if (craftinv.getInventory() instanceof TileEntityBrewingStand) {
-                getHandle().openBrewingStand((TileEntityBrewingStand) craftinv.getInventory());
+            if (craftinv.getPrimaryInventory() instanceof TileEntityBrewingStand) {
+                getHandle().openBrewingStand((TileEntityBrewingStand) craftinv.getPrimaryInventory());
             } else {
                 openCustomInventory(inventory, player, 5);
             }
@@ -220,10 +220,10 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
             openCustomInventory(inventory, player, 4);
             break;
         case HOPPER:
-            if (craftinv.getInventory() instanceof TileEntityHopper) {
-                getHandle().openHopper((TileEntityHopper) craftinv.getInventory());
-            } else if (craftinv.getInventory() instanceof EntityMinecartHopper) {
-                getHandle().openMinecartHopper((EntityMinecartHopper) craftinv.getInventory());
+            if (craftinv.getPrimaryInventory() instanceof TileEntityHopper) {
+                getHandle().openHopper((TileEntityHopper) craftinv.getPrimaryInventory());
+            } else if (craftinv.getPrimaryInventory() instanceof EntityMinecartHopper) {
+                getHandle().openMinecartHopper((EntityMinecartHopper) craftinv.getPrimaryInventory());
             }
             break;
         case CREATIVE:

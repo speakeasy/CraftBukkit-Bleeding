@@ -19,7 +19,7 @@ public class CraftInventoryEnchanting extends CraftInventory implements Enchanti
     }
 
     @Override
-    public ContainerEnchantTableInventory getInventory() {
-        return (ContainerEnchantTableInventory)inventory;
+    public ContainerEnchantTableInventory getPrimaryInventory() {
+        return (ContainerEnchantTableInventory)primaryInventory;
     }
 }

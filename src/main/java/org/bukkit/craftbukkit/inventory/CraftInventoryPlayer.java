@@ -15,8 +15,8 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     @Override
-    public PlayerInventory getInventory() {
-        return (PlayerInventory) inventory;
+    public PlayerInventory getPrimaryInventory() {
+        return (PlayerInventory) primaryInventory;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     public ItemStack getItemInHand() {
-        return CraftItemStack.asCraftMirror(getInventory().getItemInHand());
+        return CraftItemStack.asCraftMirror(getPrimaryInventory().getItemInHand());
     }
 
     public void setItemInHand(ItemStack stack) {
@@ -33,12 +33,12 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     public int getHeldItemSlot() {
-        return getInventory().itemInHandIndex;
+        return getPrimaryInventory().itemInHandIndex;
     }
 
     public void setHeldItemSlot(int slot) {
         Validate.isTrue(slot >= 0 && slot < PlayerInventory.getHotbarSize(), "Slot is not between 0 and 8 inclusive");
-        this.getInventory().itemInHandIndex = slot;
+        this.getPrimaryInventory().itemInHandIndex = slot;
         ((CraftPlayer) this.getHolder()).getHandle().playerConnection.sendPacket(new Packet16BlockItemSwitch(slot));
     }
 
@@ -75,7 +75,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     }
 
     public ItemStack[] getArmorContents() {
-        net.minecraft.server.ItemStack[] mcItems = getInventory().getArmorContents();
+        net.minecraft.server.ItemStack[] mcItems = getPrimaryInventory().getArmorContents();
         ItemStack[] ret = new ItemStack[mcItems.length];
 
         for (int i = 0; i < mcItems.length; i++) {
@@ -128,7 +128,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public HumanEntity getHolder() {
-        return (HumanEntity) inventory.getOwner();
+        return (HumanEntity) primaryInventory.getOwner();
     }
 
     public float getItemInHandDropChance() {

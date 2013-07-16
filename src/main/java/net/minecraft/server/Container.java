@@ -32,10 +32,10 @@ public abstract class Container {
     public abstract InventoryView getBukkitView();
     public void transferTo(Container other, org.bukkit.craftbukkit.entity.CraftHumanEntity player) {
         InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
-        ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-        ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
-        ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-        ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
+        ((CraftInventory) source.getTopInventory()).getPrimaryInventory().onClose(player);
+        ((CraftInventory) source.getBottomInventory()).getPrimaryInventory().onClose(player);
+        ((CraftInventory) destination.getTopInventory()).getPrimaryInventory().onOpen(player);
+        ((CraftInventory) destination.getBottomInventory()).getPrimaryInventory().onOpen(player);
     }
     // CraftBukkit end
 
