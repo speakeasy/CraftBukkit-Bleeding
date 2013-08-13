@@ -55,11 +55,6 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
     }
 
     @Override
-    public void setDefaultEffects(PotionEffectType left, PotionEffectType right) {
-        beacon.setEffectIds(left.getId(), right.getId());
-    }
-
-    @Override
     public List<PotionEffect> getDefaultEffects() {
         return CraftPotionBrewer.nmsToBukkitEffects(beacon.getDefaultEffects());
     }
