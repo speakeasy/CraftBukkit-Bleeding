@@ -8,10 +8,14 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 
+import org.bukkit.block.Beacon.ActivationState;
+import org.bukkit.craftbukkit.block.CraftBeacon;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.potion.CraftPotionBrewer;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.block.BeaconPaidEvent;
+import org.bukkit.event.block.BeaconPulseEvent;
+import org.bukkit.event.player.PlayerPayBeaconEvent;
 import org.bukkit.potion.PotionEffect;
 // CraftBukkit end
 
@@ -29,6 +33,8 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     private int maxStack = MAX_STACK;
     public boolean customEffects = false;
     public List<MobEffect> effects;
+    public double radius;
+    public ActivationState overrideState = ActivationState.DEFAULT;
 
     public ItemStack[] getContents() {
         return new ItemStack[] { this.inventorySlot };
@@ -51,9 +57,13 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     }
 
     public boolean isEnabled() {
-        if (this.d && this.e > 0) {
-            updateEffects();
-            return !effects.isEmpty();
+        if (overrideState == ActivationState.OFF) {
+            return false;
+        } else {
+            if (overrideState == ActivationState.ON || this.d && this.e > 0) {
+                updateEffects();
+                return !effects.isEmpty();
+            }
         }
         return false;
     }
@@ -64,7 +74,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         }
     }
 
-    private List<MobEffect> getDefaultEffects(int pyramid, int primary, int secondary) {
+    public List<MobEffect> getDefaultEffects(int pyramid, int primary, int secondary) {
         if (pyramid <= 0 || primary <= 0) {
             return ImmutableList.of();
         } else if (pyramid >= 4 && primary == secondary) {
@@ -74,6 +84,19 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         } else {
             return ImmutableList.of(new MobEffect(primary, 180, 0, true));
         }
+    }
+
+    // Arguments must be pre-validated
+    public void setEffectIds(int left, int right) {
+        this.f = left;
+        this.g = right;
+    }
+
+    public double getRadius() {
+        if (radius == -1) {
+            return this.e >= 4 ? 50D : (double) (this.e * 10 + 10);
+        }
+        return radius;
     }
     // CraftBukkit end
 
@@ -86,21 +109,27 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         }
     }
 
-    // CraftBukkit start - custom effects, private -> public
-    public void u() {
+    private void u() {
+        // CraftBukkit start
         if (this.world.isStatic) {
             return;
         }
         if (isEnabled()) {
-            // [Update Team] update CraftBeacon.getRadius() if this formula is modified
-            // Cap at 50 due to countPyramid() modifying e
-            double d0 = this.e >= 4 ? 50D : (double) (this.e * 10 + 10);
+            double d0 = getRadius();
             // CraftBukkit end
 
             AxisAlignedBB axisalignedbb = AxisAlignedBB.a().a((double) this.x, (double) this.y, (double) this.z, (double) (this.x + 1), (double) (this.y + 1), (double) (this.z + 1)).grow(d0, d0, d0);
 
             axisalignedbb.e = (double) this.world.getHeight();
             List list = this.world.a(EntityHuman.class, axisalignedbb);
+            // CraftBukkit start - call event
+            BeaconPulseEvent event = CraftEventFactory.callBeaconPulseEvent(this, list);
+            list = new ArrayList();
+            for (HumanEntity hum : event.getPlayers()) {
+                list.add(((CraftHumanEntity) hum).getHandle());
+            }
+            List<PotionEffect> eventEffects = event.getEffects();
+            // CraftBukkit end
             Iterator iterator = list.iterator();
 
             EntityHuman entityhuman;
@@ -108,22 +137,16 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
             while (iterator.hasNext()) {
                 entityhuman = (EntityHuman) iterator.next();
                 // CraftBukkit start - custom effects
-                for (MobEffect eff : effects) {
-                    entityhuman.addEffect(new MobEffect(eff.getEffectId(), 180, eff.getAmplifier(), true));
+                for (PotionEffect eff : eventEffects) {
+                    entityhuman.addEffect(new MobEffect(eff.getType().getId(), 180, eff.getAmplifier(), true));
                 }
                 // CraftBukkit end
             }
         }
     }
 
-    // CraftBukkit start - split method to expose
-    public boolean canSeeSky() {
-        return this.world.l(this.x, this.y + 1, this.z);
-    }
-
     private void v() {
-        if (!canSeeSky()) {
-            // CraftBukkit end
+        if (!this.world.l(this.x, this.y + 1, this.z)) {
             this.d = false;
             this.e = 0;
         } else {
@@ -185,12 +208,12 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     public boolean pickEffects(EntityPlayer player, int prim, int seco) {
         int newPri = d(prim); // should be choosePrimary
         int newSec = e(seco); // should be chooseSecondary
+        // The event clones the list, so we can compare the results to the original
         List<PotionEffect> newEffects = CraftPotionBrewer.nmsToBukkitEffects(getDefaultEffects(this.e, newPri, newSec));
-        BeaconPaidEvent event = new BeaconPaidEvent(this.world.getWorld().getBlockAt(this.x, this.y, this.z), player.getBukkitEntity(), newEffects);
+        PlayerPayBeaconEvent event = new PlayerPayBeaconEvent(new CraftBeacon(this.world.getWorld().getBlockAt(this.x, this.y, this.z)), player.getBukkitEntity(), newEffects);
         this.world.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            this.f = newPri;
-            this.g = newSec;
+            setEffectIds(newPri, newSec);
             // Set customEffects to false if the effects weren't changed
             if (newEffects.equals(event.getNewEffects())) {
                 customEffects = false;
@@ -268,6 +291,19 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         } else {
             updateEffects();
         }
+        if (nbttagcompound.hasKey("Bukkit.Radius")) {
+            this.radius = nbttagcompound.getDouble("Bukkit.Radius");
+            if (radius < 0) {
+                radius = -1;
+            }
+        } else {
+            this.radius = -1;
+        }
+        if (nbttagcompound.hasKey("Bukkit.Override")) {
+            this.overrideState = nbttagcompound.getBoolean("Bukkit.Override") ? ActivationState.ON : ActivationState.OFF;
+        } else {
+            this.overrideState = ActivationState.DEFAULT;
+        }
         // CraftBukkit end
     }
 
@@ -286,6 +322,12 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
                 tagList.add(effectTag);
             }
             nbttagcompound.set("Bukkit.Effects", tagList);
+        }
+        if (radius != -1) {
+            nbttagcompound.setDouble("Bukkit.Radius", radius);
+        }
+        if (overrideState != ActivationState.DEFAULT) {
+            nbttagcompound.setBoolean("Bukkit.Override", overrideState == ActivationState.ON);
         }
         // CraftBukkit end
     }

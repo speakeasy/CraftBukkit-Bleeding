@@ -26,12 +26,14 @@ import net.minecraft.server.ItemStack;
 import net.minecraft.server.Packet101CloseWindow;
 import net.minecraft.server.Packet103SetSlot;
 import net.minecraft.server.Slot;
+import net.minecraft.server.TileEntityBeacon;
 import net.minecraft.server.World;
 import net.minecraft.server.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -47,6 +49,7 @@ import org.bukkit.craftbukkit.util.CraftDamageSource;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Pig;
@@ -714,6 +717,20 @@ public class CraftEventFactory {
     public static PlayerLeashEntityEvent callPlayerLeashEntityEvent(EntityInsentient entity, Entity leashHolder, EntityHuman player) {
         PlayerLeashEntityEvent event = new PlayerLeashEntityEvent(entity.getBukkitEntity(), leashHolder.getBukkitEntity(), (Player) player.getBukkitEntity());
         entity.world.getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static BeaconPulseEvent callBeaconPulseEvent(TileEntityBeacon beacon, List humans) {
+        ArrayList<HumanEntity> elist = new ArrayList<HumanEntity>();
+        World nmsWorld = beacon.getWorld();
+        for (Object o : humans) {
+            if (o instanceof EntityHuman) {
+                elist.add(((EntityHuman) o).getBukkitEntity());
+            }
+        }
+        BlockState state = nmsWorld.getWorld().getBlockAt(beacon.x, beacon.y, beacon.z).getState();
+        BeaconPulseEvent event = new BeaconPulseEvent((Beacon) state, elist);
+        nmsWorld.getServer().getPluginManager().callEvent(event);
         return event;
     }
 }
