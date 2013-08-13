@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
 import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.server.TileEntityBeacon;
 
@@ -42,7 +43,7 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
     }
 
     @Override
-    public Collection<PotionEffect> getEffects() {
+    public List<PotionEffect> getEffects() {
         return CraftPotionBrewer.nmsToBukkitEffects(beacon.effects);
     }
 
@@ -59,9 +60,19 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
     }
 
     @Override
+    public List<PotionEffect> getDefaultEffects() {
+        return CraftPotionBrewer.nmsToBukkitEffects(beacon.getDefaultEffects());
+    }
+
+    @Override
     public void resetEffects() {
         beacon.customEffects = false;
         beacon.updateEffects();
+    }
+
+    @Override
+    public boolean hasCustomEffects() {
+        return beacon.customEffects;
     }
 
     @Override
@@ -89,12 +100,6 @@ public class CraftBeacon extends CraftBlockState implements Beacon {
             return beacon.e;
         }
         return beacon.countPyramid(maximum);
-    }
-
-    @Override
-    public Collection<PotionEffect> getDefaultEffects() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override

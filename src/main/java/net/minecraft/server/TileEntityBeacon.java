@@ -74,7 +74,11 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
         }
     }
 
-    public List<MobEffect> getDefaultEffects(int pyramid, int primary, int secondary) {
+    public List<MobEffect> getDefaultEffects() {
+        return getDefaultEffects(this.e, this.f, this.g);
+    }
+
+    public static List<MobEffect> getDefaultEffects(int pyramid, int primary, int secondary) {
         if (pyramid <= 0 || primary <= 0) {
             return ImmutableList.of();
         } else if (pyramid >= 4 && primary == secondary) {
