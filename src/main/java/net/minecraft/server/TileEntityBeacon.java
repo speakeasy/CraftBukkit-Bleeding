@@ -33,7 +33,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     private int maxStack = MAX_STACK;
     public boolean customEffects = false;
     public List<MobEffect> effects;
-    public double radius;
+    public double radius = -1;
     public ActivationState overrideState = ActivationState.DEFAULT;
 
     public ItemStack[] getContents() {
