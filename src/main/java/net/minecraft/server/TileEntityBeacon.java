@@ -141,30 +141,28 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
     // CraftBukkit start - split method
     public int countPyramid(int max) {
         this.e = 0;
-        { // TODO remove extra braces before putting on master (for temporary prettydiffs)
-            for (int i = 1; i <= max; this.e = i++) {
-                int j = this.y - i;
+        for (int i = 1; i <= max; this.e = i++) {
+            int j = this.y - i;
 
-                if (j < 0) {
-                    break;
-                }
+            if (j < 0) {
+                break;
+            }
 
-                boolean flag = true;
+            boolean flag = true;
 
-                for (int k = this.x - i; k <= this.x + i && flag; ++k) {
-                    for (int l = this.z - i; l <= this.z + i; ++l) {
-                        int i1 = this.world.getTypeId(k, j, l);
+            for (int k = this.x - i; k <= this.x + i && flag; ++k) {
+                for (int l = this.z - i; l <= this.z + i; ++l) {
+                    int i1 = this.world.getTypeId(k, j, l);
 
-                        if (i1 != Block.EMERALD_BLOCK.id && i1 != Block.GOLD_BLOCK.id && i1 != Block.DIAMOND_BLOCK.id && i1 != Block.IRON_BLOCK.id) {
-                            flag = false;
-                            break;
-                        }
+                    if (i1 != Block.EMERALD_BLOCK.id && i1 != Block.GOLD_BLOCK.id && i1 != Block.DIAMOND_BLOCK.id && i1 != Block.IRON_BLOCK.id) {
+                        flag = false;
+                        break;
                     }
                 }
+            }
 
-                if (!flag) {
-                    break;
-                }
+            if (!flag) {
+                break;
             }
         }
         return this.e;
