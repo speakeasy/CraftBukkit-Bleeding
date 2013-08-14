@@ -126,21 +126,17 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
 
             axisalignedbb.e = (double) this.world.getHeight();
             List list = this.world.a(EntityHuman.class, axisalignedbb);
-            // CraftBukkit start - call event
-            BeaconPulseEvent event = CraftEventFactory.callBeaconPulseEvent(this, list);
-            list = new ArrayList();
-            for (HumanEntity hum : event.getPlayers()) {
-                list.add(((CraftHumanEntity) hum).getHandle());
+            // CraftBukkit start - call event, use custom effects
+            List<HumanEntity> affected = new ArrayList<HumanEntity>(list.size());
+            for (Object o : list) {
+                affected.add(((EntityHuman) o).getBukkitEntity());
             }
+            BeaconPulseEvent event = CraftEventFactory.callBeaconPulseEvent(this, affected);
             List<PotionEffect> eventEffects = event.getEffects();
-            // CraftBukkit end
-            Iterator iterator = list.iterator();
 
-            EntityHuman entityhuman;
-
-            while (iterator.hasNext()) {
-                entityhuman = (EntityHuman) iterator.next();
-                // CraftBukkit start - custom effects
+            for (HumanEntity entity : event.getPlayers()) {
+                // We must use vanilla addEffect() code because it's different
+                EntityHuman entityhuman = ((CraftHumanEntity) entity).getHandle();
                 for (PotionEffect eff : eventEffects) {
                     entityhuman.addEffect(new MobEffect(eff.getType().getId(), 180, eff.getAmplifier(), true));
                 }

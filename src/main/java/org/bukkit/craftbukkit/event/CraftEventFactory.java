@@ -720,16 +720,10 @@ public class CraftEventFactory {
         return event;
     }
 
-    public static BeaconPulseEvent callBeaconPulseEvent(TileEntityBeacon beacon, List humans) {
-        ArrayList<HumanEntity> elist = new ArrayList<HumanEntity>();
+    public static BeaconPulseEvent callBeaconPulseEvent(TileEntityBeacon beacon, List<HumanEntity> affected) {
         World nmsWorld = beacon.getWorld();
-        for (Object o : humans) {
-            if (o instanceof EntityHuman) {
-                elist.add(((EntityHuman) o).getBukkitEntity());
-            }
-        }
         BlockState state = nmsWorld.getWorld().getBlockAt(beacon.x, beacon.y, beacon.z).getState();
-        BeaconPulseEvent event = new BeaconPulseEvent((Beacon) state, elist);
+        BeaconPulseEvent event = new BeaconPulseEvent((Beacon) state, affected);
         nmsWorld.getServer().getPluginManager().callEvent(event);
         return event;
     }
