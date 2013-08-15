@@ -2,6 +2,10 @@ package net.minecraft.server;
 
 // CraftBukkit start
 import java.util.ArrayList;
+
+import org.apache.commons.lang.mutable.MutableBoolean;
+import org.bukkit.craftbukkit.command.CraftBlockCommandSender;
+
 import com.google.common.base.Joiner;
 // CraftBukkit end
 
@@ -11,10 +15,10 @@ public class TileEntityCommand extends TileEntity implements ICommandListener {
     public String b = ""; // CraftBukkit - private -> public
     private String c = "@";
     // CraftBukkit start
-    private final org.bukkit.command.BlockCommandSender sender;
+    private final CraftBlockCommandSender sender;
 
     public TileEntityCommand() {
-        sender = new org.bukkit.craftbukkit.command.CraftBlockCommandSender(this);
+        sender = new CraftBlockCommandSender(this);
     }
     // CraftBukkit end
 
@@ -96,17 +100,25 @@ public class TileEntityCommand extends TileEntity implements ICommandListener {
                 int completed = 0;
 
                 // Now dispatch all of the commands we ended up with
-                for (int i = 0; i < commands.size(); i++) {
-                    try {
-                        if (commandMap.dispatch(sender, joiner.join(java.util.Arrays.asList(commands.get(i))))) {
-                            completed++;
+                MutableBoolean oldState = sender.state;
+                MutableBoolean state = sender.state = new MutableBoolean(true);
+                try {
+                    for (int i = 0; i < commands.size(); i++) {
+                        try {
+                            if (commandMap.dispatch(sender, joiner.join(java.util.Arrays.asList(commands.get(i))))) {
+                                if (state.booleanValue()) {
+                                    completed++;
+                                }
+                            }
+                        } catch (Throwable exception) {
+                            minecraftserver.getLogger().warning(String.format("CommandBlock at (%d,%d,%d) failed to handle command", this.x, this.y, this.z), exception);
                         }
-                    } catch (Throwable exception) {
-                        minecraftserver.getLogger().warning(String.format("CommandBlock at (%d,%d,%d) failed to handle command", this.x, this.y, this.z), exception);
                     }
-                }
 
-                return completed;
+                    return completed;
+                } finally {
+                    sender.state = oldState;
+                }
                 // CraftBukkit end
             } else {
                 return 0;
