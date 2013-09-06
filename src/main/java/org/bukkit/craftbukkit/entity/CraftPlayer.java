@@ -447,7 +447,95 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void awardAchievement(Achievement achievement) {
-        sendStatistic(achievement.getId(), 1);
+        final int STATISTIC_OFFSET = 0x500000;
+        int id = STATISTIC_OFFSET;
+
+        switch (achievement) {
+            case OPEN_INVENTORY:
+            default:
+                id += 0;
+                break;
+            case MINE_WOOD:
+                id += 1;
+                break;
+            case BUILD_WORKBENCH:
+                id += 2;
+                break;
+            case BUILD_PICKAXE:
+                id += 3;
+                break;
+            case BUILD_FURNACE:
+                id += 4;
+                break;
+            case ACQUIRE_IRON:
+                id += 5;
+                break;
+            case BUILD_HOE:
+                id += 6;
+                break;
+            case MAKE_BREAD:
+                id += 7;
+                break;
+            case BAKE_CAKE:
+                id += 8;
+                break;
+            case BUILD_BETTER_PICKAXE:
+                id += 9;
+                break;
+            case COOK_FISH:
+                id += 10;
+                break;
+            case ON_A_RAIL:
+                id += 11;
+                break;
+            case BUILD_SWORD:
+                id += 12;
+                break;
+            case KILL_ENEMY:
+                id += 13;
+                break;
+            case KILL_COW:
+                id += 14;
+                break;
+            case FLY_PIG:
+                id += 15;
+                break;
+            case SNIPE_SKELETON:
+                id += 16;
+                break;
+            case GET_DIAMONDS:
+                id += 17;
+                break;
+            case NETHER_PORTAL:
+                id += 18;
+                break;
+            case GHAST_RETURN:
+                id += 19;
+                break;
+            case GET_BLAZE_ROD:
+                id += 20;
+                break;
+            case BREW_POTION:
+                id += 21;
+                break;
+            case END_PORTAL:
+                id += 22;
+                break;
+            case THE_END:
+                id += 23;
+                break;
+            case ENCHANTMENTS:
+                id += 24;
+                break;
+            case OVERKILL:
+                id += 25;
+                break;
+            case BOOKCASE:
+                id += 26;
+                break;
+        }
+
+        sendStatistic(id, 1);
     }
 
     public void incrementStatistic(Statistic statistic) {
