@@ -662,11 +662,40 @@ public class CraftWorld implements World {
     }
 
     public void setDifficulty(Difficulty difficulty) {
-        this.getHandle().difficulty = difficulty.getValue();
+        int value;
+
+        switch (difficulty) {
+            case PEACEFUL:
+            default:
+                value = 0;
+                break;
+            case EASY:
+                value = 1;
+                break;
+            case NORMAL:
+                value = 2;
+                break;
+            case HARD:
+                value = 3;
+                break;
+        }
+
+        this.getHandle().difficulty = value;
     }
 
     public Difficulty getDifficulty() {
-        return Difficulty.getByValue(this.getHandle().difficulty);
+        switch (this.getHandle().difficulty) {
+            case 0:
+                return Difficulty.PEACEFUL;
+            case 1:
+                return Difficulty.EASY;
+            case 2:
+                return Difficulty.NORMAL;
+            case 3:
+                return Difficulty.HARD;
+            default:
+                return null;
+        }
     }
 
     public BlockMetadataStore getBlockMetadata() {
