@@ -2395,7 +2395,7 @@ public abstract class World implements IBlockAccess {
         }
 
         // CraftBukkit start
-        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(j, k, l), i, defaultReturn);
+        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(j, k, l), ((org.bukkit.block.Block) block1).getType(), defaultReturn);
         this.getServer().getPluginManager().callEvent(event);
 
         return event.isBuildable();
