@@ -5,6 +5,7 @@ import static org.bukkit.Sound.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Sound;
 
+// !!! When updating this file, remember to run org.bukkit.craftbukkit.SoundMappingTest !!!
 public class CraftSound {
     private static final String[] sounds = new String[Sound.values().length];
 
@@ -24,7 +25,6 @@ public class CraftSound {
         set(DIG_SAND, "dig.sand");
         set(DIG_SNOW, "dig.snow");
         set(DIG_STONE, "dig.stone");
-        set(DIG_WOOD, "dig.wood");
         set(DIG_WOOD, "dig.wood");
         // Fire
         set(FIRE, "fire.fire");
@@ -85,26 +85,28 @@ public class CraftSound {
         set(GHAST_FIREBALL, "mob.ghast.fireball");
         set(GHAST_MOAN, "mob.ghast.moan");
         set(GHAST_SCREAM, "mob.ghast.scream");
-        set(HORSE_ANGRY, "horse.angry");
-        set(HORSE_ARMOR, "horse.armor");
-        set(HORSE_BREATHE, "horse.breathe");
-        set(HORSE_GALLOP, "horse.gallop");
-        set(HORSE_HIT, "horse.hit");
-        set(HORSE_IDLE, "horse.idle");
-        set(HORSE_JUMP, "horse.jump");
-        set(HORSE_LAND, "horse.land");
-        set(HORSE_SADDLE, "horse.leather");
-        set(HORSE_SOFT, "horse.soft");
-        set(HORSE_WOOD, "horse.wood");
-        set(DONKEY_ANGRY, "horse.donkey.angry");
-        set(DONKEY_DEATH, "horse.donkey.death");
-        set(DONKEY_HIT, "horse.donkey.hit");
-        set(DONKEY_IDLE, "horse.donkey.idle");
-        set(HORSE_SKELETON_DEATH, "horse.skeleton.death");
-        set(HORSE_SKELETON_IDLE, "horse.skeleton.idle");
-        set(HORSE_ZOMBIE_DEATH, "horse.zombie.death");
-        set(HORSE_ZOMBIE_HIT, "horse.zombie.hit");
-        set(HORSE_ZOMBIE_IDLE, "horse.zombie.idle");
+        set(HORSE_ANGRY, "mob.horse.angry");
+        set(HORSE_ARMOR, "mob.horse.armor");
+        set(HORSE_DEATH, "mob.horse.death");
+        set(HORSE_BREATHE, "mob.horse.breathe");
+        set(HORSE_GALLOP, "mob.horse.gallop");
+        set(HORSE_HIT, "mob.horse.hit");
+        set(HORSE_IDLE, "mob.horse.idle");
+        set(HORSE_JUMP, "mob.horse.jump");
+        set(HORSE_LAND, "mob.horse.land");
+        set(HORSE_SADDLE, "mob.horse.leather");
+        set(HORSE_SOFT, "mob.horse.soft");
+        set(HORSE_WOOD, "mob.horse.wood");
+        set(DONKEY_ANGRY, "mob.horse.donkey.angry");
+        set(DONKEY_DEATH, "mob.horse.donkey.death");
+        set(DONKEY_HIT, "mob.horse.donkey.hit");
+        set(DONKEY_IDLE, "mob.horse.donkey.idle");
+        set(HORSE_SKELETON_DEATH, "mob.horse.skeleton.death");
+        set(HORSE_SKELETON_HIT, "mob.horse.skeleton.hit");
+        set(HORSE_SKELETON_IDLE, "mob.horse.skeleton.idle");
+        set(HORSE_ZOMBIE_DEATH, "mob.horse.zombie.death");
+        set(HORSE_ZOMBIE_HIT, "mob.horse.zombie.hit");
+        set(HORSE_ZOMBIE_IDLE, "mob.horse.zombie.idle");
         set(IRONGOLEM_DEATH, "mob.irongolem.death");
         set(IRONGOLEM_HIT, "mob.irongolem.hit");
         set(IRONGOLEM_THROW, "mob.irongolem.throw");
@@ -159,8 +161,9 @@ public class CraftSound {
         set(ZOMBIE_DEATH, "mob.zombie.death");
         set(ZOMBIE_HURT, "mob.zombie.hurt");
         set(ZOMBIE_INFECT, "mob.zombie.infect");
-        set(ZOMBIE_UNFECT, "mob.zombie.unfect");
         set(ZOMBIE_REMEDY, "mob.zombie.remedy");
+        set(ZOMBIE_STEP, "mob.zombie.step");
+        set(ZOMBIE_UNFECT, "mob.zombie.unfect");
         set(ZOMBIE_PIG_IDLE, "mob.zombiepig.zpig");
         set(ZOMBIE_PIG_ANGRY, "mob.zombiepig.zpigangry");
         set(ZOMBIE_PIG_DEATH, "mob.zombiepig.zpigdeath");
