@@ -234,6 +234,59 @@ public class ItemStackLoreEnchantmentTest extends ItemStackTest {
                         }
                     },
                     "Enchant vs Other"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            ((CraftMetaItem) meta).setForceEnchantGlow(true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "ForceGlow vs Blank"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            ((CraftMetaItem) meta).setForceEnchantGlow(true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            return cleanStack;
+                        }
+                    },
+                    "ForceGlow vs Null"
+                },
+                new Object[] {
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            ((CraftMetaItem) meta).setForceEnchantGlow(true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    new Operator() {
+                        public ItemStack operate(ItemStack cleanStack) {
+                            ItemMeta meta = cleanStack.getItemMeta();
+                            meta.addEnchant(Enchantment.PROTECTION_FIRE, 1, true);
+                            cleanStack.setItemMeta(meta);
+                            return cleanStack;
+                        }
+                    },
+                    "ForceGlow vs Enchant"
                 }
             )
         );

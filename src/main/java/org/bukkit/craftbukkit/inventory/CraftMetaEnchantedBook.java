@@ -54,7 +54,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     void applyToItem(NBTTagCompound itemTag) {
         super.applyToItem(itemTag);
 
-        applyEnchantments(enchantments, itemTag, STORED_ENCHANTMENTS);
+        applyEnchantments(enchantments, itemTag, STORED_ENCHANTMENTS, false);
     }
 
     @Override
@@ -117,7 +117,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
 
-        serializeEnchantments(enchantments, builder, STORED_ENCHANTMENTS);
+        serializeEnchantments(enchantments, builder, STORED_ENCHANTMENTS, false);
 
         return builder;
     }
