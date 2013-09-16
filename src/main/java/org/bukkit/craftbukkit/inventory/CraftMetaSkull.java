@@ -5,6 +5,7 @@ import java.util.Map;
 import net.minecraft.server.NBTTagCompound;
 
 import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -15,9 +16,11 @@ import com.google.common.collect.ImmutableMap.Builder;
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     static final ItemMetaKey SKULL_OWNER = new ItemMetaKey("SkullOwner", "skull-owner");
+    static final ItemMetaKey SKULL_TYPE = new ItemMetaKey("Damage", "skull-type");
     static final int MAX_OWNER_LENGTH = 16;
 
     private String player;
+    private SkullType skullType;
 
     CraftMetaSkull(CraftMetaItem meta) {
         super(meta);
@@ -26,6 +29,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         }
         CraftMetaSkull skullMeta = (CraftMetaSkull) meta;
         this.player = skullMeta.player;
+        this.skullType = skullMeta.skullType;
     }
 
     CraftMetaSkull(NBTTagCompound tag) {
@@ -34,11 +38,37 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         if (tag.hasKey(SKULL_OWNER.NBT)) {
             player = tag.getString(SKULL_OWNER.NBT);
         }
+
+        if (tag.hasKey(SKULL_TYPE.NBT)) {
+            switch (tag.getShort(SKULL_TYPE.NBT)) {
+                case 0:
+                default:
+                    skullType = SkullType.SKELETON;
+                    break;
+
+                case 1:
+                    skullType = SkullType.WITHER;
+                    break;
+
+                case 2:
+                    skullType = SkullType.ZOMBIE;
+                    break;
+
+                case 3:
+                    skullType = SkullType.PLAYER;
+                    break;
+
+                case 4:
+                    skullType = SkullType.CREEPER;
+                    break;
+            }
+        }
     }
 
     CraftMetaSkull(Map<String, Object> map) {
         super(map);
         setOwner(SerializableMeta.getString(map, SKULL_OWNER.BUKKIT, true));
+        setType(SerializableMeta.getObject(SkullType.class, map, SKULL_TYPE.BUKKIT, false));
     }
 
     @Override
@@ -48,6 +78,8 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         if (hasOwner()) {
             tag.setString(SKULL_OWNER.NBT, player);
         }
+
+        tag.setShort(SKULL_TYPE.NBT, getData(skullType));
     }
 
     @Override
@@ -125,5 +157,36 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             return builder.put(SKULL_OWNER.BUKKIT, this.player);
         }
         return builder;
+    }
+
+    @Override
+    public SkullType getType() {
+        return skullType;
+    }
+
+    @Override
+    public boolean setType(SkullType type) {
+        skullType = type;
+        return true;
+    }
+
+    private short getData(SkullType type) {
+        switch (type) {
+            case SKELETON:
+            default:
+                return 0;
+
+            case WITHER:
+                return 1;
+
+            case ZOMBIE:
+                return 2;
+
+            case PLAYER:
+                return 3;
+
+            case CREEPER:
+                return 4;
+        }
     }
 }
