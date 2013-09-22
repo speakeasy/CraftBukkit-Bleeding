@@ -9,15 +9,15 @@ import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
 
 public class ContainerAnvil extends Container {
 
-    private IInventory f = new InventoryCraftResult();
-    private IInventory g = new ContainerAnvilInventory(this, "Repair", true, 2);
+    public IInventory f = new InventoryCraftResult(); // CraftBukkit private -> public
+    public IInventory g = new ContainerAnvilInventory(this, "Repair", true, 2); // CraftBukkit private -> public
     private World h;
     private int i;
     private int j;
     private int k;
     public int a;
     private int l;
-    private String m;
+    public String m; // CraftBukkit private -> public
     private final EntityHuman n;
     // CraftBukkit start
     private CraftInventoryView bukkitEntity = null;
@@ -51,7 +51,7 @@ public class ContainerAnvil extends Container {
     public void a(IInventory iinventory) {
         super.a(iinventory);
         if (iinventory == this.g) {
-            this.e();
+            //this.e(); // CraftBukkit - Manually update after InventoryClickEvent.
         }
     }
 
@@ -66,6 +66,7 @@ public class ContainerAnvil extends Container {
         if (itemstack == null) {
             this.f.setItem(0, (ItemStack) null);
             this.a = 0;
+            this.m = null; // CraftBukkit - Reset the item name value when the item is removed.
         } else {
             ItemStack itemstack1 = itemstack.cloneItemStack();
             ItemStack itemstack2 = this.g.getItem(1);
@@ -295,7 +296,7 @@ public class ContainerAnvil extends Container {
             }
 
             this.f.setItem(0, itemstack1);
-            this.b();
+            //this.b(); // CraftBukkit - Manually update after calling AnvilUpdateEvent
         }
     }
 
@@ -384,12 +385,19 @@ public class ContainerAnvil extends Container {
     }
 
     // CraftBukkit start
+    public void b() {
+        super.b();
+        for (ICrafting listener : (java.util.List<ICrafting>) this.listeners) {
+            listener.setContainerData(this, 0, this.a);
+        }
+    }
+
     public CraftInventoryView getBukkitView() {
         if (bukkitEntity != null) {
             return bukkitEntity;
         }
 
-        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(this.g, this.f);
+        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(this);
         bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
         return bukkitEntity;
     }

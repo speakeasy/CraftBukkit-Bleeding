@@ -29,11 +29,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.AnvilUpdateEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.AnvilUpdateEvent.UpdateCause;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
@@ -1428,6 +1430,21 @@ public class PlayerConnection extends Connection {
                         }
                         return;
                 }
+                // AnvilUpdateEvent
+                if (this.player.activeContainer instanceof ContainerAnvil && event.getAction() != InventoryAction.NOTHING && packet102windowclick.slot < 3) {
+                    ContainerAnvil anvil = (ContainerAnvil) this.player.activeContainer;
+                    if (anvil.m != null) {
+                        int originalCost = anvil.a;
+                        // Update the inventory to calculate the new cost.
+                        anvil.e();
+                        int newCost = anvil.a;
+                        anvil.a = originalCost;
+                        String newName = ((org.bukkit.inventory.AnvilInventory)anvil.getBukkitView().getTopInventory()).getNewName();
+                        AnvilUpdateEvent anvilUpdateEvent = new AnvilUpdateEvent(this.player.getBukkitEntity().getOpenInventory(), newCost, newName, AnvilUpdateEvent.UpdateCause.INVENTORY_CHANGE);
+                        server.getPluginManager().callEvent(anvilUpdateEvent);
+                        anvil.b();
+                    }
+                }
             }
             // CraftBukkit end
 
@@ -1783,7 +1800,25 @@ public class PlayerConnection extends Connection {
                         String s1 = SharedConstants.a(new String(packet250custompayload.data));
 
                         if (s1.length() <= 30) {
+                            // CraftBukkit start
+
+                            // Store the name currently in the anvil.
+                            String originalName = containeranvil.m;
+                            // Update the anvil with the new name and store the new cost.
                             containeranvil.a(s1);
+                            int newCost = containeranvil.a;
+                            // Reset the anvil back to its previous state by setting the name to what it was before.
+                            containeranvil.a(originalName);
+                            UpdateCause cause = containeranvil.m == null ? UpdateCause.INVENTORY_CHANGE : UpdateCause.NAME_CHANGE;
+                            AnvilUpdateEvent anvilUpdateEvent = new AnvilUpdateEvent(this.player.getBukkitEntity().getOpenInventory(), newCost, s1, cause);
+                            this.player.world.getServer().getPluginManager().callEvent(anvilUpdateEvent);
+
+                            containeranvil.a(anvilUpdateEvent.getName());
+                            if (anvilUpdateEvent.isExperienceCostChanged()) {
+                                containeranvil.a = anvilUpdateEvent.getExperienceCost();
+                            }
+                            containeranvil.b();
+                            // CraftBukkit end
                         }
                     } else {
                         containeranvil.a("");
