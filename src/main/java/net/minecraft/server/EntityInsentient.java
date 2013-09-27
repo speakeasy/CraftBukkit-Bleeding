@@ -6,6 +6,8 @@ import java.util.UUID;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.event.entity.EntityEquipEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
 // CraftBukkit end
@@ -194,7 +196,7 @@ public abstract class EntityInsentient extends EntityLiving {
             if (k < 5) {
                 ItemStack itemstack = this.l(k <= 0 ? 1 : 0);
                 if (itemstack != null) {
-                    loot.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack));
+                    loot.add(CraftItemStack.asCraftMirror(itemstack));
                 }
             }
         }
@@ -353,6 +355,19 @@ public abstract class EntityInsentient extends EntityLiving {
                         }
 
                         if (flag) {
+                            // CraftBukkit start
+                            EntityEquipEvent event = new EntityEquipEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity(), (org.bukkit.entity.Item) entityitem.getBukkitEntity(), i);
+                            this.world.getServer().getPluginManager().callEvent(event);
+                            if (event.isCancelled()) {
+                                continue;
+                            }
+                            itemstack = entityitem.getItemStack();
+                            if (entityitem.dead || itemstack == null) {
+                                entityitem.die();
+                                continue;
+                            }
+                            // CraftBukkit end
+
                             if (itemstack1 != null && this.random.nextFloat() - 0.1F < this.dropChances[i]) {
                                 this.a(itemstack1, 0.0F);
                             }
