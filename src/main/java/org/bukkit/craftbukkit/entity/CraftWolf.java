@@ -5,6 +5,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Wolf;
+import org.bukkit.material.Wool;
 
 public class CraftWolf extends CraftTameableAnimal implements Wolf {
     public CraftWolf(CraftServer server, EntityWolf wolf) {
@@ -30,10 +31,10 @@ public class CraftWolf extends CraftTameableAnimal implements Wolf {
     }
 
     public DyeColor getCollarColor() {
-        return DyeColor.getByWoolData((byte) getHandle().getCollarColor());
+        return DyeColor.values()[(byte) getHandle().getCollarColor()];
     }
 
     public void setCollarColor(DyeColor color) {
-        getHandle().setCollarColor(color.getWoolData());
+        getHandle().setCollarColor(new Wool(color).getData());
     }
 }

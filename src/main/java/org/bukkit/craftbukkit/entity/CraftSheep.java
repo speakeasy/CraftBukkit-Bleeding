@@ -6,6 +6,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
+import org.bukkit.material.Wool;
 
 public class CraftSheep extends CraftAnimals implements Sheep {
     public CraftSheep(CraftServer server, EntitySheep entity) {
@@ -13,11 +14,11 @@ public class CraftSheep extends CraftAnimals implements Sheep {
     }
 
     public DyeColor getColor() {
-        return DyeColor.getByWoolData((byte) getHandle().getColor());
+        return DyeColor.values()[((byte) getHandle().getColor())];
     }
 
     public void setColor(DyeColor color) {
-        getHandle().setColor(color.getWoolData());
+        getHandle().setColor(new Wool(color).getData());
     }
 
     public boolean isSheared() {
