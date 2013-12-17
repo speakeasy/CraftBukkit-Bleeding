@@ -200,13 +200,13 @@ public class Explosion {
         int k;
         Block block;
 
-        if (this.b) {
-            // CraftBukkit start
-            org.bukkit.World bworld = this.world.getWorld();
-            org.bukkit.entity.Entity explode = this.source == null ? null : this.source.getBukkitEntity();
-            Location location = new Location(bworld, this.posX, this.posY, this.posZ);
+        // CraftBukkit start
+        org.bukkit.World bworld = this.world.getWorld();
+        org.bukkit.entity.Entity explode = this.source == null ? null : this.source.getBukkitEntity();
+        Location location = new Location(bworld, this.posX, this.posY, this.posZ);
 
-            List<org.bukkit.block.Block> blockList = new ArrayList<org.bukkit.block.Block>();
+        List<org.bukkit.block.Block> blockList = new ArrayList<org.bukkit.block.Block>();
+        if (this.b){
             for (int i1 = this.blocks.size() - 1; i1 >= 0; i1--) {
                 ChunkPosition cpos = (ChunkPosition) this.blocks.get(i1);
                 org.bukkit.block.Block bblock = bworld.getBlockAt(cpos.x, cpos.y, cpos.z);
@@ -214,23 +214,25 @@ public class Explosion {
                     blockList.add(bblock);
                 }
             }
+        }
 
-            EntityExplodeEvent event = new EntityExplodeEvent(explode, location, blockList, 0.3F);
-            this.world.getServer().getPluginManager().callEvent(event);
+        EntityExplodeEvent event = new EntityExplodeEvent(explode, location, blockList, this.b ? 0.3F : 0.0F);
+        this.world.getServer().getPluginManager().callEvent(event);
 
-            this.blocks.clear();
+        this.blocks.clear();
 
-            for (org.bukkit.block.Block bblock : event.blockList()) {
-                ChunkPosition coords = new ChunkPosition(bblock.getX(), bblock.getY(), bblock.getZ());
-                blocks.add(coords);
-            }
+        for (org.bukkit.block.Block bblock : event.blockList()) {
+            ChunkPosition coords = new ChunkPosition(bblock.getX(), bblock.getY(), bblock.getZ());
+            blocks.add(coords);
+        }
 
-            if (event.isCancelled()) {
-                this.wasCanceled = true;
-                return;
-            }
-            // CraftBukkit end
+        if (event.isCancelled()) {
+            this.wasCanceled = true;
+            return;
+        }
+        // CraftBukkit end
 
+        if (this.b) {
             iterator = this.blocks.iterator();
 
             while (iterator.hasNext()) {
