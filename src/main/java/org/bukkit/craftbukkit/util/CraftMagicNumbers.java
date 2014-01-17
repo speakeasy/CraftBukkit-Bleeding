@@ -1,13 +1,17 @@
 package org.bukkit.craftbukkit.util;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.server.Block;
 import net.minecraft.server.Blocks;
+import net.minecraft.server.EntityInsentient;
+import net.minecraft.server.EntityTypes;
+import net.minecraft.server.GroupDataEntity;
 import net.minecraft.server.Item;
 import net.minecraft.server.MojangsonParser;
+import net.minecraft.server.NBTBase;
 import net.minecraft.server.NBTTagCompound;
 import net.minecraft.server.StatisticList;
 
@@ -15,8 +19,11 @@ import org.bukkit.Achievement;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.UnsafeValues;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftStatistic;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
@@ -119,14 +126,58 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public List<String> tabCompleteInternalStatisticOrAchievementName(String token, List<String> completions) {
-        List<String> matches = new ArrayList<String>();
         Iterator iterator = StatisticList.b.iterator();
         while (iterator.hasNext()) {
             String statistic = ((net.minecraft.server.Statistic) iterator.next()).e;
             if (statistic.startsWith(token)) {
-                matches.add(statistic);
+                completions.add(statistic);
             }
         }
-        return matches;
+        return completions;
+    }
+
+    @Override
+    public Entity createEntity(String entityId, World bukkitWorld, double x, double y, double z, String data) throws Exception {
+        net.minecraft.server.World world = ((CraftWorld) bukkitWorld).getHandle();
+        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        if (data != null) {
+            NBTBase nbtbase = MojangsonParser.a(data);
+            if (nbtbase instanceof NBTTagCompound) {
+                nbttagcompound = (NBTTagCompound) nbtbase;
+            } else {
+                throw new Exception("Not a valid tag");
+            }
+        }
+        nbttagcompound.setString("id", entityId);
+        net.minecraft.server.Entity entity = EntityTypes.a(nbttagcompound, world);
+        if (entity != null) {
+            entity.setPositionRotation(x, y, z, entity.yaw, entity.pitch);
+            if (data == null && (entity instanceof EntityInsentient)) {
+                ((EntityInsentient) entity).a((GroupDataEntity) null);
+            }
+            world.addEntity(entity);
+            net.minecraft.server.Entity vehicle = entity;
+            for (NBTTagCompound nbttagcompound1 = nbttagcompound; nbttagcompound1.hasKeyOfType("Riding", 10); nbttagcompound1 = nbttagcompound1.getCompound("Riding")) {
+                net.minecraft.server.Entity passenger = EntityTypes.a(nbttagcompound1.getCompound("Riding"), world);
+                if (passenger != null) {
+                    passenger.setPositionRotation(x, y, z, passenger.yaw, passenger.pitch);
+                    world.addEntity(passenger);
+                    vehicle.mount(passenger);
+                }
+                vehicle = passenger;
+            }
+            return entity.getBukkitEntity();
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> tabCompleteEntityType(String token, List<String> completions) {
+        for (String string : ((Set<String>) EntityTypes.b())) {
+            if (string.startsWith(token)) {
+                completions.add(string);
+            }
+        }
+        return completions;
     }
 }
