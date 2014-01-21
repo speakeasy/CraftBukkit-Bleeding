@@ -1574,6 +1574,10 @@ public abstract class Entity {
 
     public void a(EntityLightning entitylightning) {
         // CraftBukkit start
+        if (entitylightning.hasDamaged.contains(this)) {
+            return;
+        }
+
         final org.bukkit.entity.Entity thisBukkitEntity = this.getBukkitEntity();
         final org.bukkit.entity.Entity stormBukkitEntity = entitylightning.getBukkitEntity();
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -1592,6 +1596,7 @@ public abstract class Entity {
             return;
         }
 
+        entitylightning.hasDamaged.add(this);
         this.burn((float) event.getDamage());
         // CraftBukkit end
 
